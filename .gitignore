@@ -1,0 +1,35 @@
+# Dépendances
+node_modules/
+vendor/
+
+# Fichiers de build
+dist/
+build/
+
+# Fichiers de log
+*.log
+logs/
+
+# Fichiers d'environnement
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Fichiers de cache
+.cache/
+.parcel-cache/
+
+# Fichiers IDE/éditeurs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Fichiers de couverture de tests
+coverage/
