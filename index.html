@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nom du Projet - Une nouvelle expérience</title>
+    <title>CryptoCards - Jeu de cartes à collectionner NFT</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,18 +13,19 @@
 <body>
     <header>
         <div class="logo">
-            <span class="logo-text">PROJET<span class="logo-text-highlight">X</span></span>
+            <span class="logo-text">CRYPTO<span class="logo-text-highlight">CARDS</span></span>
         </div>
         <nav>
             <ul>
                 <li><a href="#features">Fonctionnalités</a></li>
-                <li><a href="#about">À propos</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li><a href="#cards">Cartes</a></li>
+                <li><a href="#tokenomics">Tokenomics</a></li>
+                <li><a href="#roadmap">Roadmap</a></li>
             </ul>
         </nav>
         <div class="auth-buttons">
-            <a href="login.html" class="btn btn-login">Connexion</a>
-            <a href="register.html" class="btn btn-register">Inscription</a>
+            <a href="#" class="btn btn-login connect-wallet">Connecter Wallet</a>
+            <a href="app.html" class="btn btn-register">Accéder au Jeu</a>
         </div>
         <div class="menu-toggle">
             <i class="fas fa-bars"></i>
@@ -33,131 +34,254 @@
 
     <section class="hero">
         <div class="hero-content">
-            <h1>Découvrez une nouvelle façon d'expérimenter</h1>
-            <p>Une plateforme innovante qui vous permet de créer, partager et explorer de nouveaux horizons.</p>
+            <h1>Collectionnez, Échangez, Jouez</h1>
+            <p>Plongez dans l'univers de CryptoCards, le premier jeu de cartes NFT où vous possédez véritablement vos actifs numériques sur la blockchain.</p>
             <div class="hero-buttons">
-                <a href="register.html" class="btn btn-primary">Commencer maintenant</a>
+                <a href="app.html" class="btn btn-primary">Commencer à jouer</a>
                 <a href="#features" class="btn btn-secondary">En savoir plus</a>
             </div>
         </div>
         <div class="hero-image">
             <div class="hero-blob"></div>
-            <div class="hero-abstract"></div>
+            <div class="hero-cards">
+                <div class="card card-1"></div>
+                <div class="card card-2"></div>
+                <div class="card card-3"></div>
+            </div>
         </div>
     </section>
 
     <section id="features" class="features">
-        <h2>Fonctionnalités principales</h2>
+        <h2>Entrez dans le monde des NFTs Jouables</h2>
         <div class="features-grid">
             <div class="feature-card">
                 <div class="feature-icon">
-                    <i class="fas fa-bolt"></i>
+                    <i class="fas fa-wallet"></i>
                 </div>
-                <h3>Rapide et efficace</h3>
-                <p>Notre plateforme est optimisée pour vous offrir une expérience fluide et réactive, sans temps d'attente.</p>
+                <h3>Propriété Véritable</h3>
+                <p>Toutes les cartes sont des NFTs que vous possédez réellement dans votre wallet. Achetez, vendez et échangez en toute liberté.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">
-                    <i class="fas fa-shield-alt"></i>
+                    <i class="fas fa-dice"></i>
                 </div>
-                <h3>Sécurité renforcée</h3>
-                <p>Vos données sont protégées avec les technologies de sécurité les plus avancées du marché.</p>
+                <h3>Gameplay Stratégique</h3>
+                <p>Construisez votre deck parfait et affrontez d'autres joueurs dans des batailles palpitantes avec vos cartes NFT.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">
-                    <i class="fas fa-users"></i>
+                    <i class="fas fa-layer-group"></i>
                 </div>
-                <h3>Collaboration</h3>
-                <p>Travaillez en équipe et partagez vos projets avec une communauté active et passionnée.</p>
+                <h3>Fusion & Évolution</h3>
+                <p>Combinez vos cartes pour créer des versions plus puissantes et déverrouiller des capacités spéciales.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">
-                    <i class="fas fa-code"></i>
+                    <i class="fas fa-coins"></i>
                 </div>
-                <h3>Personnalisation</h3>
-                <p>Adaptez l'interface et les fonctionnalités selon vos besoins spécifiques.</p>
+                <h3>Économie en Jeu</h3>
+                <p>Utilisez notre token $CCARD pour acheter des packs, participer à des événements exclusifs et bien plus encore.</p>
             </div>
         </div>
     </section>
 
-    <section id="about" class="about">
-        <div class="about-content">
-            <h2>À propos du projet</h2>
-            <p>Notre projet est né d'une vision simple : créer une plateforme qui révolutionne la manière dont nous interagissons avec la technologie.</p>
-            <p>Fondé en 2025, notre équipe de passionnés travaille sans relâche pour vous offrir une expérience utilisateur exceptionnelle, combinant design moderne et fonctionnalités innovantes.</p>
-            <div class="stats">
-                <div class="stat">
-                    <span class="stat-number">100K+</span>
-                    <span class="stat-label">Utilisateurs</span>
+    <section id="cards" class="cards-showcase">
+        <h2>Des Cartes Uniques et Rares</h2>
+        <p class="section-description">Découvrez quelques exemples de nos cartes NFT. Chaque carte possède ses propres statistiques, raretés et capacités spéciales.</p>
+        
+        <div class="cards-slider">
+            <div class="card-preview">
+                <div class="card-rarity legendary">Légendaire</div>
+                <div class="card-image" style="background-color: #9b59b6;"></div>
+                <div class="card-info">
+                    <h3>Dragon Ancien</h3>
+                    <div class="card-stats">
+                        <span>Attaque: 95</span>
+                        <span>Défense: 80</span>
+                    </div>
                 </div>
-                <div class="stat">
-                    <span class="stat-number">50+</span>
-                    <span class="stat-label">Pays</span>
+            </div>
+            <div class="card-preview">
+                <div class="card-rarity epic">Épique</div>
+                <div class="card-image" style="background-color: #3498db;"></div>
+                <div class="card-info">
+                    <h3>Mage Suprême</h3>
+                    <div class="card-stats">
+                        <span>Attaque: 75</span>
+                        <span>Défense: 45</span>
+                    </div>
                 </div>
-                <div class="stat">
-                    <span class="stat-number">99%</span>
-                    <span class="stat-label">Satisfaction</span>
+            </div>
+            <div class="card-preview">
+                <div class="card-rarity rare">Rare</div>
+                <div class="card-image" style="background-color: #2ecc71;"></div>
+                <div class="card-info">
+                    <h3>Guerrier d'Élite</h3>
+                    <div class="card-stats">
+                        <span>Attaque: 60</span>
+                        <span>Défense: 65</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-preview">
+                <div class="card-rarity common">Commun</div>
+                <div class="card-image" style="background-color: #e67e22;"></div>
+                <div class="card-info">
+                    <h3>Archer Novice</h3>
+                    <div class="card-stats">
+                        <span>Attaque: 40</span>
+                        <span>Défense: 30</span>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="about-image">
-            <div class="about-shape"></div>
+        
+        <div class="cards-cta">
+            <a href="app.html" class="btn btn-primary">Collectionner Maintenant</a>
+        </div>
+    </section>
+
+    <section id="tokenomics" class="tokenomics">
+        <div class="tokenomics-content">
+            <h2>Tokenomics</h2>
+            <p>Notre écosystème est alimenté par $CCARD, un token ERC-20 qui vous donne accès à l'ensemble des fonctionnalités du jeu.</p>
+            
+            <div class="token-info">
+                <div class="token-utility">
+                    <h3>Utilités du Token</h3>
+                    <ul>
+                        <li><i class="fas fa-shopping-cart"></i> Achat de packs de cartes</li>
+                        <li><i class="fas fa-sync-alt"></i> Fusion de cartes</li>
+                        <li><i class="fas fa-trophy"></i> Participation aux tournois</li>
+                        <li><i class="fas fa-store"></i> Accès au marché secondaire</li>
+                    </ul>
+                </div>
+                <div class="token-distribution">
+                    <h3>Distribution</h3>
+                    <div class="distribution-chart">
+                        <!-- Canvas pour le graphique sera initialisé par JS -->
+                        <div class="chart-placeholder"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="roadmap" class="roadmap">
+        <h2>Notre Roadmap</h2>
+        <div class="roadmap-timeline">
+            <div class="roadmap-item active">
+                <div class="roadmap-date">Q2 2025</div>
+                <div class="roadmap-content">
+                    <h3>Lancement Alpha</h3>
+                    <ul>
+                        <li>Déploiement des smart contracts sur testnet</li>
+                        <li>Première collection de 100 cartes</li>
+                        <li>Interface utilisateur de base</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="roadmap-item">
+                <div class="roadmap-date">Q3 2025</div>
+                <div class="roadmap-content">
+                    <h3>Lancement Bêta</h3>
+                    <ul>
+                        <li>Mécanismes de jeu complets</li>
+                        <li>Système de fusion de cartes</li>
+                        <li>Distribution du token $CCARD</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="roadmap-item">
+                <div class="roadmap-date">Q4 2025</div>
+                <div class="roadmap-content">
+                    <h3>Version 1.0</h3>
+                    <ul>
+                        <li>Marketplace intégrée</li>
+                        <li>Système de tournois</li>
+                        <li>Extension de la collection à 300 cartes</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="roadmap-item">
+                <div class="roadmap-date">Q1 2026</div>
+                <div class="roadmap-content">
+                    <h3>Expansion</h3>
+                    <ul>
+                        <li>Passage au mainnet</li>
+                        <li>Première saison compétitive</li>
+                        <li>Collaborations avec d'autres projets NFT</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="network">
+        <h2>Réseau & Compatibilité</h2>
+        <p>CryptoCards est actuellement déployé sur les testnets suivants, avec une expansion prévue vers d'autres réseaux.</p>
+        
+        <div class="networks-grid">
+            <div class="network-item">
+                <img src="img/polygon.svg" alt="Polygon Mumbai" class="network-logo">
+                <span class="network-name">Polygon Mumbai</span>
+                <span class="network-status active">Actif</span>
+            </div>
+            <div class="network-item">
+                <img src="img/base.svg" alt="Base Goerli" class="network-logo">
+                <span class="network-name">Base Goerli</span>
+                <span class="network-status active">Actif</span>
+            </div>
+            <div class="network-item">
+                <img src="img/ethereum.svg" alt="Ethereum Goerli" class="network-logo">
+                <span class="network-name">Ethereum Goerli</span>
+                <span class="network-status">Bientôt</span>
+            </div>
+            <div class="network-item">
+                <img src="img/optimism.svg" alt="Optimism Goerli" class="network-logo">
+                <span class="network-name">Optimism Goerli</span>
+                <span class="network-status">Bientôt</span>
+            </div>
         </div>
     </section>
 
     <section class="cta">
         <div class="cta-content">
-            <h2>Prêt à rejoindre l'aventure ?</h2>
-            <p>Inscrivez-vous dès maintenant et découvrez toutes les possibilités qui s'offrent à vous.</p>
-            <a href="register.html" class="btn btn-cta">S'inscrire gratuitement</a>
+            <h2>Prêt à rejoindre l'aventure?</h2>
+            <p>Connectez votre wallet et commencez à collectionner vos premières cartes NFT dès maintenant.</p>
+            <a href="app.html" class="btn btn-cta">Lancer l'Application</a>
         </div>
         <div class="cta-shape"></div>
-    </section>
-
-    <section id="contact" class="contact">
-        <h2>Contactez-nous</h2>
-        <p>Une question ? Une suggestion ? N'hésitez pas à nous contacter.</p>
-        <form class="contact-form">
-            <div class="form-group">
-                <input type="text" placeholder="Votre nom" required>
-            </div>
-            <div class="form-group">
-                <input type="email" placeholder="Votre email" required>
-            </div>
-            <div class="form-group">
-                <textarea placeholder="Votre message" rows="5" required></textarea>
-            </div>
-            <button type="submit" class="btn btn-contact">Envoyer</button>
-        </form>
     </section>
 
     <footer>
         <div class="footer-content">
             <div class="footer-logo">
-                <span class="logo-text">PROJET<span class="logo-text-highlight">X</span></span>
-                <p>Une nouvelle expérience digitale.</p>
+                <span class="logo-text">CRYPTO<span class="logo-text-highlight">CARDS</span></span>
+                <p>Le futur du gaming NFT est ici.</p>
             </div>
             <div class="footer-links">
                 <h3>Liens utiles</h3>
                 <ul>
                     <li><a href="#features">Fonctionnalités</a></li>
-                    <li><a href="#about">À propos</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                    <li><a href="privacy.html">Confidentialité</a></li>
+                    <li><a href="#cards">Cartes</a></li>
+                    <li><a href="#tokenomics">Tokenomics</a></li>
+                    <li><a href="#roadmap">Roadmap</a></li>
+                    <li><a href="docs.html">Documentation</a></li>
                 </ul>
             </div>
             <div class="footer-social">
-                <h3>Suivez-nous</h3>
+                <h3>Communauté</h3>
                 <div class="social-icons">
                     <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-facebook"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-discord"></i></a>
+                    <a href="#"><i class="fab fa-telegram"></i></a>
                     <a href="#"><i class="fab fa-github"></i></a>
                 </div>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2025 PROJETX. Tous droits réservés.</p>
+            <p>&copy; 2025 CryptoCards. Tous droits réservés.</p>
         </div>
     </footer>
 
