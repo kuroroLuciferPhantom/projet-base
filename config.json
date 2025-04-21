@@ -1,0 +1,11 @@
+{
+  "name": "projet-base",
+  "version": "0.1.0",
+  "description": "Structure de base pour un nouveau projet",
+  "main": "src/main.js",
+  "author": "",
+  "settings": {
+    "debug": false,
+    "environment": "development"
+  }
+}
