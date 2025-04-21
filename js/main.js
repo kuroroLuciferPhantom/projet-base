@@ -91,3 +91,103 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('scroll', animateStats);
     // Animation au chargement initial
     animateStats();
+    
+    // Animation des cartes de fonctionnalités
+    const featureCards = document.querySelectorAll('.feature-card');
+    
+    function animateFeatureCards() {
+        featureCards.forEach((card, index) => {
+            if (isInViewport(card) && !card.classList.contains('animated')) {
+                card.classList.add('animated');
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(50px)';
+                
+                // Animation avec délai progressif pour effet en cascade
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100 * index); // Délai différent pour chaque carte
+            }
+        });
+    }
+    
+    window.addEventListener('scroll', animateFeatureCards);
+    // Animation au chargement initial après un court délai
+    setTimeout(animateFeatureCards, 500);
+    
+    // Validation du formulaire de contact
+    const contactForm = document.querySelector('.contact-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Récupération des valeurs du formulaire
+            const name = contactForm.querySelector('input[type="text"]').value;
+            const email = contactForm.querySelector('input[type="email"]').value;
+            const message = contactForm.querySelector('textarea').value;
+            
+            // Exemple de validation simple
+            if (name.trim() === '' || email.trim() === '' || message.trim() === '') {
+                alert('Veuillez remplir tous les champs du formulaire.');
+                return;
+            }
+            
+            // Ici vous pourriez ajouter le code pour envoyer les données à un serveur
+            
+            // Affichage d'un message de confirmation
+            const formWrapper = contactForm.parentElement;
+            contactForm.style.display = 'none';
+            
+            // Création d'un message de succès
+            const successMessage = document.createElement('div');
+            successMessage.className = 'success-message';
+            successMessage.innerHTML = `
+                <i class="fas fa-check-circle" style="font-size: 48px; color: var(--color-yellow); margin-bottom: 20px;"></i>
+                <h3>Message envoyé avec succès!</h3>
+                <p>Merci de nous avoir contacté, ${name}. Nous vous répondrons dans les plus brefs délais.</p>
+            `;
+            
+            successMessage.style.textAlign = 'center';
+            successMessage.style.padding = '30px';
+            successMessage.style.backgroundColor = 'rgba(26, 26, 26, 0.8)';
+            successMessage.style.borderRadius = '10px';
+            successMessage.style.animation = 'fadeIn 0.5s ease-in-out';
+            
+            formWrapper.appendChild(successMessage);
+        });
+    }
+    
+    // Ajout d'une animation simple pour les éléments au scroll
+    const animateOnScroll = document.querySelectorAll('.hero-content, .about-content, .cta-content');
+    
+    function animateElements() {
+        animateOnScroll.forEach(element => {
+            if (isInViewport(element) && !element.classList.contains('animated')) {
+                element.classList.add('animated');
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    element.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, 200);
+            }
+        });
+    }
+    
+    window.addEventListener('scroll', animateElements);
+    // Animation au chargement initial
+    setTimeout(animateElements, 300);
+});
+
+// Définition de l'animation de fondu pour le message de succès
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+`;
+document.head.appendChild(style);
