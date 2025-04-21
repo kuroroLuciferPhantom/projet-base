@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoCards - Votre Collection</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <a href="index.html">
+                    <span class="logo-text">CRYPTO<span class="logo-text-highlight">CARDS</span></span>
+                </a>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active">
+                        <a href="#">
+                            <i class="fas fa-layer-group"></i>
+                            <span>Ma Collection</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fas fa-store"></i>
+                            <span>Boutique</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fas fa-sync-alt"></i>
+                            <span>Fusion</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fas fa-gamepad"></i>
+                            <span>Jouer</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fas fa-trophy"></i>
+                            <span>Tournois</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Marché</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="token-balance">
+                    <div class="token-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <div class="token-info">
+                        <span class="token-amount">0 $CCARD</span>
+                        <a href="#" class="token-action">Obtenir des tokens</a>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <main class="app-content">
+            <header class="app-header">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Rechercher dans votre collection...">
+                </div>
+                
+                <div class="wallet-info">
+                    <div class="network-indicator">
+                        <span class="network-status"></span>
+                        <span class="network-name">Non connecté</span>
+                    </div>
+                    <button class="btn btn-wallet connect-wallet">
+                        <i class="fas fa-wallet"></i>
+                        <span>Connecter Wallet</span>
+                    </button>
+                </div>
+            </header>
+            
+            <section class="wallet-not-connected">
+                <div class="connect-prompt">
+                    <img src="img/wallet-connect.svg" alt="Connecter wallet" class="connect-img">
+                    <h2>Connectez votre Wallet</h2>
+                    <p>Pour accéder à votre collection de cartes et jouer, veuillez connecter votre wallet compatible avec Web3.</p>
+                    <button class="btn btn-primary connect-wallet">
+                        <i class="fas fa-wallet"></i>
+                        Connecter Wallet
+                    </button>
+                    <div class="supported-wallets">
+                        <p>Wallets supportés :</p>
+                        <div class="wallet-icons">
+                            <img src="img/metamask.svg" alt="MetaMask" title="MetaMask">
+                            <img src="img/walletconnect.svg" alt="WalletConnect" title="WalletConnect">
+                            <img src="img/coinbase.svg" alt="Coinbase Wallet" title="Coinbase Wallet">
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="wallet-connected hidden">
+                <div class="collection-header">
+                    <h1>Ma Collection</h1>
+                    <div class="collection-stats">
+                        <div class="stat">
+                            <span class="stat-value">0</span>
+                            <span class="stat-label">Cartes</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">0</span>
+                            <span class="stat-label">Sets complets</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">0</span>
+                            <span class="stat-label">Cartes Légendaires</span>
+                        </div>
+                    </div>
+                    <div class="collection-actions">
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-filter"></i>
+                            Filtrer
+                        </button>
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-sort"></i>
+                            Trier
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="no-cards-prompt">
+                    <div class="empty-state">
+                        <img src="img/empty-collection.svg" alt="Collection vide" class="empty-img">
+                        <h3>Votre collection est vide</h3>
+                        <p>Vous n'avez pas encore de cartes dans votre collection. Commencez par acheter des packs ou des cartes individuelles.</p>
+                        <div class="empty-actions">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-shopping-cart"></i>
+                                Acheter un Pack
+                            </button>
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-store"></i>
+                                Visiter le Marché
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="cards-grid hidden">
+                    <!-- Cette section sera remplie dynamiquement avec les cartes de l'utilisateur -->
+                </div>
+                
+                <div class="card-detail-modal hidden">
+                    <div class="modal-backdrop"></div>
+                    <div class="modal-content">
+                        <button class="modal-close">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <div class="card-detail">
+                            <div class="card-image-large">
+                                <!-- Image de la carte -->
+                            </div>
+                            <div class="card-detail-info">
+                                <h2 class="card-name">Nom de la carte</h2>
+                                <div class="card-rarity">Rareté</div>
+                                <div class="card-metadata">
+                                    <div class="metadata-item">
+                                        <span class="metadata-label">ID NFT :</span>
+                                        <span class="metadata-value">#0000</span>
+                                    </div>
+                                    <div class="metadata-item">
+                                        <span class="metadata-label">Acquis le :</span>
+                                        <span class="metadata-value">00/00/0000</span>
+                                    </div>
+                                </div>
+                                <div class="card-stats-detailed">
+                                    <div class="stat-bar">
+                                        <span class="stat-label">Attaque</span>
+                                        <div class="stat-progress">
+                                            <div class="stat-fill" style="width: 75%;"></div>
+                                        </div>
+                                        <span class="stat-value">75</span>
+                                    </div>
+                                    <div class="stat-bar">
+                                        <span class="stat-label">Défense</span>
+                                        <div class="stat-progress">
+                                            <div class="stat-fill" style="width: 60%;"></div>
+                                        </div>
+                                        <span class="stat-value">60</span>
+                                    </div>
+                                    <div class="stat-bar">
+                                        <span class="stat-label">Magie</span>
+                                        <div class="stat-progress">
+                                            <div class="stat-fill" style="width: 85%;"></div>
+                                        </div>
+                                        <span class="stat-value">85</span>
+                                    </div>
+                                    <div class="stat-bar">
+                                        <span class="stat-label">Vitesse</span>
+                                        <div class="stat-progress">
+                                            <div class="stat-fill" style="width: 50%;"></div>
+                                        </div>
+                                        <span class="stat-value">50</span>
+                                    </div>
+                                </div>
+                                <div class="card-description">
+                                    <p>Description détaillée de la carte avec ses pouvoirs spéciaux et son histoire.</p>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn btn-secondary">
+                                        <i class="fas fa-sync-alt"></i>
+                                        Fusionner
+                                    </button>
+                                    <button class="btn btn-secondary">
+                                        <i class="fas fa-share-alt"></i>
+                                        Partager
+                                    </button>
+                                    <button class="btn btn-primary">
+                                        <i class="fas fa-chart-line"></i>
+                                        Mettre en vente
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <script src="js/app.js"></script>
+</body>
+</html>
