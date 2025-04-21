@@ -43,3 +43,51 @@ document.addEventListener('DOMContentLoaded', function() {
             authButtons.style.padding = '20px';
         }
     });
+    
+    // Animation des chiffres statistiques
+    const stats = document.querySelectorAll('.stat-number');
+    const animationDuration = 2000; // 2 secondes pour l'animation
+    
+    function isInViewport(element) {
+        const rect = element.getBoundingClientRect();
+        return (
+            rect.top >= 0 &&
+            rect.left >= 0 &&
+            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+        );
+    }
+    
+    function animateStats() {
+        stats.forEach(stat => {
+            if (isInViewport(stat) && !stat.classList.contains('animated')) {
+                stat.classList.add('animated');
+                
+                const targetValue = parseInt(stat.textContent.replace(/[^0-9]/g, ''));
+                const increment = targetValue / (animationDuration / 16);
+                let currentValue = 0;
+                
+                const updateValue = () => {
+                    if (currentValue < targetValue) {
+                        currentValue += increment;
+                        if (currentValue > targetValue) currentValue = targetValue;
+                        
+                        if (targetValue >= 1000) {
+                            stat.textContent = Math.floor(currentValue).toLocaleString() + '+';
+                        } else {
+                            stat.textContent = Math.floor(currentValue) + '%';
+                        }
+                        
+                        requestAnimationFrame(updateValue);
+                    }
+                };
+                
+                updateValue();
+            }
+        });
+    }
+    
+    // Animation au scroll
+    window.addEventListener('scroll', animateStats);
+    // Animation au chargement initial
+    animateStats();
