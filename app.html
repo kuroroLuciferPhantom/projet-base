@@ -8,6 +8,12 @@
     <link rel="stylesheet" href="css/app.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Ethers.js pour l'interaction blockchain -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" 
+            integrity="sha512-FDcVY+g7vc5CXANbrTSg1K5qLyriCsGDYCE02Li1tP+zrMgFf2xJK3uLHp3BpZVrCxcBJH+5n+LLUKcnUJzLcQ==" 
+            crossorigin="anonymous" 
+            referrerpolicy="no-referrer"></script>
 </head>
 <body>
     <div class="app-container">
@@ -21,37 +27,37 @@
             <nav class="sidebar-nav">
                 <ul>
                     <li class="active">
-                        <a href="#">
+                        <a href="#" data-section="collection">
                             <i class="fas fa-layer-group"></i>
                             <span>Ma Collection</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#">
+                        <a href="#" data-section="shop">
                             <i class="fas fa-store"></i>
                             <span>Boutique</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#">
+                        <a href="#" data-section="fusion">
                             <i class="fas fa-sync-alt"></i>
                             <span>Fusion</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#">
+                        <a href="#" data-section="play">
                             <i class="fas fa-gamepad"></i>
                             <span>Jouer</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#">
+                        <a href="#" data-section="tournaments">
                             <i class="fas fa-trophy"></i>
                             <span>Tournois</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#">
+                        <a href="#" data-section="marketplace">
                             <i class="fas fa-chart-line"></i>
                             <span>Marché</span>
                         </a>
@@ -66,7 +72,7 @@
                     </div>
                     <div class="token-info">
                         <span class="token-amount">0 $CCARD</span>
-                        <a href="#" class="token-action">Obtenir des tokens</a>
+                        <a href="#" class="token-action" id="get-tokens">Obtenir des tokens</a>
                     </div>
                 </div>
             </div>
@@ -91,6 +97,7 @@
                 </div>
             </header>
             
+            <!-- État non connecté -->
             <section class="wallet-not-connected">
                 <div class="connect-prompt">
                     <img src="img/wallet-connect.svg" alt="Connecter wallet" class="connect-img">
@@ -111,7 +118,8 @@
                 </div>
             </section>
             
-            <section class="wallet-connected hidden">
+            <!-- État connecté - Collection de cartes -->
+            <section class="wallet-connected hidden" id="section-collection">
                 <div class="collection-header">
                     <h1>Ma Collection</h1>
                     <div class="collection-stats">
@@ -129,28 +137,29 @@
                         </div>
                     </div>
                     <div class="collection-actions">
-                        <button class="btn btn-secondary">
+                        <button class="btn btn-secondary" id="filter-cards">
                             <i class="fas fa-filter"></i>
                             Filtrer
                         </button>
-                        <button class="btn btn-secondary">
+                        <button class="btn btn-secondary" id="sort-cards">
                             <i class="fas fa-sort"></i>
                             Trier
                         </button>
                     </div>
                 </div>
                 
+                <!-- Si l'utilisateur n'a pas de cartes -->
                 <div class="no-cards-prompt">
                     <div class="empty-state">
                         <img src="img/empty-collection.svg" alt="Collection vide" class="empty-img">
                         <h3>Votre collection est vide</h3>
                         <p>Vous n'avez pas encore de cartes dans votre collection. Commencez par acheter des packs ou des cartes individuelles.</p>
                         <div class="empty-actions">
-                            <button class="btn btn-primary">
+                            <button class="btn btn-primary" id="buy-pack">
                                 <i class="fas fa-shopping-cart"></i>
                                 Acheter un Pack
                             </button>
-                            <button class="btn btn-secondary">
+                            <button class="btn btn-secondary" id="visit-marketplace">
                                 <i class="fas fa-store"></i>
                                 Visiter le Marché
                             </button>
@@ -158,10 +167,12 @@
                     </div>
                 </div>
                 
+                <!-- Si l'utilisateur a des cartes -->
                 <div class="cards-grid hidden">
                     <!-- Cette section sera remplie dynamiquement avec les cartes de l'utilisateur -->
                 </div>
                 
+                <!-- Modal de détails de carte -->
                 <div class="card-detail-modal hidden">
                     <div class="modal-backdrop"></div>
                     <div class="modal-content">
@@ -219,15 +230,15 @@
                                     <p>Description détaillée de la carte avec ses pouvoirs spéciaux et son histoire.</p>
                                 </div>
                                 <div class="card-actions">
-                                    <button class="btn btn-secondary">
+                                    <button class="btn btn-secondary" id="card-fuse">
                                         <i class="fas fa-sync-alt"></i>
                                         Fusionner
                                     </button>
-                                    <button class="btn btn-secondary">
+                                    <button class="btn btn-secondary" id="card-share">
                                         <i class="fas fa-share-alt"></i>
                                         Partager
                                     </button>
-                                    <button class="btn btn-primary">
+                                    <button class="btn btn-primary" id="card-sell">
                                         <i class="fas fa-chart-line"></i>
                                         Mettre en vente
                                     </button>
@@ -237,9 +248,42 @@
                     </div>
                 </div>
             </section>
+            
+            <!-- Section Boutique (à développer) -->
+            <section class="wallet-connected hidden" id="section-shop">
+                <h1>Boutique</h1>
+                <p>Cette fonctionnalité sera disponible prochainement.</p>
+            </section>
+            
+            <!-- Section Fusion (à développer) -->
+            <section class="wallet-connected hidden" id="section-fusion">
+                <h1>Fusion de Cartes</h1>
+                <p>Cette fonctionnalité sera disponible prochainement.</p>
+            </section>
+            
+            <!-- Section Jouer (à développer) -->
+            <section class="wallet-connected hidden" id="section-play">
+                <h1>Jouer</h1>
+                <p>Cette fonctionnalité sera disponible prochainement.</p>
+            </section>
+            
+            <!-- Section Tournois (à développer) -->
+            <section class="wallet-connected hidden" id="section-tournaments">
+                <h1>Tournois</h1>
+                <p>Cette fonctionnalité sera disponible prochainement.</p>
+            </section>
+            
+            <!-- Section Marché (à développer) -->
+            <section class="wallet-connected hidden" id="section-marketplace">
+                <h1>Marché</h1>
+                <p>Cette fonctionnalité sera disponible prochainement.</p>
+            </section>
         </main>
     </div>
     
+    <!-- Scripts -->
+    <script src="js/contracts.js"></script>
+    <script src="js/wallet-connect.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
