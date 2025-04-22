@@ -9,11 +9,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Ethers.js pour l'interaction blockchain -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" 
-            crossorigin="anonymous" 
-            referrerpolicy="no-referrer"></script>
 </head>
 <body>
     <header>
@@ -222,6 +217,41 @@
         </div>
     </section>
 
+    <section class="network">
+        <h2>Réseau & Compatibilité</h2>
+        <p>CryptoCards est actuellement déployé sur les testnets suivants, avec une expansion prévue vers d'autres réseaux.</p>
+        
+        <div class="networks-grid">
+            <div class="network-item">
+                <div class="network-logo">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <span class="network-name">Arbitrum Goerli</span>
+                <span class="network-status active">Actif</span>
+            </div>
+            <div class="network-item">
+                <div class="network-logo">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <span class="network-name">Arbitrum One</span>
+                <span class="network-status">Bientôt</span>
+            </div>
+            <div class="network-item">
+                <div class="network-logo">
+                    <i class="fab fa-ethereum"></i>
+                </div>
+                <span class="network-name">Ethereum Goerli</span>
+                <span class="network-status">Bientôt</span>
+            </div>
+            <div class="network-item">
+                <div class="network-logo">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <span class="network-name">Optimism Goerli</span>
+                <span class="network-status">Bientôt</span>
+            </div>
+        </div>
+    </section>
 
     <section class="cta">
         <div class="cta-content">
@@ -264,8 +294,7 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="js/contracts.js"></script>
-    <script src="js/wallet-connect.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/wallet-connect-simple.js"></script>
 </body>
 </html>
