@@ -8,11 +8,6 @@
     <link rel="stylesheet" href="css/app.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Ethers.js pour l'interaction blockchain -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" 
-            crossorigin="anonymous" 
-            referrerpolicy="no-referrer"></script>
 </head>
 <body>
     <div class="app-container">
@@ -99,7 +94,9 @@
             <!-- État non connecté -->
             <section class="wallet-not-connected">
                 <div class="connect-prompt">
-                    <img src="img/wallet-connect.svg" alt="Connecter wallet" class="connect-img">
+                    <div class="connect-img">
+                        <i class="fas fa-wallet fa-5x" style="color: #888;"></i>
+                    </div>
                     <h2>Connectez votre Wallet</h2>
                     <p>Pour accéder à votre collection de cartes et jouer, veuillez connecter votre wallet compatible avec Web3.</p>
                     <button class="btn btn-primary connect-wallet">
@@ -150,7 +147,9 @@
                 <!-- Si l'utilisateur n'a pas de cartes -->
                 <div class="no-cards-prompt">
                     <div class="empty-state">
-                        <img src="img/empty-collection.svg" alt="Collection vide" class="empty-img">
+                        <div class="empty-img">
+                            <i class="fas fa-box-open fa-5x" style="color: #888;"></i>
+                        </div>
                         <h3>Votre collection est vide</h3>
                         <p>Vous n'avez pas encore de cartes dans votre collection. Commencez par acheter des packs ou des cartes individuelles.</p>
                         <div class="empty-actions">
@@ -281,8 +280,7 @@
     </div>
     
     <!-- Scripts -->
-    <script src="js/contracts.js"></script>
-    <script src="js/wallet-connect.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/wallet-connect-simple.js"></script>
 </body>
 </html>
