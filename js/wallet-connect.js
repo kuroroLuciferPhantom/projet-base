@@ -47,16 +47,38 @@ class WalletConnector {
         this.setupEventListeners();
     }
     
+    // Détection de wallets disponibles
+    detectProvider() {
+        // Ordre de priorité pour les différents fournisseurs
+        if (window.ethereum) {
+            console.log("Detected window.ethereum provider");
+            return window.ethereum;
+        } else if (window.rabby) {
+            console.log("Detected Rabby wallet");
+            return window.rabby;
+        } else if (window.solana && window.phantom) {
+            console.log("Detected Phantom wallet");
+            // Note: Phantom est pour Solana, pas pour Ethereum/Arbitrum
+            // Cette partie nécessiterait une logique spécifique à Solana
+            return null;
+        } else {
+            console.log("No Ethereum wallet detected");
+            return null;
+        }
+    }
+    
     // Vérifier si un wallet est déjà connecté
     async checkConnection() {
-        if (window.ethereum) {
+        const provider = this.detectProvider();
+        
+        if (provider) {
             try {
                 // Vérifier si des comptes sont déjà connectés
-                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                const accounts = await provider.request({ method: 'eth_accounts' });
                 if (accounts.length > 0) {
                     this.accounts = accounts;
-                    this.chainId = await window.ethereum.request({ method: 'eth_chainId' });
-                    this.setupProvider();
+                    this.chainId = await provider.request({ method: 'eth_chainId' });
+                    this.setupProvider(provider);
                     this.isConnected = true;
                     
                     // Vérifier si nous sommes sur le bon réseau
@@ -73,8 +95,10 @@ class WalletConnector {
     
     // Configurer les event listeners pour le wallet
     setupEventListeners() {
-        if (window.ethereum) {
-            window.ethereum.on('accountsChanged', (accounts) => {
+        const provider = this.detectProvider();
+        
+        if (provider) {
+            provider.on('accountsChanged', (accounts) => {
                 this.accounts = accounts;
                 
                 if (accounts.length === 0) {
@@ -86,7 +110,7 @@ class WalletConnector {
                 }
             });
             
-            window.ethereum.on('chainChanged', (chainId) => {
+            provider.on('chainChanged', (chainId) => {
                 // Reload la page si le réseau change
                 this.chainId = chainId;
                 this.triggerChainChangedCallbacks(chainId);
@@ -95,22 +119,22 @@ class WalletConnector {
                 this.checkAndSwitchNetwork();
             });
             
-            window.ethereum.on('disconnect', (error) => {
+            provider.on('disconnect', (error) => {
                 this.disconnect();
             });
         }
     }
     
     // Configurer le provider et le signer
-    setupProvider() {
-        if (window.ethereum) {
+    setupProvider(provider) {
+        if (provider) {
             // Utiliser ethers.js si disponible
             if (window.ethers) {
-                this.provider = new ethers.providers.Web3Provider(window.ethereum);
+                this.provider = new ethers.providers.Web3Provider(provider);
                 this.signer = this.provider.getSigner();
             } else {
                 // Fallback vers une autre méthode si nécessaire
-                this.provider = window.ethereum;
+                this.provider = provider;
                 this.signer = null;
             }
         }
@@ -118,14 +142,16 @@ class WalletConnector {
     
     // Se connecter au wallet
     async connect() {
-        if (window.ethereum) {
+        const provider = this.detectProvider();
+        
+        if (provider) {
             try {
                 // Demander l'autorisation de connexion
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                const accounts = await provider.request({ method: 'eth_requestAccounts' });
                 
                 this.accounts = accounts;
-                this.chainId = await window.ethereum.request({ method: 'eth_chainId' });
-                this.setupProvider();
+                this.chainId = await provider.request({ method: 'eth_chainId' });
+                this.setupProvider(provider);
                 this.isConnected = true;
                 
                 // Vérifier si nous sommes sur le bon réseau
@@ -140,7 +166,7 @@ class WalletConnector {
                 throw error;
             }
         } else {
-            alert('Please install MetaMask or another Web3 wallet to connect.');
+            alert('Veuillez installer MetaMask, Rabby ou un autre portefeuille Web3 pour vous connecter.');
             throw new Error('No Ethereum provider detected');
         }
     }
@@ -154,9 +180,11 @@ class WalletConnector {
     
     // Vérifier si le réseau est correct et changer si nécessaire
     async checkAndSwitchNetwork() {
-        if (!window.ethereum || !this.isConnected) return false;
+        const provider = this.detectProvider();
         
-        const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
+        if (!provider || !this.isConnected) return false;
+        
+        const currentChainId = await provider.request({ method: 'eth_chainId' });
         
         // Si nous sommes déjà sur le bon réseau
         if (currentChainId === NETWORK_PARAMS.chainId) {
@@ -165,7 +193,7 @@ class WalletConnector {
         
         // Essayer de changer de réseau
         try {
-            await window.ethereum.request({
+            await provider.request({
                 method: 'wallet_switchEthereumChain',
                 params: [{ chainId: NETWORK_PARAMS.chainId }],
             });
@@ -174,7 +202,7 @@ class WalletConnector {
             // Si le réseau n'existe pas dans le wallet, on essaie de l'ajouter
             if (switchError.code === 4902) {
                 try {
-                    await window.ethereum.request({
+                    await provider.request({
                         method: 'wallet_addEthereumChain',
                         params: [NETWORK_PARAMS],
                     });
