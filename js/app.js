@@ -1,198 +1,190 @@
+// Script pour la gestion de l'interface de l'application CryptoCards
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Configuration
-    const NFT_ABI = []; // À remplir une fois que les contrats sont créés
-    const TOKEN_ABI = []; // À remplir une fois que les contrats sont créés
+    // Navigation dans la sidebar
+    const sidebarLinks = document.querySelectorAll('.sidebar-nav a');
+    const sections = document.querySelectorAll('section[id^="section-"]');
+
+    // Fonction pour activer un onglet et sa section correspondante
+    function activateTab(tabId) {
+        // Cacher toutes les sections
+        sections.forEach(section => {
+            section.classList.add('hidden');
+        });
+        
+        // Afficher la section sélectionnée
+        const targetSection = document.getElementById('section-' + tabId);
+        if (targetSection) {
+            targetSection.classList.remove('hidden');
+        }
+        
+        // Mettre à jour les classes active dans la sidebar
+        sidebarLinks.forEach(link => {
+            link.parentElement.classList.remove('active');
+            if (link.dataset.section === tabId) {
+                link.parentElement.classList.add('active');
+            }
+        });
+    }
     
-    // Sélecteurs d'éléments
-    const walletNotConnected = document.querySelector('.wallet-not-connected');
-    const walletConnected = document.querySelector('.wallet-connected');
-    const networkStatus = document.querySelector('.network-status');
-    const networkName = document.querySelector('.network-name');
-    const tokenAmount = document.querySelector('.token-amount');
-    const cardStatsValues = document.querySelectorAll('.stat-value');
-    const modalBackdrop = document.querySelector('.modal-backdrop');
-    const modalClose = document.querySelector('.modal-close');
+    // Ajouter des écouteurs d'événements aux liens de la sidebar
+    sidebarLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const section = this.dataset.section;
+            activateTab(section);
+        });
+    });
+    
+    // Gestionnaires pour les boutons de collection
+    const filterBtn = document.getElementById('filter-cards');
+    const sortBtn = document.getElementById('sort-cards');
+    
+    if (filterBtn) {
+        filterBtn.addEventListener('click', function() {
+            alert('Fonctionnalité de filtrage à venir...');
+        });
+    }
+    
+    if (sortBtn) {
+        sortBtn.addEventListener('click', function() {
+            alert('Fonctionnalité de tri à venir...');
+        });
+    }
+    
+    // Gestionnaires pour les boutons d'action
+    const buyPackBtn = document.getElementById('buy-pack');
+    const visitMarketBtn = document.getElementById('visit-marketplace');
+    
+    if (buyPackBtn) {
+        buyPackBtn.addEventListener('click', function() {
+            activateTab('shop');
+        });
+    }
+    
+    if (visitMarketBtn) {
+        visitMarketBtn.addEventListener('click', function() {
+            activateTab('marketplace');
+        });
+    }
+    
+    // Gestionnaires pour les boutons d'action de la carte
+    const cardFuseBtn = document.getElementById('card-fuse');
+    const cardShareBtn = document.getElementById('card-share');
+    const cardSellBtn = document.getElementById('card-sell');
+    
+    if (cardFuseBtn) {
+        cardFuseBtn.addEventListener('click', function() {
+            activateTab('fusion');
+        });
+    }
+    
+    if (cardShareBtn) {
+        cardShareBtn.addEventListener('click', function() {
+            alert('Partage de carte à venir...');
+        });
+    }
+    
+    if (cardSellBtn) {
+        cardSellBtn.addEventListener('click', function() {
+            alert('Mise en vente de carte à venir...');
+        });
+    }
+    
+    // Gestionnaire pour le modal de détail de carte
     const cardDetailModal = document.querySelector('.card-detail-modal');
-    const cardsGrid = document.querySelector('.cards-grid');
-    const noCardsPrompt = document.querySelector('.no-cards-prompt');
+    const modalClose = document.querySelector('.modal-close');
+    const modalBackdrop = document.querySelector('.modal-backdrop');
     
-    // État de l'application
-    const appState = {
-        walletConnected: false,
-        walletAddress: null,
-        network: null,
-        balance: 0,
-        cards: [],
-        contracts: {
-            nft: null,
-            token: null
-        }
-    };
-    
-    // Initialiser les contrats
-    async function initContracts() {
-        if (!window.walletConnector || !window.walletConnector.isConnected) return;
-        
-        try {
-            const provider = window.walletConnector.provider;
-            const signer = window.walletConnector.signer;
-            
-            // Déterminer les adresses de contrat à utiliser en fonction du réseau
-            const isTestnet = window.walletConnector.chainId === '0x66EED'; // Arbitrum Goerli
-            const contractAddresses = isTestnet ? 
-                window.CONTRACT_ADDRESSES.testnet : 
-                window.CONTRACT_ADDRESSES.mainnet;
-            
-            // Initialiser les contrats si les adresses sont définies
-            if (contractAddresses.NFT) {
-                appState.contracts.nft = new ethers.Contract(
-                    contractAddresses.NFT,
-                    NFT_ABI,
-                    signer
-                );
-            }
-            
-            if (contractAddresses.TOKEN) {
-                appState.contracts.token = new ethers.Contract(
-                    contractAddresses.TOKEN,
-                    TOKEN_ABI,
-                    signer
-                );
-            }
-            
-            // Charger les informations si les contrats sont initialisés
-            if (appState.contracts.nft && appState.contracts.token) {
-                await loadUserData();
-            } else {
-                console.warn('Contrats non initialisés - adresses manquantes');
-            }
-        } catch (error) {
-            console.error('Erreur lors de l\'initialisation des contrats:', error);
-        }
+    if (modalClose && cardDetailModal) {
+        modalClose.addEventListener('click', function() {
+            cardDetailModal.classList.add('hidden');
+        });
     }
     
-    // Charger les données de l'utilisateur
-    async function loadUserData() {
-        if (!window.walletConnector || !window.walletConnector.isConnected) return;
-        
-        const address = window.walletConnector.getAddress();
-        
-        try {
-            // Charger le solde de tokens
-            if (appState.contracts.token) {
-                const balance = await appState.contracts.token.balanceOf(address);
-                appState.balance = ethers.utils.formatUnits(balance, 18); // Supposant 18 décimales
-                updateTokenBalance();
-            }
-            
-            // Charger les NFTs
-            await loadUserCards();
-            
-        } catch (error) {
-            console.error('Erreur lors du chargement des données utilisateur:', error);
-        }
+    if (modalBackdrop && cardDetailModal) {
+        modalBackdrop.addEventListener('click', function() {
+            cardDetailModal.classList.add('hidden');
+        });
     }
     
-    // Charger les cartes de l'utilisateur
-    async function loadUserCards() {
-        if (!window.walletConnector || !window.walletConnector.isConnected || !appState.contracts.nft) {
-            return;
-        }
-        
-        const address = window.walletConnector.getAddress();
-        
-        try {
-            // Si nous utilisons un vrai contrat ERC-721 ou ERC-1155, nous pouvons obtenir les NFTs
-            // Exemple avec ERC-721:
-            // const balance = await appState.contracts.nft.balanceOf(address);
-            // const totalCards = balance.toNumber();
-            
-            // Puisque nous n'avons pas encore de contrat déployé, utilisons des données simulées
-            simulateUserCards();
-            
-            // Mettre à jour l'interface
-            updateCardsDisplay();
-            
-        } catch (error) {
-            console.error('Erreur lors du chargement des cartes:', error);
-            // En cas d'erreur, afficher l'interface "pas de cartes"
-            showNoCardsInterface();
-        }
-    }
-    
-    // Simuler des cartes utilisateur (à remplacer par de vraies données plus tard)
+    // Simulation de cartes (à remplacer par des données réelles plus tard)
     function simulateUserCards() {
-        // Simulation de données de cartes pour tester l'interface
-        appState.cards = [
-            {
-                id: 1,
-                name: 'Dragon Ancien',
-                rarity: 'legendary',
-                image: null, // Remplacez par une URL d'image plus tard
-                stats: {
-                    attack: 95,
-                    defense: 80,
-                    magic: 90,
-                    speed: 75
+        // Si l'utilisateur est connecté, on simule quelques cartes
+        if (window.ethereum && window.ethereum.selectedAddress) {
+            // On simule 3 cartes
+            const cards = [
+                {
+                    id: 1,
+                    name: 'Dragon Ancien',
+                    rarity: 'legendary',
+                    stats: {
+                        attack: 95,
+                        defense: 80,
+                        magic: 90,
+                        speed: 75
+                    },
+                    acquired: '2025-03-15',
+                    description: 'Le Dragon Ancien est une créature légendaire dont les pouvoirs remontent à l\'ère préhistorique. Sa capacité à contrôler les éléments en fait un adversaire redoutable sur le champ de bataille.'
                 },
-                acquired: '2025-03-15',
-                description: 'Le Dragon Ancien est une créature légendaire dont les pouvoirs remontent à l\'ère préhistorique. Sa capacité à contrôler les éléments en fait un adversaire redoutable sur le champ de bataille.'
-            },
-            {
-                id: 2,
-                name: 'Mage Suprême',
-                rarity: 'epic',
-                image: null,
-                stats: {
-                    attack: 75,
-                    defense: 45,
-                    magic: 95,
-                    speed: 65
+                {
+                    id: 2,
+                    name: 'Mage Suprême',
+                    rarity: 'epic',
+                    stats: {
+                        attack: 75,
+                        defense: 45,
+                        magic: 95,
+                        speed: 65
+                    },
+                    acquired: '2025-03-20',
+                    description: 'Le Mage Suprême a consacré sa vie à l\'étude des arts mystiques. Sa maîtrise des sortilèges les plus complexes lui confère un avantage considérable contre tout type d\'adversaire.'
                 },
-                acquired: '2025-03-20',
-                description: 'Le Mage Suprême a consacré sa vie à l\'étude des arts mystiques. Sa maîtrise des sortilèges les plus complexes lui confère un avantage considérable contre tout type d\'adversaire.'
-            },
-            {
-                id: 3,
-                name: 'Guerrier d\'Élite',
-                rarity: 'rare',
-                image: null,
-                stats: {
-                    attack: 60,
-                    defense: 65,
-                    magic: 30,
-                    speed: 55
-                },
-                acquired: '2025-03-25',
-                description: 'Le Guerrier d\'Élite est un combattant aguerri, formé dans les plus grandes académies militaires. Sa discipline et sa détermination en font un allié précieux dans toute escarmouche.'
-            }
-        ];
+                {
+                    id: 3,
+                    name: 'Guerrier d\'Élite',
+                    rarity: 'rare',
+                    stats: {
+                        attack: 60,
+                        defense: 65,
+                        magic: 30,
+                        speed: 55
+                    },
+                    acquired: '2025-03-25',
+                    description: 'Le Guerrier d\'Élite est un combattant aguerri, formé dans les plus grandes académies militaires. Sa discipline et sa détermination en font un allié précieux dans toute escarmouche.'
+                }
+            ];
+            
+            displayCards(cards);
+            updateCardStats(cards);
+        }
     }
     
-    // Mettre à jour l'affichage des cartes
-    function updateCardsDisplay() {
-        if (!cardsGrid) return;
+    // Afficher les cartes dans l'interface
+    function displayCards(cards) {
+        const cardsGrid = document.querySelector('.cards-grid');
+        const noCardsPrompt = document.querySelector('.no-cards-prompt');
         
-        if (appState.cards.length === 0) {
-            showNoCardsInterface();
+        if (!cardsGrid || !noCardsPrompt) return;
+        
+        if (!cards || cards.length === 0) {
+            cardsGrid.classList.add('hidden');
+            noCardsPrompt.classList.remove('hidden');
             return;
         }
-        
-        // Cacher l'interface "pas de cartes" et afficher la grille
-        noCardsPrompt.classList.add('hidden');
-        cardsGrid.classList.remove('hidden');
         
         // Vider la grille
         cardsGrid.innerHTML = '';
         
-        // Mettre à jour les statistiques
-        updateCardStats();
-        
-        // Ajouter chaque carte à la grille
-        appState.cards.forEach(card => {
+        // Ajouter chaque carte
+        cards.forEach(card => {
             const cardElement = createCardElement(card);
             cardsGrid.appendChild(cardElement);
         });
+        
+        // Afficher la grille et cacher le message de collection vide
+        cardsGrid.classList.remove('hidden');
+        noCardsPrompt.classList.add('hidden');
     }
     
     // Créer un élément de carte
@@ -201,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function() {
         cardElement.className = 'card-item';
         cardElement.dataset.cardId = card.id;
         
-        // Déterminer la couleur de fond en fonction de la rareté
+        // Déterminer la couleur en fonction de la rareté
         const rarityColors = {
             common: 'var(--color-common)',
             rare: 'var(--color-rare)',
@@ -232,19 +224,11 @@ document.addEventListener('DOMContentLoaded', function() {
         return cardElement;
     }
     
-    // Afficher l'interface "pas de cartes"
-    function showNoCardsInterface() {
-        if (!noCardsPrompt || !cardsGrid) return;
-        
-        cardsGrid.classList.add('hidden');
-        noCardsPrompt.classList.remove('hidden');
-    }
-    
     // Afficher les détails d'une carte
     function showCardDetails(card) {
+        const cardDetailModal = document.querySelector('.card-detail-modal');
         if (!cardDetailModal) return;
         
-        // Mettre à jour le contenu du modal
         const cardNameElement = cardDetailModal.querySelector('.card-name');
         const cardRarityElement = cardDetailModal.querySelector('.card-rarity');
         const cardImageElement = cardDetailModal.querySelector('.card-image-large');
@@ -289,95 +273,40 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Mettre à jour les statistiques des cartes
-    function updateCardStats() {
+    function updateCardStats(cards) {
+        const cardStatsValues = document.querySelectorAll('.collection-stats .stat-value');
+        
         if (!cardStatsValues || cardStatsValues.length < 3) return;
         
         // Nombre total de cartes
-        cardStatsValues[0].textContent = appState.cards.length;
+        cardStatsValues[0].textContent = cards.length;
         
         // Nombre de sets complets (à implémenter ultérieurement)
-        // Pour l'instant, on simule 0
         cardStatsValues[1].textContent = 0;
         
         // Nombre de cartes légendaires
-        const legendaryCards = appState.cards.filter(card => card.rarity === 'legendary').length;
+        const legendaryCards = cards.filter(card => card.rarity === 'legendary').length;
         cardStatsValues[2].textContent = legendaryCards;
     }
     
-    // Mettre à jour l'affichage du solde de tokens
-    function updateTokenBalance() {
-        if (!tokenAmount) return;
-        
-        tokenAmount.textContent = `${appState.balance} $CCARD`;
+    // Écouter les événements de connexion wallet pour mettre à jour l'interface
+    window.addEventListener('ethereum#initialized', function() {
+        simulateUserCards();
+    });
+    
+    // Vérifier si ethereum est déjà disponible et connecté
+    if (window.ethereum && window.ethereum.selectedAddress) {
+        simulateUserCards();
     }
     
-    // Gestionnaire pour l'événement de connexion de wallet
-    function handleWalletConnect(accounts) {
-        appState.walletConnected = true;
-        appState.walletAddress = accounts[0];
-        
-        // Initialiser les contrats
-        initContracts();
-        
-        // Afficher l'interface connectée
-        if (walletNotConnected && walletConnected) {
-            walletNotConnected.classList.add('hidden');
-            walletConnected.classList.remove('hidden');
-        }
-    }
-    
-    // Gestionnaire pour l'événement de déconnexion de wallet
-    function handleWalletDisconnect() {
-        appState.walletConnected = false;
-        appState.walletAddress = null;
-        appState.cards = [];
-        
-        // Réinitialiser les contrats
-        appState.contracts.nft = null;
-        appState.contracts.token = null;
-        
-        // Afficher l'interface déconnectée
-        if (walletNotConnected && walletConnected) {
-            walletNotConnected.classList.remove('hidden');
-            walletConnected.classList.add('hidden');
-        }
-    }
-    
-    // Initialisation
-    function init() {
-        // Configurer les gestionnaires d'événements
-        if (window.walletConnector) {
-            window.walletConnector.onConnect(handleWalletConnect);
-            window.walletConnector.onDisconnect(handleWalletDisconnect);
-        }
-        
-        // Configurer la fermeture du modal
-        if (modalClose && modalBackdrop && cardDetailModal) {
-            modalClose.addEventListener('click', () => {
-                cardDetailModal.classList.add('hidden');
-            });
-            
-            modalBackdrop.addEventListener('click', () => {
-                cardDetailModal.classList.add('hidden');
-            });
-        }
-        
-        // Si déjà connecté, initialiser les contrats
-        if (window.walletConnector && window.walletConnector.isConnected) {
-            handleWalletConnect([window.walletConnector.getAddress()]);
-        }
-    }
-    
-    // Utilitaires
+    // Fonction utilitaire pour capitaliser la première lettre
     function capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
     
+    // Fonction utilitaire pour formater une date
     function formatDate(dateString) {
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
         return new Date(dateString).toLocaleDateString(undefined, options);
     }
-    
-    // Initialiser l'application
-    init();
 });
