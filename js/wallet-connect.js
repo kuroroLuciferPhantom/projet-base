@@ -27,20 +27,6 @@ const ARBITRUM_MAINNET_PARAMS = {
 // Paramètres du réseau actuel (testnet par défaut)
 const NETWORK_PARAMS = ARBITRUM_TESTNET_PARAMS;
 
-// Adresses des contrats (à remplir une fois déployés)
-const CONTRACT_ADDRESSES = {
-    testnet: {
-        NFT: '',
-        TOKEN: '',
-        MARKETPLACE: ''
-    },
-    mainnet: {
-        NFT: '',
-        TOKEN: '',
-        MARKETPLACE: ''
-    }
-};
-
 // Class pour gérer la connexion Wallet
 class WalletConnector {
     constructor() {
