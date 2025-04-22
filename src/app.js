@@ -5,9 +5,13 @@ const helmet = require('helmet');
 const cors = require('cors');
 const session = require('express-session');
 const dotenv = require('dotenv');
+const connectDB = require('./config/database');
 
 // Charger les variables d'environnement
 dotenv.config();
+
+// Connexion à la base de données MongoDB
+connectDB();
 
 // Initialiser l'application Express
 const app = express();
@@ -43,10 +47,10 @@ app.set('views', path.join(__dirname, 'views'));
 // Servir les fichiers statiques
 app.use(express.static(path.join(__dirname, '../public')));
 
-// Routes (à implémenter)
-app.get('/', (req, res) => {
-  res.send('Serveur Node.js pour CryptoCards - En cours de développement');
-});
+// Routes
+app.use('/', require('./routes/index'));
+app.use('/api', require('./routes/api'));
+app.use('/auth', require('./routes/auth'));
 
 // Middleware de gestion des erreurs
 app.use((req, res, next) => {
