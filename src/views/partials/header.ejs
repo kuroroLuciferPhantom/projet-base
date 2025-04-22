@@ -1,0 +1,27 @@
+<header>
+    <div class="logo">
+        <a href="/">
+            <span class="logo-text">CRYPTO<span class="logo-text-highlight">CARDS</span></span>
+        </a>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="/#features">Fonctionnalités</a></li>
+            <li><a href="/#cards">Cartes</a></li>
+            <li><a href="/#tokenomics">Tokenomics</a></li>
+            <li><a href="/#roadmap">Roadmap</a></li>
+        </ul>
+    </nav>
+    <div class="auth-buttons">
+        <% if (user) { %>
+            <a href="/app" class="btn btn-primary">Mon Espace</a>
+            <a href="#" class="btn btn-secondary logout-btn">Déconnexion</a>
+        <% } else { %>
+            <a href="#" class="btn btn-login connect-wallet">Connecter Wallet</a>
+            <a href="/app" class="btn btn-register">Accéder au Jeu</a>
+        <% } %>
+    </div>
+    <div class="menu-toggle">
+        <i class="fas fa-bars"></i>
+    </div>
+</header>
