@@ -176,27 +176,40 @@ exports.getNonce = async (req, res) => {
     // Vérifier si un utilisateur existe déjà avec cette adresse
     let user = await User.findOne({ walletAddress: address.toLowerCase() });
     
+    // Générer un nouveau nonce et le message de signature
+    const nonce = generateNonce();
+    const signMessage = getSignMessage(nonce);
+    
+    // Stocker temporairement dans la session pour vérification ultérieure
+    if (!req.session.pendingWallets) {
+      req.session.pendingWallets = {};
+    }
+    
+    req.session.pendingWallets[address.toLowerCase()] = {
+      nonce,
+      signMessage
+    };
+    
+    console.log('Session données de signature stockées:', req.session.pendingWallets[address.toLowerCase()]);
+    
     if (!user) {
-      // Générer un nouveau nonce
-      const nonce = generateNonce();
-      
       res.status(200).json({
         success: true,
         message: 'Nonce généré',
         nonce,
-        signMessage: getSignMessage(nonce),
+        signMessage,
         userExists: false
       });
     } else {
-      // Mettre à jour le nonce existant
-      user.nonce = generateNonce();
+      // Si l'utilisateur existe, stocker le nonce dans la base de données aussi
+      user.nonce = nonce;
       await user.save();
       
       res.status(200).json({
         success: true,
         message: 'Nonce généré',
-        nonce: user.nonce,
-        signMessage: getSignMessage(user.nonce),
+        nonce,
+        signMessage,
         userExists: true
       });
     }
@@ -214,6 +227,9 @@ exports.connectWallet = async (req, res) => {
   try {
     const { address, signature, nonce, username } = req.body;
     
+    console.log('Données reçues:', { address, nonce, username });
+    console.log('Signature reçue (tronquée):', signature.substring(0, 30) + '...');
+    
     // Valider l'adresse Ethereum
     if (!isValidEthereumAddress(address)) {
       return res.status(400).json({
@@ -222,11 +238,25 @@ exports.connectWallet = async (req, res) => {
       });
     }
     
-    // Valider la signature
-    const signMessage = getSignMessage(nonce);
+    // Récupérer le message de signature stocké dans la session
+    const pendingWallet = req.session.pendingWallets?.[address.toLowerCase()];
+    
+    if (!pendingWallet) {
+      console.error('Aucune donnée de wallet en attente trouvée pour cette adresse');
+      return res.status(401).json({
+        success: false,
+        message: 'Session expirée ou invalide. Veuillez réessayer.'
+      });
+    }
+    
+    const { signMessage } = pendingWallet;
+    console.log('Message de signature stocké:', signMessage);
+    
+    // Valider la signature en utilisant le message stocké
     const isValidSignature = await verifySignature(signMessage, signature, address);
     
     if (!isValidSignature) {
+      console.error('Validation de signature échouée');
       return res.status(401).json({
         success: false,
         message: 'Signature invalide'
@@ -267,6 +297,9 @@ exports.connectWallet = async (req, res) => {
       user.nonce = generateNonce();
       await user.save();
     }
+    
+    // Nettoyer les données temporaires
+    delete req.session.pendingWallets[address.toLowerCase()];
     
     // Mettre à jour la date de dernière connexion
     user.lastLogin = Date.now();
