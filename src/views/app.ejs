@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/app.css">
+    <link rel="stylesheet" href="/css/tutorial.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Ethers.js pour Web3 -->
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js" type="application/javascript"></script>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <a href="/">
+                    <span class="logo-text">CRYPTO<span class="logo-text-highlight">CARDS</span></span>
+                </a>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active">
+                        <a href="#" data-section="collection">
+                            <i class="fas fa-layer-group"></i>
+                            <span>Ma Collection</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-section="shop">
+                            <i class="fas fa-store"></i>
+                            <span>Boutique</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-section="fusion">
+                            <i class="fas fa-sync-alt"></i>
+                            <span>Fusion</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-section="play">
+                            <i class="fas fa-gamepad"></i>
+                            <span>Jouer</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-section="tournaments">
+                            <i class="fas fa-trophy"></i>
+                            <span>Tournois</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-section="marketplace">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Marché</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="token-balance">
+                    <div class="token-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <div class="token-info">
+                        <span class="token-amount">0 $CCARD</span>
+                        <a href="#" class="token-action" id="get-tokens">Obtenir des tokens</a>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <main class="app-content">
+            <header class="app-header">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Rechercher dans votre collection...">
+                </div>
+                
+                <div class="wallet-info">
+                    <div class="network-indicator">
+                        <span class="network-status"></span>
+                        <span class="network-name">Non connecté</span>
+                    </div>
+                    <div class="user-menu">
+                        <div class="user-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <span class="username">Utilisateur</span>
+                        <i class="fas fa-chevron-down"></i>
+                        
+                        <div class="dropdown-menu">
+                            <a href="#" class="dropdown-item" id="profile-link">
+                                <i class="fas fa-user"></i>
+                                Profil
+                            </a>
+                            <a href="#" class="dropdown-item" id="settings-link">
+                                <i class="fas fa-cog"></i>
+                                Paramètres
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item" id="logout-link">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Déconnexion
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- État non connecté -->
+            <section class="wallet-not-connected">
+                <div class="connect-prompt">
+                    <div class="connect-img">
+                        <i class="fas fa-wallet fa-5x" style="color: #888;"></i>
+                    </div>
+                    <h2>Connectez votre Wallet</h2>
+                    <p>Pour accéder à votre collection de cartes et jouer, veuillez connecter votre wallet compatible avec Web3.</p>
+                    <button class="btn btn-primary connect-wallet">
+                        <i class="fas fa-wallet"></i>
+                        Connecter Wallet
+                    </button>
+                    <div class="supported-wallets">
+                        <p>Wallets supportés :</p>
+                        <div class="wallet-icons">
+                            <i class="fas fa-wallet" title="MetaMask"></i>
+                            <i class="fas fa-wallet" title="Rabby"></i>
+                            <i class="fas fa-wallet" title="WalletConnect"></i>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- État connecté - Collection de cartes -->
+            <section class="wallet-connected hidden" id="section-collection">
+                <div class="collection-header">
+                    <h1>Ma Collection</h1>
+                    <div class="collection-stats">
+                        <div class="stat">
+                            <span class="stat-value">0</span>
+                            <span class="stat-label">Cartes</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">0</span>
+                            <span class="stat-label">Sets complets</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">0</span>
+                            <span class="stat-label">Cartes Légendaires</span>
+                        </div>
+                    </div>
+                    <div class="collection-actions">
+                        <button class="btn btn-secondary" id="filter-cards">
+                            <i class="fas fa-filter"></i>
+                            Filtrer
+                        </button>
+                        <button class="btn btn-secondary" id="sort-cards">
+                            <i class="fas fa-sort"></i>
+                            Trier
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Si l'utilisateur n'a pas de cartes -->
+                <div class="no-cards-prompt">
+                    <div class="empty-state">
+                        <div class="empty-img">
+                            <i class="fas fa-box-open fa-5x" style="color: #888;"></i>
+                        </div>
+                        <h3>Votre collection est vide</h3>
+                        <p>Vous n'avez pas encore de cartes dans votre collection. Commencez par acheter des packs ou des cartes individuelles.</p>
+                        <div class="empty-actions">
+                            <button class="btn btn-primary" id="buy-pack">
+                                <i class="fas fa-shopping-cart"></i>
+                                Acheter un Pack
+                            </button>
+                            <button class="btn btn-secondary" id="visit-marketplace">
+                                <i class="fas fa-store"></i>
+                                Visiter le Marché
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Si l'utilisateur a des cartes -->
+                <div class="cards-grid hidden">
+                    <!-- Cette section sera remplie dynamiquement avec les cartes de l'utilisateur -->
+                </div>
+            </section>
+            
+            <!-- Autres sections (à développer) -->
+            <section class="wallet-connected hidden" id="section-shop">
+                <h1>Boutique</h1>
+                <p>Cette fonctionnalité sera disponible prochainement.</p>
+            </section>
+            
+            <section class="wallet-connected hidden" id="section-fusion">
+                <h1>Fusion de Cartes</h1>
+                <p>Cette fonctionnalité sera disponible prochainement.</p>
+            </section>
+            
+            <section class="wallet-connected hidden" id="section-play">
+                <h1>Jouer</h1>
+                <p>Cette fonctionnalité sera disponible prochainement.</p>
+            </section>
+            
+            <section class="wallet-connected hidden" id="section-tournaments">
+                <h1>Tournois</h1>
+                <p>Cette fonctionnalité sera disponible prochainement.</p>
+            </section>
+            
+            <section class="wallet-connected hidden" id="section-marketplace">
+                <h1>Marché</h1>
+                <p>Cette fonctionnalité sera disponible prochainement.</p>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Modales de tutoriel pour les nouveaux utilisateurs -->
+    <div class="modal tutorial-modal" id="tutorial-welcome">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Bienvenue sur CryptoCards !</h3>
+            </div>
+            <div class="modal-body">
+                <div class="tutorial-illustration">
+                    <img src="/img/welcome.svg" alt="Bienvenue" class="tutorial-image">
+                </div>
+                <p>Félicitations pour la création de votre compte ! Plongez dans l'univers fascinant de CryptoCards, où chaque carte est un NFT unique que vous possédez véritablement.</p>
+                <p>Nous allons vous guider à travers les premières étapes pour commencer votre aventure.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary tutorial-next" data-next="tutorial-collection">Commencer</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal tutorial-modal" id="tutorial-collection">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Votre Collection</h3>
+            </div>
+            <div class="modal-body">
+                <div class="tutorial-illustration">
+                    <img src="/img/collection.svg" alt="Collection" class="tutorial-image">
+                </div>
+                <p>C'est ici que vous pourrez voir toutes vos cartes. Chaque carte est unique et possède des statistiques différentes.</p>
+                <p>Vous pouvez filtrer et trier votre collection pour trouver facilement les cartes que vous recherchez.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary tutorial-prev" data-prev="tutorial-welcome">Précédent</button>
+                <button class="btn btn-primary tutorial-next" data-next="tutorial-boosters">Suivant</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal tutorial-modal" id="tutorial-boosters">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Les Boosters</h3>
+            </div>
+            <div class="modal-body">
+                <div class="tutorial-illustration">
+                    <img src="/img/booster.svg" alt="Boosters" class="tutorial-image">
+                </div>
+                <p>Les boosters contiennent des cartes aléatoires que vous pouvez ajouter à votre collection.</p>
+                <p>Il existe différents types de boosters, chacun avec des probabilités différentes d'obtenir des cartes rares :</p>
+                <ul>
+                    <li><strong>Booster Commun</strong> : Principalement des cartes communes</li>
+                    <li><strong>Booster Rare</strong> : Plus de chances d'obtenir des cartes rares</li>
+                    <li><strong>Booster Épique</strong> : Contient souvent des cartes épiques</li>
+                    <li><strong>Booster Légendaire</strong> : Meilleure chance d'obtenir des cartes légendaires</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary tutorial-prev" data-prev="tutorial-collection">Précédent</button>
+                <button class="btn btn-primary tutorial-next" data-next="tutorial-gameplay">Suivant</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal tutorial-modal" id="tutorial-gameplay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Le Gameplay</h3>
+            </div>
+            <div class="modal-body">
+                <div class="tutorial-illustration">
+                    <img src="/img/gameplay.svg" alt="Gameplay" class="tutorial-image">
+                </div>
+                <p>Avec vos cartes, vous pourrez :</p>
+                <ul>
+                    <li><strong>Jouer</strong> contre d'autres joueurs dans des batailles stratégiques</li>
+                    <li><strong>Fusionner</strong> des cartes pour en créer de plus puissantes</li>
+                    <li><strong>Échanger</strong> sur le marché pour compléter votre collection</li>
+                    <li><strong>Participer</strong> à des tournois pour gagner des récompenses</li>
+                </ul>
+                <p>Plus vous jouez, plus vos cartes gagneront de l'expérience et monteront en niveau !</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary tutorial-prev" data-prev="tutorial-boosters">Précédent</button>
+                <button class="btn btn-primary tutorial-next" data-next="tutorial-reward">Suivant</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal tutorial-modal" id="tutorial-reward">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Votre Premier Booster</h3>
+            </div>
+            <div class="modal-body">
+                <div class="tutorial-illustration">
+                    <img src="/img/gift.svg" alt="Récompense" class="tutorial-image">
+                </div>
+                <p>Pour vous aider à démarrer, nous vous offrons un <strong>Booster Commun</strong> gratuit !</p>
+                <p>Cliquez sur le bouton ci-dessous pour le récupérer et commencer à constituer votre collection.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary tutorial-prev" data-prev="tutorial-gameplay">Précédent</button>
+                <button class="btn btn-primary" id="claim-first-booster">Récupérer mon booster</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modale d'ouverture de booster -->
+    <div class="modal" id="booster-opening-modal">
+        <div class="modal-content booster-modal">
+            <div class="modal-header">
+                <h3>Ouverture de Booster</h3>
+            </div>
+            <div class="modal-body">
+                <div class="booster-container">
+                    <div class="booster-image">
+                        <img src="/img/booster-pack.png" alt="Booster Pack" id="booster-pack-img">
+                    </div>
+                    <button class="btn btn-primary btn-large" id="open-booster-btn">Ouvrir le Booster</button>
+                </div>
+                
+                <div class="cards-reveal hidden">
+                    <h3>Vos nouvelles cartes :</h3>
+                    <div class="reveal-cards-container">
+                        <!-- Les cartes seront ajoutées ici dynamiquement -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary hidden" id="continue-btn">Continuer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Vérifier si l'utilisateur est authentifié
+            const token = localStorage.getItem('token');
+            let userId = null;
+            let showTutorial = false;
+            
+            // Récupérer les paramètres de l'URL
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('tutorial') === 'true') {
+                showTutorial = true;
+            }
+            
+            // Si un token existe, vérifier l'authentification
+            if (token) {
+                // Mettre à jour l'interface
+                document.querySelector('.wallet-not-connected').classList.add('hidden');
+                document.querySelector('#section-collection').classList.remove('hidden');
+                
+                // Charger les informations de l'utilisateur
+                fetchUserInfo();
+            }
+            
+            // Fonction pour récupérer les informations de l'utilisateur
+            async function fetchUserInfo() {
+                try {
+                    // Simuler la récupération des informations
+                    // Dans une implémentation réelle, il faudrait faire une requête au serveur
+                    
+                    // Mettre à jour l'interface
+                    document.querySelector('.username').textContent = 'Joueur';
+                    document.querySelector('.token-amount').textContent = '100 $CCARD';
+                    document.querySelector('.network-name').textContent = 'Arbitrum Goerli';
+                    document.querySelector('.network-status').classList.add('connected');
+                    
+                    // Si c'est un nouveau utilisateur, afficher le tutoriel
+                    if (showTutorial) {
+                        setTimeout(() => {
+                            document.getElementById('tutorial-welcome').style.display = 'flex';
+                        }, 1000);
+                    }
+                } catch (error) {
+                    console.error('Erreur lors de la récupération des informations:', error);
+                }
+            }
+            
+            // Navigation dans la sidebar
+            const navLinks = document.querySelectorAll('.sidebar-nav a');
+            const sections = document.querySelectorAll('main section');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const sectionId = this.getAttribute('data-section');
+                    
+                    // Mettre à jour les classes actives
+                    navLinks.forEach(link => link.parentElement.classList.remove('active'));
+                    this.parentElement.classList.add('active');
+                    
+                    // Masquer toutes les sections et afficher celle sélectionnée
+                    sections.forEach(section => section.classList.add('hidden'));
+                    document.getElementById('section-' + sectionId).classList.remove('hidden');
+                });
+            });
+            
+            // Tutoriel - Navigation
+            const tutorialNext = document.querySelectorAll('.tutorial-next');
+            const tutorialPrev = document.querySelectorAll('.tutorial-prev');
+            
+            tutorialNext.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const currentModal = this.closest('.modal');
+                    const nextModalId = this.getAttribute('data-next');
+                    
+                    currentModal.style.display = 'none';
+                    document.getElementById(nextModalId).style.display = 'flex';
+                });
+            });
+            
+            tutorialPrev.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const currentModal = this.closest('.modal');
+                    const prevModalId = this.getAttribute('data-prev');
+                    
+                    currentModal.style.display = 'none';
+                    document.getElementById(prevModalId).style.display = 'flex';
+                });
+            });
+            
+            // Récupérer le premier booster
+            document.getElementById('claim-first-booster').addEventListener('click', async function() {
+                try {
+                    // Fermer la modale de tutoriel
+                    document.getElementById('tutorial-reward').style.display = 'none';
+                    
+                    // Dans une implémentation réelle, faire une requête au serveur pour récupérer le booster
+                    // et marquer le tutoriel comme terminé
+                    const response = await fetch('/api/boosters/first', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    // Simuler une réponse réussie
+                    // const data = await response.json();
+                    
+                    // Afficher la modale d'ouverture de booster
+                    document.getElementById('booster-opening-modal').style.display = 'flex';
+                } catch (error) {
+                    console.error('Erreur lors de la récupération du booster:', error);
+                    alert('Une erreur est survenue lors de la récupération du booster. Veuillez réessayer.');
+                }
+            });
+            
+            // Ouverture de booster
+            document.getElementById('open-booster-btn').addEventListener('click', function() {
+                // Masquer le bouton d'ouverture et l'image du booster
+                this.classList.add('hidden');
+                document.getElementById('booster-pack-img').classList.add('opening');
+                
+                // Simuler l'ouverture du booster
+                setTimeout(() => {
+                    document.getElementById('booster-pack-img').classList.add('hidden');
+                    document.querySelector('.cards-reveal').classList.remove('hidden');
+                    document.getElementById('continue-btn').classList.remove('hidden');
+                    
+                    // Simuler les cartes obtenues
+                    const cardsContainer = document.querySelector('.reveal-cards-container');
+                    cardsContainer.innerHTML = '';
+                    
+                    // Créer 5 cartes aléatoires (dans une implémentation réelle, ces données viendraient du serveur)
+                    const rarities = ['common', 'common', 'common', 'rare', 'epic'];
+                    const cardNames = ['Guerrier Novice', 'Archer Agile', 'Mage Apprenti', 'Dragon de Feu', 'Licorne Mystique'];
+                    
+                    rarities.forEach((rarity, index) => {
+                        const card = document.createElement('div');
+                        card.className = `reveal-card ${rarity}`;
+                        card.innerHTML = `
+                            <div class="card-rarity">${rarity.charAt(0).toUpperCase() + rarity.slice(1)}</div>
+                            <div class="card-image" style="background-color: var(--color-${rarity === 'common' ? 'orange' : rarity === 'rare' ? 'green' : rarity === 'epic' ? 'blue' : 'purple'});"></div>
+                            <div class="card-info">
+                                <h3>${cardNames[index]}</h3>
+                                <div class="card-stats">
+                                    <span>ATK: ${Math.floor(Math.random() * 50) + 20}</span>
+                                    <span>DEF: ${Math.floor(Math.random() * 50) + 20}</span>
+                                </div>
+                            </div>
+                        `;
+                        cardsContainer.appendChild(card);
+                    });
+                }, 1500);
+            });
+            
+            // Continuer après l'ouverture du booster
+            document.getElementById('continue-btn').addEventListener('click', function() {
+                // Fermer la modale
+                document.getElementById('booster-opening-modal').style.display = 'none';
+                
+                // Mettre à jour l'interface pour afficher les cartes dans la collection
+                document.querySelector('.no-cards-prompt').classList.add('hidden');
+                document.querySelector('.cards-grid').classList.remove('hidden');
+                
+                // Dans une implémentation réelle, il faudrait charger les cartes depuis le serveur
+                // Pour cette démo, nous simulons les cartes
+                const cardsGrid = document.querySelector('.cards-grid');
+                cardsGrid.innerHTML = '';
+                
+                // Ajouter les 5 cartes à la collection
+                const rarities = ['common', 'common', 'common', 'rare', 'epic'];
+                const cardNames = ['Guerrier Novice', 'Archer Agile', 'Mage Apprenti', 'Dragon de Feu', 'Licorne Mystique'];
+                
+                rarities.forEach((rarity, index) => {
+                    const card = document.createElement('div');
+                    card.className = `card-item ${rarity}`;
+                    card.innerHTML = `
+                        <div class="card-rarity">${rarity.charAt(0).toUpperCase() + rarity.slice(1)}</div>
+                        <div class="card-image" style="background-color: var(--color-${rarity === 'common' ? 'orange' : rarity === 'rare' ? 'green' : rarity === 'epic' ? 'blue' : 'purple'});"></div>
+                        <div class="card-info">
+                            <h3>${cardNames[index]}</h3>
+                            <div class="card-stats">
+                                <span>ATK: ${Math.floor(Math.random() * 50) + 20}</span>
+                                <span>DEF: ${Math.floor(Math.random() * 50) + 20}</span>
+                            </div>
+                        </div>
+                    `;
+                    cardsGrid.appendChild(card);
+                });
+                
+                // Mettre à jour les statistiques
+                document.querySelector('.collection-stats .stat-value').textContent = '5';
+            });
+            
+            // Connecter Wallet (pour la démo)
+            document.querySelector('.connect-wallet').addEventListener('click', function() {
+                // Simuler une connexion réussie
+                setTimeout(() => {
+                    // Rediriger vers la page d'inscription
+                    window.location.href = '/register';
+                }, 500);
+            });
+            
+            // Menu utilisateur
+            const userMenu = document.querySelector('.user-menu');
+            if (userMenu) {
+                userMenu.addEventListener('click', function(e) {
+                    const dropdownMenu = this.querySelector('.dropdown-menu');
+                    dropdownMenu.classList.toggle('show');
+                });
+                
+                // Cliquer ailleurs pour fermer le menu
+                document.addEventListener('click', function(e) {
+                    if (!userMenu.contains(e.target)) {
+                        userMenu.querySelector('.dropdown-menu').classList.remove('show');
+                    }
+                });
+            }
+            
+            // Déconnexion
+            document.getElementById('logout-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Supprimer le token
+                localStorage.removeItem('token');
+                
+                // Rediriger vers la page d'accueil
+                window.location.href = '/';
+            });
+            
+            // Actions de la page de collection
+            document.getElementById('buy-pack')?.addEventListener('click', function() {
+                // Rediriger vers la boutique
+                document.querySelector('[data-section="shop"]').click();
+            });
+            
+            document.getElementById('visit-marketplace')?.addEventListener('click', function() {
+                // Rediriger vers le marché
+                document.querySelector('[data-section="marketplace"]').click();
+            });
+        });
+    </script>
+</body>
+</html>

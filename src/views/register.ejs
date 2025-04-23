@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/auth.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Ethers.js pour Web3 -->
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js" type="application/javascript"></script>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <a href="/" class="auth-logo">
+                    <span class="logo-text">CRYPTO<span class="logo-text-highlight">CARDS</span></span>
+                </a>
+                <h1>Créer un compte</h1>
+            </div>
+            
+            <div class="auth-tabs">
+                <button class="auth-tab-btn active" data-tab="wallet">Wallet</button>
+                <button class="auth-tab-btn" data-tab="email">Email</button>
+            </div>
+            
+            <div class="auth-tab-content active" id="wallet-tab">
+                <div class="wallet-connect-section">
+                    <p>Connectez votre wallet pour créer un compte ou vous connecter.</p>
+                    
+                    <div class="wallet-options">
+                        <button class="btn btn-wallet metamask-btn">
+                            <img src="/img/metamask.svg" alt="MetaMask" class="wallet-icon">
+                            <span>MetaMask</span>
+                        </button>
+                        <button class="btn btn-wallet walletconnect-btn">
+                            <img src="/img/walletconnect.svg" alt="WalletConnect" class="wallet-icon">
+                            <span>WalletConnect</span>
+                        </button>
+                    </div>
+                    
+                    <div class="wallet-status hidden">
+                        <div class="connected-wallet">
+                            <i class="fas fa-check-circle"></i>
+                            <span class="wallet-address"></span>
+                        </div>
+                        <div class="wallet-network">
+                            <span class="network-icon"></span>
+                            <span class="network-name"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="username-form hidden">
+                        <h3>Choisissez un nom d'utilisateur</h3>
+                        <div class="form-group">
+                            <input type="text" id="wallet-username" name="username" placeholder="Nom d'utilisateur" required>
+                        </div>
+                        <button type="button" class="btn btn-primary btn-block" id="complete-wallet-registration">Terminer l'inscription</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="auth-tab-content" id="email-tab">
+                <form id="register-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="username">Nom d'utilisateur</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="username" name="username" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Mot de passe</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirm-password">Confirmer le mot de passe</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="confirm-password" name="confirm-password" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <div class="terms-agreement">
+                            <input type="checkbox" id="terms" name="terms" required>
+                            <label for="terms">J'accepte les <a href="#">termes et conditions</a></label>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-block">S'inscrire</button>
+                    
+                    <div class="auth-separator">
+                        <span>ou</span>
+                    </div>
+                    
+                    <button type="button" class="btn btn-outline btn-block" id="show-wallet-tab">
+                        <i class="fas fa-wallet"></i>
+                        S'inscrire avec un Wallet
+                    </button>
+                </form>
+            </div>
+            
+            <div class="auth-footer">
+                <p>Vous avez déjà un compte ? <a href="/login">Se connecter</a></p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modals -->
+    <div class="modal" id="wallet-error-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Erreur de connexion</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="wallet-error-message">Une erreur est survenue lors de la connexion au wallet.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary modal-close">OK</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tabs
+            const tabBtns = document.querySelectorAll('.auth-tab-btn');
+            const tabContents = document.querySelectorAll('.auth-tab-content');
+            
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Remove active class from all buttons and contents
+                    tabBtns.forEach(btn => btn.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    
+                    // Add active class to current button and content
+                    this.classList.add('active');
+                    document.getElementById(tabId + '-tab').classList.add('active');
+                });
+            });
+            
+            // Show wallet tab when button is clicked
+            document.getElementById('show-wallet-tab').addEventListener('click', function() {
+                document.querySelector('[data-tab="wallet"]').click();
+            });
+            
+            // Wallet connection
+            const metamaskBtn = document.querySelector('.metamask-btn');
+            const walletConnectBtn = document.querySelector('.walletconnect-btn');
+            const walletStatus = document.querySelector('.wallet-status');
+            const walletAddressElement = document.querySelector('.wallet-address');
+            const networkNameElement = document.querySelector('.network-name');
+            const usernameForm = document.querySelector('.username-form');
+            
+            let walletAddress = null;
+            let chainId = null;
+            let nonce = null;
+            
+            // MetaMask connection
+            metamaskBtn.addEventListener('click', async function() {
+                try {
+                    // Check if MetaMask is installed
+                    if (typeof window.ethereum === 'undefined') {
+                        throw new Error('MetaMask n\'est pas installé. Veuillez l\'installer pour continuer.');
+                    }
+                    
+                    // Request account access
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    walletAddress = accounts[0];
+                    
+                    // Get chain ID
+                    chainId = await window.ethereum.request({ method: 'eth_chainId' });
+                    
+                    // Get nonce from server
+                    await getNonce(walletAddress);
+                    
+                    // Update UI
+                    displayWalletInfo(walletAddress, chainId);
+                    
+                } catch (error) {
+                    showWalletError(error.message);
+                }
+            });
+            
+            // WalletConnect connection (placeholder - would need WalletConnect library)
+            walletConnectBtn.addEventListener('click', function() {
+                showWalletError('WalletConnect n\'est pas encore implémenté dans cette démo.');
+            });
+            
+            // Get nonce from server
+            async function getNonce(address) {
+                try {
+                    const response = await fetch(`/api/wallet/nonce/${address}`);
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        nonce = data.nonce;
+                        
+                        // If user exists, redirect to login
+                        if (data.userExists) {
+                            await signMessageAndConnect(data.signMessage);
+                        } else {
+                            // Show username form for new users
+                            usernameForm.classList.remove('hidden');
+                        }
+                    } else {
+                        throw new Error(data.message);
+                    }
+                } catch (error) {
+                    showWalletError('Erreur lors de la récupération du nonce: ' + error.message);
+                }
+            }
+            
+            // Display wallet info
+            function displayWalletInfo(address, chainId) {
+                // Format address (0x1234...5678)
+                const formattedAddress = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+                walletAddressElement.textContent = formattedAddress;
+                
+                // Get network name based on chain ID
+                let networkName = 'Réseau inconnu';
+                
+                switch (chainId) {
+                    case '0x1':
+                        networkName = 'Ethereum Mainnet';
+                        break;
+                    case '0xa4b1':
+                        networkName = 'Arbitrum One';
+                        break;
+                    case '0x66eed':
+                        networkName = 'Arbitrum Goerli';
+                        break;
+                    case '0x5':
+                        networkName = 'Goerli Testnet';
+                        break;
+                    default:
+                        networkName = `Réseau ${chainId}`;
+                }
+                
+                networkNameElement.textContent = networkName;
+                
+                // Show wallet status
+                walletStatus.classList.remove('hidden');
+            }
+            
+            // Sign message and connect
+            async function signMessageAndConnect(message) {
+                try {
+                    const provider = new ethers.providers.Web3Provider(window.ethereum);
+                    const signer = provider.getSigner();
+                    const signature = await signer.signMessage(message);
+                    
+                    // Connect with server
+                    const response = await fetch('/api/wallet/connect', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            address: walletAddress,
+                            signature,
+                            nonce,
+                            username: document.getElementById('wallet-username')?.value
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        // Save token to localStorage
+                        localStorage.setItem('token', data.token);
+                        
+                        // Redirect based on user status
+                        if (data.user.newUser) {
+                            // New user - redirect to tutorial
+                            window.location.href = '/app?tutorial=true';
+                        } else {
+                            // Existing user - redirect to app
+                            window.location.href = '/app';
+                        }
+                    } else {
+                        throw new Error(data.message);
+                    }
+                } catch (error) {
+                    showWalletError('Erreur lors de la connexion: ' + error.message);
+                }
+            }
+            
+            // Complete wallet registration
+            document.getElementById('complete-wallet-registration').addEventListener('click', async function() {
+                const username = document.getElementById('wallet-username').value;
+                
+                if (!username || username.trim() === '') {
+                    showWalletError('Veuillez entrer un nom d\'utilisateur valide.');
+                    return;
+                }
+                
+                // Get sign message from server
+                try {
+                    const response = await fetch(`/api/wallet/nonce/${walletAddress}`);
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        nonce = data.nonce;
+                        await signMessageAndConnect(data.signMessage);
+                    } else {
+                        throw new Error(data.message);
+                    }
+                } catch (error) {
+                    showWalletError('Erreur: ' + error.message);
+                }
+            });
+            
+            // Email registration form
+            const registerForm = document.getElementById('register-form');
+            
+            registerForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('username').value;
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirm-password').value;
+                
+                // Validation
+                if (password !== confirmPassword) {
+                    showWalletError('Les mots de passe ne correspondent pas.');
+                    return;
+                }
+                
+                // Register with server
+                try {
+                    const response = await fetch('/auth/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ username, email, password })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        // Save token to localStorage
+                        localStorage.setItem('token', data.token);
+                        
+                        // If wallet is required, show message and switch to wallet tab
+                        if (data.requiresWallet) {
+                            alert('Votre compte a été créé. Veuillez maintenant connecter votre wallet pour continuer.');
+                            document.querySelector('[data-tab="wallet"]').click();
+                        } else {
+                            // Redirect to app
+                            window.location.href = '/app';
+                        }
+                    } else {
+                        throw new Error(data.message);
+                    }
+                } catch (error) {
+                    showWalletError('Erreur lors de l\'inscription: ' + error.message);
+                }
+            });
+            
+            // Error modal
+            function showWalletError(message) {
+                document.getElementById('wallet-error-message').textContent = message;
+                document.getElementById('wallet-error-modal').style.display = 'flex';
+            }
+            
+            // Close modal
+            const closeButtons = document.querySelectorAll('.modal-close');
+            closeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    this.closest('.modal').style.display = 'none';
+                });
+            });
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(event) {
+                if (event.target.classList.contains('modal')) {
+                    event.target.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
