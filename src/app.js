@@ -6,6 +6,7 @@ const cors = require('cors');
 const session = require('express-session');
 const dotenv = require('dotenv');
 const connectDB = require('./config/database');
+const expressLayouts = require('express-ejs-layouts');
 
 // Charger les variables d'environnement
 dotenv.config();
@@ -43,6 +44,16 @@ app.use(session({
 // Configuration des vues EJS
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
+// Configuration du layout EJS
+app.use(expressLayouts);
+app.set('layout', 'layouts/main');
+
+// Middleware pour logger les requêtes statiques (pour déboguer)
+app.use((req, res, next) => {
+  console.log('Request URL:', req.url);
+  next();
+});
 
 // Servir les fichiers statiques
 app.use(express.static(path.join(__dirname, '../public')));
