@@ -29,6 +29,10 @@ const UserSchema = new Schema({
     type: String,
     default: () => Math.floor(Math.random() * 1000000).toString()
   },
+  signMessage: {
+    type: String,
+    sparse: true  // Pour stocker le message complet à signer
+  },
   tokenBalance: {
     type: Number,
     default: 100  // Balance initiale de tokens pour les nouveaux utilisateurs
