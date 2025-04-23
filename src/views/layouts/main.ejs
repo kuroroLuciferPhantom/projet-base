@@ -3,19 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
+    <title><%= typeof title !== 'undefined' ? title : 'CryptoCards' %></title>
+    
+    <!-- Feuilles de style principale -->
     <link rel="stylesheet" href="/css/styles.css">
+    
+    <!-- Feuilles de style spécifiques aux pages -->
     <% if (typeof pageCss !== 'undefined') { %>
         <link rel="stylesheet" href="/css/<%= pageCss %>.css">
     <% } %>
+
+    <!-- Feuilles de style multiples si nécessaire -->
+    <% if (typeof cssFiles !== 'undefined' && Array.isArray(cssFiles)) { %>
+        <% cssFiles.forEach(function(cssFile) { %>
+            <link rel="stylesheet" href="/css/<%= cssFile %>.css">
+        <% }); %>
+    <% } %>
+    
+    <!-- Polices et icônes -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+    <%- include('../partials/header') %>
+    
+    <!-- Contenu principal injecté par express-ejs-layouts -->
     <%- body %>
     
+    <%- include('../partials/footer') %>
+    
+    <!-- Scripts communs à toutes les pages -->
+    <script src="/js/main.js"></script>
+    
+    <!-- Scripts spécifiques aux pages -->
     <% if (typeof pageJs !== 'undefined') { %>
         <script src="/js/<%= pageJs %>.js"></script>
     <% } %>
