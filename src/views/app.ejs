@@ -6,6 +6,7 @@
     <title><%= title %></title>
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/app.css">
+    <link rel="stylesheet" href="/css/tutorial.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Ethers.js pour Web3 -->
@@ -451,8 +452,18 @@
                     // Fermer la modale de tutoriel
                     document.getElementById('tutorial-reward').style.display = 'none';
                     
-                    // Dans une implémentation réelle, faire une requête au serveur
-                    // pour attribuer le booster et marquer le tutoriel comme terminé
+                    // Dans une implémentation réelle, faire une requête au serveur pour récupérer le booster
+                    // et marquer le tutoriel comme terminé
+                    const response = await fetch('/api/boosters/first', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    // Simuler une réponse réussie
+                    // const data = await response.json();
                     
                     // Afficher la modale d'ouverture de booster
                     document.getElementById('booster-opening-modal').style.display = 'flex';
@@ -540,6 +551,31 @@
                 document.querySelector('.collection-stats .stat-value').textContent = '5';
             });
             
+            // Connecter Wallet (pour la démo)
+            document.querySelector('.connect-wallet').addEventListener('click', function() {
+                // Simuler une connexion réussie
+                setTimeout(() => {
+                    // Rediriger vers la page d'inscription
+                    window.location.href = '/register';
+                }, 500);
+            });
+            
+            // Menu utilisateur
+            const userMenu = document.querySelector('.user-menu');
+            if (userMenu) {
+                userMenu.addEventListener('click', function(e) {
+                    const dropdownMenu = this.querySelector('.dropdown-menu');
+                    dropdownMenu.classList.toggle('show');
+                });
+                
+                // Cliquer ailleurs pour fermer le menu
+                document.addEventListener('click', function(e) {
+                    if (!userMenu.contains(e.target)) {
+                        userMenu.querySelector('.dropdown-menu').classList.remove('show');
+                    }
+                });
+            }
+            
             // Déconnexion
             document.getElementById('logout-link').addEventListener('click', function(e) {
                 e.preventDefault();
@@ -549,6 +585,17 @@
                 
                 // Rediriger vers la page d'accueil
                 window.location.href = '/';
+            });
+            
+            // Actions de la page de collection
+            document.getElementById('buy-pack')?.addEventListener('click', function() {
+                // Rediriger vers la boutique
+                document.querySelector('[data-section="shop"]').click();
+            });
+            
+            document.getElementById('visit-marketplace')?.addEventListener('click', function() {
+                // Rediriger vers le marché
+                document.querySelector('[data-section="marketplace"]').click();
             });
         });
     </script>
