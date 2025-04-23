@@ -178,6 +178,7 @@
             let walletAddress = null;
             let chainId = null;
             let nonce = null;
+            let signMessage = null;
             
             // Éléments DOM
             const metamaskBtn = document.querySelector('.metamask-btn');
@@ -227,12 +228,13 @@
                     
                     if (data.success) {
                         nonce = data.nonce;
+                        signMessage = data.signMessage; // Stocker le message exact à signer
                         
-                        // If user exists, redirect to login
+                        // Si l'utilisateur existe, rediriger vers la connexion
                         if (data.userExists) {
-                            await signMessageAndConnect(data.signMessage);
+                            await signMessageAndConnect(signMessage);
                         } else {
-                            // Show username form for new users
+                            // Afficher le formulaire d'inscription pour les nouveaux utilisateurs
                             usernameForm.classList.remove('hidden');
                         }
                     } else {
@@ -283,11 +285,15 @@
                         throw new Error('La bibliothèque ethers.js n\'est pas disponible');
                     }
                     
+                    console.log("Message à signer:", message); // Pour le débogage
+                    
                     // Utiliser la variable globale ethers si elle existe
                     const ethersLib = window.ethers || ethers;
                     const provider = new ethersLib.providers.Web3Provider(window.ethereum);
                     const signer = provider.getSigner();
                     const signature = await signer.signMessage(message);
+                    
+                    console.log("Signature générée:", signature); // Pour le débogage
                     
                     // Connect with server
                     const response = await fetch('/api/wallet/connect', {
@@ -335,19 +341,25 @@
                         return;
                     }
                     
-                    // Get sign message from server
-                    try {
-                        const response = await fetch(`/api/wallet/nonce/${walletAddress}`);
-                        const data = await response.json();
-                        
-                        if (data.success) {
-                            nonce = data.nonce;
-                            await signMessageAndConnect(data.signMessage);
-                        } else {
-                            throw new Error(data.message);
+                    // Utiliser le message de signature déjà récupéré
+                    if (signMessage) {
+                        await signMessageAndConnect(signMessage);
+                    } else {
+                        // Si le message n'est pas disponible, récupérer un nouveau nonce
+                        try {
+                            const response = await fetch(`/api/wallet/nonce/${walletAddress}`);
+                            const data = await response.json();
+                            
+                            if (data.success) {
+                                nonce = data.nonce;
+                                signMessage = data.signMessage;
+                                await signMessageAndConnect(data.signMessage);
+                            } else {
+                                throw new Error(data.message);
+                            }
+                        } catch (error) {
+                            showWalletError('Erreur: ' + error.message);
                         }
-                    } catch (error) {
-                        showWalletError('Erreur: ' + error.message);
                     }
                 });
             }
