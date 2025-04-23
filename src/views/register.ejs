@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="/css/auth.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Ethers.js pour Web3 depuis cdnjs -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" integrity="sha512-FDcVY+g7vc5CXANbrTSg1K5qLyriCsGDYCE02Li1tP+La9v1zYsqKT/961MoK7wZjCUVVBiGxUCgRWcwQ8R1OQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Ethers.js pour Web3 depuis cdnjs - sans attribut integrity pour éviter les problèmes de validation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
     <div class="auth-container">
@@ -140,6 +140,17 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Vérifier que la bibliothèque ethers est chargée
+            if (typeof window.ethers === 'undefined') {
+                // Si ethers n'est pas disponible globalement, essayer de l'extraire
+                if (typeof ethers !== 'undefined') {
+                    window.ethers = ethers;
+                    console.log("Bibliothèque ethers exposée globalement");
+                } else {
+                    console.error("La bibliothèque ethers.js n'est pas chargée correctement");
+                }
+            }
+            
             // Tabs
             const tabBtns = document.querySelectorAll('.auth-tab-btn');
             const tabContents = document.querySelectorAll('.auth-tab-content');
@@ -267,7 +278,14 @@
             // Sign message and connect
             async function signMessageAndConnect(message) {
                 try {
-                    const provider = new ethers.providers.Web3Provider(window.ethereum);
+                    // Vérifier que ethers est bien défini
+                    if (typeof window.ethers === 'undefined' && typeof ethers === 'undefined') {
+                        throw new Error('La bibliothèque ethers.js n\'est pas disponible');
+                    }
+                    
+                    // Utiliser la variable globale ethers si elle existe
+                    const ethersLib = window.ethers || ethers;
+                    const provider = new ethersLib.providers.Web3Provider(window.ethereum);
                     const signer = provider.getSigner();
                     const signature = await signer.signMessage(message);
                     
