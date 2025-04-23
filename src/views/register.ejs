@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="/css/auth.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Ethers.js pour Web3 -->
-    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js" type="application/javascript"></script>
+    <!-- Ethers.js pour Web3 depuis cdnjs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" integrity="sha512-FDcVY+g7vc5CXANbrTSg1K5qLyriCsGDYCE02Li1tP+La9v1zYsqKT/961MoK7wZjCUVVBiGxUCgRWcwQ8R1OQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
     <div class="auth-container">
@@ -140,24 +140,6 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // S'assurer que ethers est bien défini
-            if (typeof ethers === 'undefined') {
-                console.error("La bibliothèque ethers.js n'est pas chargée correctement");
-                // Essayons de la charger dynamiquement en cas d'erreur
-                const script = document.createElement('script');
-                script.src = "https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js";
-                script.type = "application/javascript";
-                document.head.appendChild(script);
-                
-                // Attendez que le script soit chargé
-                script.onload = function() {
-                    console.log("ethers.js a été chargé dynamiquement");
-                    initializeWalletFunctions();
-                };
-            } else {
-                initializeWalletFunctions();
-            }
-            
             // Tabs
             const tabBtns = document.querySelectorAll('.auth-tab-btn');
             const tabContents = document.querySelectorAll('.auth-tab-content');
@@ -181,182 +163,175 @@
                 document.querySelector('[data-tab="wallet"]').click();
             });
             
-            function initializeWalletFunctions() {
-                // Variables globales
-                let walletAddress = null;
-                let chainId = null;
-                let nonce = null;
-                
-                // Éléments DOM
-                const metamaskBtn = document.querySelector('.metamask-btn');
-                const walletConnectBtn = document.querySelector('.walletconnect-btn');
-                const walletStatus = document.querySelector('.wallet-status');
-                const walletAddressElement = document.querySelector('.wallet-address');
-                const networkNameElement = document.querySelector('.network-name');
-                const usernameForm = document.querySelector('.username-form');
-                const completeRegistrationBtn = document.getElementById('complete-wallet-registration');
-                
-                // MetaMask connection
-                metamaskBtn.addEventListener('click', async function() {
-                    try {
-                        // Check if MetaMask is installed
-                        if (typeof window.ethereum === 'undefined') {
-                            throw new Error('MetaMask n\'est pas installé. Veuillez l\'installer pour continuer.');
-                        }
-                        
-                        // Request account access
-                        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                        walletAddress = accounts[0];
-                        
-                        // Get chain ID
-                        chainId = await window.ethereum.request({ method: 'eth_chainId' });
-                        
-                        // Get nonce from server
-                        await getNonce(walletAddress);
-                        
-                        // Update UI
-                        displayWalletInfo(walletAddress, chainId);
-                        
-                    } catch (error) {
-                        showWalletError(error.message);
+            // Variables globales
+            let walletAddress = null;
+            let chainId = null;
+            let nonce = null;
+            
+            // Éléments DOM
+            const metamaskBtn = document.querySelector('.metamask-btn');
+            const walletConnectBtn = document.querySelector('.walletconnect-btn');
+            const walletStatus = document.querySelector('.wallet-status');
+            const walletAddressElement = document.querySelector('.wallet-address');
+            const networkNameElement = document.querySelector('.network-name');
+            const usernameForm = document.querySelector('.username-form');
+            const completeRegistrationBtn = document.getElementById('complete-wallet-registration');
+            
+            // MetaMask connection
+            metamaskBtn.addEventListener('click', async function() {
+                try {
+                    // Check if MetaMask is installed
+                    if (typeof window.ethereum === 'undefined') {
+                        throw new Error('MetaMask n\'est pas installé. Veuillez l\'installer pour continuer.');
                     }
-                });
+                    
+                    // Request account access
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    walletAddress = accounts[0];
+                    
+                    // Get chain ID
+                    chainId = await window.ethereum.request({ method: 'eth_chainId' });
+                    
+                    // Get nonce from server
+                    await getNonce(walletAddress);
+                    
+                    // Update UI
+                    displayWalletInfo(walletAddress, chainId);
+                    
+                } catch (error) {
+                    showWalletError(error.message);
+                }
+            });
+            
+            // WalletConnect connection (placeholder - would need WalletConnect library)
+            walletConnectBtn.addEventListener('click', function() {
+                showWalletError('WalletConnect n\'est pas encore implémenté dans cette démo.');
+            });
+            
+            // Get nonce from server
+            async function getNonce(address) {
+                try {
+                    const response = await fetch(`/api/wallet/nonce/${address}`);
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        nonce = data.nonce;
+                        
+                        // If user exists, redirect to login
+                        if (data.userExists) {
+                            await signMessageAndConnect(data.signMessage);
+                        } else {
+                            // Show username form for new users
+                            usernameForm.classList.remove('hidden');
+                        }
+                    } else {
+                        throw new Error(data.message);
+                    }
+                } catch (error) {
+                    showWalletError('Erreur lors de la récupération du nonce: ' + error.message);
+                }
+            }
+            
+            // Display wallet info
+            function displayWalletInfo(address, chainId) {
+                // Format address (0x1234...5678)
+                const formattedAddress = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+                walletAddressElement.textContent = formattedAddress;
                 
-                // WalletConnect connection (placeholder - would need WalletConnect library)
-                walletConnectBtn.addEventListener('click', function() {
-                    showWalletError('WalletConnect n\'est pas encore implémenté dans cette démo.');
-                });
+                // Get network name based on chain ID
+                let networkName = 'Réseau inconnu';
                 
-                // Get nonce from server
-                async function getNonce(address) {
+                switch (chainId) {
+                    case '0x1':
+                        networkName = 'Ethereum Mainnet';
+                        break;
+                    case '0xa4b1':
+                        networkName = 'Arbitrum One';
+                        break;
+                    case '0x66eed':
+                        networkName = 'Arbitrum Goerli';
+                        break;
+                    case '0x5':
+                        networkName = 'Goerli Testnet';
+                        break;
+                    default:
+                        networkName = `Réseau ${chainId}`;
+                }
+                
+                networkNameElement.textContent = networkName;
+                
+                // Show wallet status
+                walletStatus.classList.remove('hidden');
+            }
+            
+            // Sign message and connect
+            async function signMessageAndConnect(message) {
+                try {
+                    const provider = new ethers.providers.Web3Provider(window.ethereum);
+                    const signer = provider.getSigner();
+                    const signature = await signer.signMessage(message);
+                    
+                    // Connect with server
+                    const response = await fetch('/api/wallet/connect', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            address: walletAddress,
+                            signature,
+                            nonce,
+                            username: document.getElementById('wallet-username')?.value
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        // Save token to localStorage
+                        localStorage.setItem('token', data.token);
+                        
+                        // Redirect based on user status
+                        if (data.user.newUser) {
+                            // New user - redirect to tutorial
+                            window.location.href = '/app?tutorial=true';
+                        } else {
+                            // Existing user - redirect to app
+                            window.location.href = '/app';
+                        }
+                    } else {
+                        throw new Error(data.message);
+                    }
+                } catch (error) {
+                    showWalletError('Erreur lors de la connexion: ' + error.message);
+                }
+            }
+            
+            // Complete wallet registration
+            if (completeRegistrationBtn) {
+                completeRegistrationBtn.addEventListener('click', async function() {
+                    const username = document.getElementById('wallet-username').value;
+                    
+                    if (!username || username.trim() === '') {
+                        showWalletError('Veuillez entrer un nom d\'utilisateur valide.');
+                        return;
+                    }
+                    
+                    // Get sign message from server
                     try {
-                        const response = await fetch(`/api/wallet/nonce/${address}`);
+                        const response = await fetch(`/api/wallet/nonce/${walletAddress}`);
                         const data = await response.json();
                         
                         if (data.success) {
                             nonce = data.nonce;
-                            
-                            // If user exists, redirect to login
-                            if (data.userExists) {
-                                await signMessageAndConnect(data.signMessage);
-                            } else {
-                                // Show username form for new users
-                                usernameForm.classList.remove('hidden');
-                            }
+                            await signMessageAndConnect(data.signMessage);
                         } else {
                             throw new Error(data.message);
                         }
                     } catch (error) {
-                        showWalletError('Erreur lors de la récupération du nonce: ' + error.message);
+                        showWalletError('Erreur: ' + error.message);
                     }
-                }
-                
-                // Display wallet info
-                function displayWalletInfo(address, chainId) {
-                    // Format address (0x1234...5678)
-                    const formattedAddress = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
-                    walletAddressElement.textContent = formattedAddress;
-                    
-                    // Get network name based on chain ID
-                    let networkName = 'Réseau inconnu';
-                    
-                    switch (chainId) {
-                        case '0x1':
-                            networkName = 'Ethereum Mainnet';
-                            break;
-                        case '0xa4b1':
-                            networkName = 'Arbitrum One';
-                            break;
-                        case '0x66eed':
-                            networkName = 'Arbitrum Goerli';
-                            break;
-                        case '0x5':
-                            networkName = 'Goerli Testnet';
-                            break;
-                        default:
-                            networkName = `Réseau ${chainId}`;
-                    }
-                    
-                    networkNameElement.textContent = networkName;
-                    
-                    // Show wallet status
-                    walletStatus.classList.remove('hidden');
-                }
-                
-                // Sign message and connect
-                async function signMessageAndConnect(message) {
-                    try {
-                        // Vérifier que ethers est bien défini
-                        if (typeof ethers === 'undefined') {
-                            throw new Error('La bibliothèque ethers.js n\'est pas disponible');
-                        }
-                        
-                        const provider = new ethers.providers.Web3Provider(window.ethereum);
-                        const signer = provider.getSigner();
-                        const signature = await signer.signMessage(message);
-                        
-                        // Connect with server
-                        const response = await fetch('/api/wallet/connect', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                address: walletAddress,
-                                signature,
-                                nonce,
-                                username: document.getElementById('wallet-username')?.value
-                            })
-                        });
-                        
-                        const data = await response.json();
-                        
-                        if (data.success) {
-                            // Save token to localStorage
-                            localStorage.setItem('token', data.token);
-                            
-                            // Redirect based on user status
-                            if (data.user.newUser) {
-                                // New user - redirect to tutorial
-                                window.location.href = '/app?tutorial=true';
-                            } else {
-                                // Existing user - redirect to app
-                                window.location.href = '/app';
-                            }
-                        } else {
-                            throw new Error(data.message);
-                        }
-                    } catch (error) {
-                        showWalletError('Erreur lors de la connexion: ' + error.message);
-                    }
-                }
-                
-                // Complete wallet registration
-                if (completeRegistrationBtn) {
-                    completeRegistrationBtn.addEventListener('click', async function() {
-                        const username = document.getElementById('wallet-username').value;
-                        
-                        if (!username || username.trim() === '') {
-                            showWalletError('Veuillez entrer un nom d\'utilisateur valide.');
-                            return;
-                        }
-                        
-                        // Get sign message from server
-                        try {
-                            const response = await fetch(`/api/wallet/nonce/${walletAddress}`);
-                            const data = await response.json();
-                            
-                            if (data.success) {
-                                nonce = data.nonce;
-                                await signMessageAndConnect(data.signMessage);
-                            } else {
-                                throw new Error(data.message);
-                            }
-                        } catch (error) {
-                            showWalletError('Erreur: ' + error.message);
-                        }
-                    });
-                }
+                });
             }
             
             // Email registration form
