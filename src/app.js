@@ -27,6 +27,7 @@ app.use(helmet({
       fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
       scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdnjs.cloudflare.com"],
       imgSrc: ["'self'", "data:"],
+      connectSrc: ["'self'", "https://api.etherscan.io"]
     },
   },
 }));
