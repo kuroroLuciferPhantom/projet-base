@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <rect width="100%" height="100%" fill="#1a1a1a"/>
+  <circle cx="400" cy="300" r="150" fill="url(#grad1)" opacity="0.7"/>
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6a11cb;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2575fc;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <text x="400" y="310" font-family="Arial" font-size="36" text-anchor="middle" fill="white">Bienvenue sur CryptoCards</text>
+  <rect x="300" y="340" width="200" height="50" rx="10" fill="none" stroke="#4facfe" stroke-width="3"/>
+  <text x="400" y="375" font-family="Arial" font-size="24" text-anchor="middle" fill="white">Commencer</text>
+</svg>
