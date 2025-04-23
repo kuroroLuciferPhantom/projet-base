@@ -13,7 +13,13 @@ const isValidEthereumAddress = (address) => {
 // Fonction pour vérifier une signature
 const verifySignature = async (message, signature, address) => {
   try {
+    console.log('Message utilisé pour vérification:', message);
+    console.log('Signature reçue:', signature);
+    console.log('Adresse attendue:', address);
+    
     const signerAddress = ethers.utils.verifyMessage(message, signature);
+    console.log('Adresse du signataire:', signerAddress);
+    
     return signerAddress.toLowerCase() === address.toLowerCase();
   } catch (error) {
     console.error('Erreur lors de la vérification de la signature:', error);
@@ -28,7 +34,9 @@ const generateNonce = () => {
 
 // Message à signer
 const getSignMessage = (nonce) => {
-  return `Bienvenue sur CryptoCards!\n\nCette signature prouve que vous êtes le propriétaire de ce wallet.\n\nNonce: ${nonce}\nDate: ${new Date().toISOString()}`;
+  // Utiliser la même date pour toute la requête
+  const date = new Date().toISOString();
+  return `Bienvenue sur CryptoCards!\n\nCette signature prouve que vous êtes le propriétaire de ce wallet.\n\nNonce: ${nonce}\nDate: ${date}`;
 };
 
 // Fonction pour obtenir les informations de la chaîne
