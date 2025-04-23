@@ -1,4 +1,4 @@
-<%- include('./partials/header') %>
+<!-- Contenu de la page d'accueil - Avec express-ejs-layouts, nous n'avons pas besoin d'inclure le header et footer manuellement -->
 
 <section class="hero">
     <div class="hero-content">
@@ -64,11 +64,10 @@
     <div class="cta-shape"></div>
 </section>
 
-<%- include('./partials/footer') %>
-
 <script>
     // Ajouter ici les scripts spécifiques à la page d'accueil
     document.addEventListener('DOMContentLoaded', function() {
         // Code JavaScript pour animer les éléments, etc.
+        console.log('Page d\'accueil chargée');
     });
 </script>
