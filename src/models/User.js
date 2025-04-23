@@ -21,8 +21,8 @@ const UserSchema = new Schema({
   },
   walletAddress: {
     type: String,
-    required: true,
     unique: true,
+    sparse: true,  // Permet aux utilisateurs sans wallet d'exister
     lowercase: true
   },
   nonce: {
