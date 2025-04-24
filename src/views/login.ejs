@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="/css/auth.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Ethers.js pour Web3 depuis cdnjs - sans attribut integrity pour éviter les problèmes de validation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
     <div class="auth-container">
@@ -62,10 +64,44 @@
         </div>
     </div>
     
+    <!-- Modals pour les erreurs wallet -->
+    <div class="modal" id="wallet-error-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Erreur de connexion</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="wallet-error-message">Une erreur est survenue lors de la connexion au wallet.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary modal-close">OK</button>
+            </div>
+        </div>
+    </div>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const loginForm = document.getElementById('login-form');
+            // Vérifier que la bibliothèque ethers est chargée
+            if (typeof window.ethers === 'undefined') {
+                if (typeof ethers !== 'undefined') {
+                    window.ethers = ethers;
+                    console.log("Bibliothèque ethers exposée globalement");
+                } else {
+                    console.error("La bibliothèque ethers.js n'est pas chargée correctement");
+                }
+            }
             
+            const loginForm = document.getElementById('login-form');
+            const connectWalletButton = document.querySelector('.connect-wallet');
+            
+            // Variables globales pour la connexion wallet
+            let walletAddress = null;
+            let chainId = null;
+            let nonce = null;
+            let signMessage = null;
+            
+            // Connexion par email/password
             loginForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
@@ -85,14 +121,132 @@
                     
                     if (response.ok && data.success) {
                         // Connexion réussie, rediriger vers l'application
+                        localStorage.setItem('token', data.token);
                         window.location.href = '/app';
                     } else {
                         // Afficher l'erreur
-                        alert(data.message || 'Erreur de connexion');
+                        showWalletError(data.message || 'Erreur de connexion');
                     }
                 } catch (error) {
                     console.error('Erreur:', error);
-                    alert('Une erreur est survenue lors de la connexion');
+                    showWalletError('Une erreur est survenue lors de la connexion');
+                }
+            });
+            
+            // Connexion avec wallet
+            connectWalletButton.addEventListener('click', async function() {
+                try {
+                    // Vérifier si MetaMask est installé
+                    if (typeof window.ethereum === 'undefined') {
+                        throw new Error('MetaMask n\'est pas installé. Veuillez l\'installer pour continuer.');
+                    }
+                    
+                    // Demander l'accès au compte
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    walletAddress = accounts[0];
+                    
+                    // Obtenir l'ID de la chaîne
+                    chainId = await window.ethereum.request({ method: 'eth_chainId' });
+                    
+                    // Obtenir un nonce du serveur
+                    await getNonce(walletAddress);
+                    
+                } catch (error) {
+                    showWalletError(error.message);
+                }
+            });
+            
+            // Obtenir un nonce du serveur
+            async function getNonce(address) {
+                try {
+                    const response = await fetch(`/api/wallet/nonce/${address}`);
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        nonce = data.nonce;
+                        signMessage = data.signMessage;
+                        
+                        // Signer le message et se connecter
+                        await signMessageAndConnect(signMessage);
+                    } else {
+                        throw new Error(data.message);
+                    }
+                } catch (error) {
+                    showWalletError('Erreur lors de la récupération du nonce: ' + error.message);
+                }
+            }
+            
+            // Signer le message et se connecter
+            async function signMessageAndConnect(message) {
+                try {
+                    // Vérifier que ethers est bien défini
+                    if (typeof window.ethers === 'undefined' && typeof ethers === 'undefined') {
+                        throw new Error('La bibliothèque ethers.js n\'est pas disponible');
+                    }
+                    
+                    console.log("Message à signer:", message);
+                    
+                    // Utiliser la variable globale ethers si elle existe
+                    const ethersLib = window.ethers || ethers;
+                    const provider = new ethersLib.providers.Web3Provider(window.ethereum);
+                    const signer = provider.getSigner();
+                    const signature = await signer.signMessage(message);
+                    
+                    console.log("Signature générée:", signature.substring(0, 30) + '...');
+                    
+                    // Connexion avec le serveur
+                    const response = await fetch('/api/wallet/connect', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            address: walletAddress,
+                            signature,
+                            nonce
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        // Sauvegarder le token dans localStorage
+                        localStorage.setItem('token', data.token);
+                        
+                        // Redirection basée sur le statut de l'utilisateur
+                        if (data.user.newUser) {
+                            // Nouvel utilisateur - rediriger vers le tutoriel
+                            window.location.href = '/app?tutorial=true';
+                        } else {
+                            // Utilisateur existant - rediriger vers l'application
+                            window.location.href = '/app';
+                        }
+                    } else {
+                        throw new Error(data.message);
+                    }
+                } catch (error) {
+                    showWalletError('Erreur lors de la connexion: ' + error.message);
+                }
+            }
+            
+            // Afficher une erreur dans la modal
+            function showWalletError(message) {
+                document.getElementById('wallet-error-message').textContent = message;
+                document.getElementById('wallet-error-modal').style.display = 'flex';
+            }
+            
+            // Fermer la modal
+            const closeButtons = document.querySelectorAll('.modal-close');
+            closeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    this.closest('.modal').style.display = 'none';
+                });
+            });
+            
+            // Fermer la modal en cliquant à l'extérieur
+            window.addEventListener('click', function(event) {
+                if (event.target.classList.contains('modal')) {
+                    event.target.style.display = 'none';
                 }
             });
         });
