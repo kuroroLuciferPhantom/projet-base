@@ -126,6 +126,8 @@
     flex-direction: column;
     gap: 20px;
     width: 100%; /* Assure que le footer reste dans la sidebar */
+    background-color: var(--color-black); /* Assurer que le fond est visible */
+    z-index: 51; /* S'assurer qu'il est au-dessus du menu */
 }
 
 .token-balance {
@@ -204,7 +206,7 @@
 .footer-section ul li a {
     color: var(--color-gray-light);
     transition: color 0.2s ease;
-    display: flex;
+    display: inline-flex; /* Permet de garder les icônes et le texte alignés horizontalement */
     align-items: center;
     gap: 8px;
 }
@@ -244,7 +246,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
+    padding: 0 20px;
     background-color: var(--color-dark);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     height: var(--header-height);
@@ -253,11 +255,14 @@
     left: var(--sidebar-width); /* Aligné avec le contenu principal */
     right: 0;
     z-index: 40;
+    box-sizing: border-box; /* Assurer que le padding est inclus dans la largeur */
 }
 
 .search-bar {
     position: relative;
     width: 400px;
+    display: block; /* S'assurer que la barre est visible */
+    margin-right: 20px; /* Espace à droite */
 }
 
 .search-bar input {
@@ -268,6 +273,12 @@
     border-radius: 50px;
     color: var(--color-white);
     font-size: 14px;
+    display: block; /* S'assurer que l'input est visible */
+}
+
+.search-bar input::placeholder {
+    color: var(--color-gray-light);
+    opacity: 1; /* Pour s'assurer que le placeholder est visible */
 }
 
 .search-bar input:focus {
@@ -282,11 +293,13 @@
     top: 50%;
     transform: translateY(-50%);
     color: var(--color-gray-light);
+    z-index: 2; /* S'assurer que l'icône est au-dessus */
 }
 
 .wallet-info {
     display: flex;
     align-items: center;
+    flex-shrink: 0; /* Éviter que cet élément rétrécisse */
 }
 
 .network-indicator {
