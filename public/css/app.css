@@ -22,6 +22,17 @@
     --color-green: #2ecc71;
     --color-blue: #3498db;
     --color-purple: #9b59b6;
+    
+    /* Dimensions fixes */
+    --sidebar-width: 260px;
+    --header-height: 80px;
+}
+
+/* Reset de base pour éviter les problèmes d'espacement */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 /* Layout principal */
@@ -29,11 +40,12 @@
     display: flex;
     min-height: 100vh;
     background-color: var(--color-dark);
+    position: relative;
 }
 
 /* Sidebar */
 .sidebar {
-    width: 260px;
+    width: var(--sidebar-width);
     background-color: var(--color-black);
     display: flex;
     flex-direction: column;
@@ -41,7 +53,7 @@
     top: 0;
     left: 0;
     height: 100vh;
-    z-index: 100;
+    z-index: 50;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
     overflow-x: hidden; /* Empêche le défilement horizontal */
     overflow-y: auto; /* Permet le défilement vertical si nécessaire */
@@ -54,7 +66,7 @@
 }
 
 .sidebar-nav {
-    flex-grow: 0;
+    flex-grow: 1;
     padding: 20px 0;
     overflow-y: auto;
     overflow-x: hidden; /* Empêche le défilement horizontal */
@@ -65,11 +77,14 @@
     padding: 0;
     margin: 0;
     width: 100%;
+    display: flex;
+    flex-direction: column; /* Force l'affichage vertical */
 }
 
 .sidebar-nav ul.main-menu li {
     margin-bottom: 5px;
     width: 100%;
+    display: block; /* Force le comportement de bloc */
 }
 
 .sidebar-nav a {
@@ -110,6 +125,7 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+    width: 100%; /* Assure que le footer reste dans la sidebar */
 }
 
 .token-balance {
@@ -165,6 +181,7 @@
     flex-direction: column;
     gap: 15px;
     font-size: 13px;
+    width: 100%; /* Assure que les liens restent dans la sidebar */
 }
 
 .footer-section h4 {
@@ -208,15 +225,18 @@
     text-align: center;
     padding-top: 15px;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
+    width: 100%; /* Assure que le copyright reste dans la sidebar */
 }
 
 /* Contenu principal */
 .app-content {
     flex: 1;
-    margin-left: 260px;
+    margin-left: var(--sidebar-width);
     padding: 20px;
     background-color: var(--color-dark);
     min-height: 100vh;
+    position: relative;
+    padding-top: calc(var(--header-height) + 20px); /* Espace pour le header */
 }
 
 /* Header de l'application */
@@ -224,10 +244,15 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
-    padding-bottom: 20px;
+    padding: 20px;
+    background-color: var(--color-dark);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    height: auto; /* Hauteur adaptative */
+    height: var(--header-height);
+    position: fixed;
+    top: 0;
+    left: var(--sidebar-width); /* Aligné avec le contenu principal */
+    right: 0;
+    z-index: 40;
 }
 
 .search-bar {
@@ -727,12 +752,8 @@
 
 /* Responsive */
 @media (max-width: 1024px) {
-    .sidebar {
-        width: 220px;
-    }
-    
-    .app-content {
-        margin-left: 220px;
+    :root {
+        --sidebar-width: 220px;
     }
     
     .search-bar {
@@ -741,13 +762,8 @@
 }
 
 @media (max-width: 768px) {
-    .sidebar {
-        width: 70px;
-        overflow: hidden;
-    }
-    
-    .app-content {
-        margin-left: 70px;
+    :root {
+        --sidebar-width: 70px;
     }
     
     .sidebar-nav a span, .token-info {
@@ -781,6 +797,12 @@
     .app-header {
         flex-direction: column;
         align-items: stretch;
+        height: auto;
+        padding: 15px;
+    }
+    
+    .app-content {
+        padding-top: 120px; /* Plus d'espace pour le header sur petit écran */
     }
     
     .search-bar {
