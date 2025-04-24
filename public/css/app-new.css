@@ -1,0 +1,454 @@
+/* Styles pour l'application CryptoCards - NOUVELLE VERSION */
+:root {
+    --color-black: #0a0a0a;
+    --color-dark: #1a1a1a;
+    --color-dark-lighter: #222222;
+    --color-red: #e62e2e;
+    --color-red-light: #ff4d4d;
+    --color-yellow: #ffcc00;
+    --color-yellow-light: #ffe066;
+    --color-gray: #333333;
+    --color-gray-light: #888888;
+    --color-white: #ffffff;
+    
+    /* Couleurs des raretés */
+    --color-common: #7f8c8d;
+    --color-rare: #2ecc71;
+    --color-epic: #3498db;
+    --color-legendary: #9b59b6;
+    
+    /* Nouvelles couleurs */
+    --color-orange: #e67e22;
+    --color-green: #2ecc71;
+    --color-blue: #3498db;
+    --color-purple: #9b59b6;
+}
+
+/* Reset de base pour éviter les problèmes d'espacement */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--color-dark);
+    color: var(--color-white);
+    overflow-x: hidden;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+ul {
+    list-style: none;
+}
+
+/* Layout principal */
+.app-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    background-color: var(--color-black);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    z-index: 50;
+    overflow-y: auto;
+}
+
+.sidebar .logo {
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-nav {
+    padding: 20px 0;
+    flex: 1 0 auto;
+}
+
+.sidebar-nav ul.main-menu {
+    width: 100%;
+}
+
+.sidebar-nav li {
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: var(--color-gray-light);
+    border-left: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.sidebar-nav a:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--color-white);
+}
+
+.sidebar-nav li.active a {
+    background-color: rgba(230, 46, 46, 0.1);
+    color: var(--color-white);
+    border-left-color: var(--color-red);
+}
+
+.sidebar-nav i {
+    margin-right: 15px;
+    font-size: 18px;
+    width: 20px;
+    text-align: center;
+}
+
+.sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: var(--color-black);
+}
+
+.token-balance {
+    display: flex;
+    align-items: center;
+    background-color: rgba(255, 204, 0, 0.1);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 20px;
+}
+
+.token-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--color-yellow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    color: var(--color-black);
+    font-size: 18px;
+}
+
+.token-info {
+    flex: 1;
+}
+
+.token-amount {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 3px;
+}
+
+.token-action {
+    font-size: 12px;
+    color: var(--color-yellow);
+}
+
+.token-action:hover {
+    text-decoration: underline;
+}
+
+/* Footer Links */
+.footer-links {
+    font-size: 13px;
+}
+
+.footer-section {
+    margin-bottom: 15px;
+}
+
+.footer-section h4 {
+    color: var(--color-white);
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.footer-section ul li {
+    margin-bottom: 8px;
+}
+
+.footer-section ul li a {
+    color: var(--color-gray-light);
+    display: flex;
+    align-items: center;
+}
+
+.footer-section ul li a:hover {
+    color: var(--color-white);
+}
+
+.footer-section ul li a i {
+    margin-right: 8px;
+    width: 16px;
+    text-align: center;
+}
+
+.copyright {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 12px;
+    color: var(--color-gray-light);
+    text-align: center;
+}
+
+/* Contenu principal */
+.app-content {
+    margin-left: 260px;
+    flex: 1;
+    padding: 80px 20px 20px;
+}
+
+/* Header de l'application */
+.app-header {
+    height: 60px;
+    background-color: var(--color-dark);
+    position: fixed;
+    top: 0;
+    left: 260px;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 40;
+}
+
+.search-bar {
+    position: relative;
+    width: 400px;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 10px 15px 10px 40px;
+    background-color: var(--color-dark-lighter);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    color: var(--color-white);
+    font-size: 14px;
+}
+
+.search-bar input::placeholder {
+    color: var(--color-gray-light);
+}
+
+.search-bar i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-gray-light);
+}
+
+.wallet-info {
+    display: flex;
+    align-items: center;
+}
+
+.network-indicator {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+}
+
+.network-status {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #e74c3c;
+    margin-right: 8px;
+}
+
+.network-status.connected {
+    background-color: #2ecc71;
+}
+
+.network-name {
+    font-size: 14px;
+    color: var(--color-gray-light);
+}
+
+/* Menu utilisateur */
+.user-menu {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 25px;
+    background-color: var(--color-dark-lighter);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.user-menu:hover {
+    background-color: var(--color-gray);
+}
+
+.user-avatar {
+    margin-right: 10px;
+    font-size: 20px;
+    color: var(--color-yellow);
+}
+
+.username {
+    margin-right: 10px;
+    font-weight: 500;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 200px;
+    background-color: var(--color-dark-lighter);
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    margin-top: 10px;
+    display: none;
+    z-index: 60;
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dropdown-item i {
+    margin-right: 10px;
+    width: 16px;
+    text-align: center;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin: 5px 0;
+}
+
+/* Sections */
+.wallet-not-connected,
+.wallet-connected {
+    background-color: var(--color-dark-lighter);
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Boutons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    font-family: inherit;
+}
+
+.btn-primary {
+    background-color: var(--color-red);
+    color: var(--color-white);
+}
+
+.btn-primary:hover {
+    background-color: var(--color-red-light);
+}
+
+.btn-secondary {
+    background-color: var(--color-dark-lighter);
+    color: var(--color-white);
+    border: 1px solid var(--color-gray-light);
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-gray);
+}
+
+.btn i {
+    margin-right: 8px;
+}
+
+.btn-block {
+    display: flex;
+    width: 100%;
+}
+
+/* Utilitaires */
+.hidden {
+    display: none !important;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 220px;
+    }
+    
+    .app-content {
+        margin-left: 220px;
+    }
+    
+    .app-header {
+        left: 220px;
+    }
+    
+    .search-bar {
+        width: 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 70px;
+    }
+    
+    .sidebar-nav a span,
+    .token-info {
+        display: none;
+    }
+    
+    .app-content {
+        margin-left: 70px;
+    }
+    
+    .app-header {
+        left: 70px;
+    }
+    
+    .search-bar {
+        width: 200px;
+    }
+    
+    .footer-links {
+        display: none;
+    }
+}
