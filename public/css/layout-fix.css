@@ -1,0 +1,128 @@
+/* Correctifs pour la sidebar et le footer */
+.sidebar {
+    width: 260px;
+    background-color: var(--color-black);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    z-index: 50;
+    overflow-y: auto;
+}
+
+.sidebar-nav {
+    padding: 20px 0;
+    flex: 1 0 auto;
+    overflow-y: auto;
+}
+
+.sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: auto; /* Pousse le footer vers le bas */
+    background-color: var(--color-black);
+    width: 100%;
+    flex-shrink: 0; /* Empêche le footer de rétrécir */
+}
+
+.footer-links {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
+
+.footer-section {
+    margin-bottom: 15px;
+    width: 100%; /* Assure que les sections prennent toute la largeur */
+}
+
+/* Correctifs pour le header */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    background-color: var(--color-dark);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    height: var(--header-height);
+    position: fixed;
+    top: 0;
+    left: var(--sidebar-width);
+    right: 0;
+    z-index: 40;
+    box-sizing: border-box;
+}
+
+.search-bar {
+    position: relative;
+    width: 40%; /* Ajusté pour être proportionnel */
+    max-width: 400px;
+    min-width: 200px;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 12px 12px 12px 40px;
+    background-color: var(--color-dark-lighter);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    color: var(--color-white);
+    font-size: 14px;
+}
+
+.search-bar input::placeholder {
+    color: var(--color-gray-light);
+    opacity: 1; /* Assure que le placeholder est visible */
+}
+
+.wallet-info {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0; /* Empêche de rétrécir */
+    margin-left: 15px; /* Espace à gauche */
+    white-space: nowrap; /* Évite les sauts de ligne */
+}
+
+/* Responsivité améliorée */
+@media (max-width: 1024px) {
+    .search-bar {
+        width: 35%;
+    }
+}
+
+@media (max-width: 768px) {
+    .search-bar {
+        width: 50%;
+        min-width: 150px;
+    }
+    
+    .network-name {
+        max-width: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+@media (max-width: 576px) {
+    .app-header {
+        flex-wrap: wrap;
+        height: auto;
+        padding: 10px;
+    }
+    
+    .search-bar {
+        width: 100%;
+        order: 2;
+        margin-top: 10px;
+    }
+    
+    .wallet-info {
+        width: 100%;
+        order: 1;
+        justify-content: flex-end;
+        margin-left: 0;
+    }
+}
