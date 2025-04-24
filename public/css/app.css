@@ -16,6 +16,12 @@
     --color-rare: #2ecc71;
     --color-epic: #3498db;
     --color-legendary: #9b59b6;
+    
+    /* Nouvelles couleurs */
+    --color-orange: #e67e22;
+    --color-green: #2ecc71;
+    --color-blue: #3498db;
+    --color-purple: #9b59b6;
 }
 
 /* Layout principal */
@@ -37,6 +43,7 @@
     height: 100vh;
     z-index: 100;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+    overflow-x: hidden; /* Empêche le défilement horizontal */
 }
 
 .sidebar .logo {
@@ -49,16 +56,19 @@
     flex: 1;
     padding: 20px 0;
     overflow-y: auto;
+    overflow-x: hidden; /* Empêche le défilement horizontal */
 }
 
 .sidebar-nav ul {
     list-style: none;
     padding: 0;
     margin: 0;
+    width: 100%;
 }
 
 .sidebar-nav li {
     margin-bottom: 5px;
+    width: 100%;
 }
 
 .sidebar-nav a {
@@ -68,6 +78,9 @@
     color: var(--color-gray-light);
     transition: all 0.3s ease;
     border-left: 3px solid transparent;
+    width: 100%;
+    box-sizing: border-box;
+    white-space: nowrap;
 }
 
 .sidebar-nav a:hover {
@@ -91,6 +104,7 @@
 .sidebar-footer {
     padding: 20px;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
+    overflow: hidden;
 }
 
 .token-balance {
@@ -112,22 +126,28 @@
     margin-right: 12px;
     color: var(--color-black);
     font-size: 18px;
+    flex-shrink: 0;
 }
 
 .token-info {
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .token-amount {
     font-weight: 600;
     color: var(--color-white);
     margin-bottom: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .token-action {
     font-size: 12px;
     color: var(--color-yellow);
+    white-space: nowrap;
 }
 
 .token-action:hover {
@@ -151,6 +171,7 @@
     margin-bottom: 30px;
     padding-bottom: 20px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    height: auto; /* Hauteur adaptative */
 }
 
 .search-bar {
@@ -209,6 +230,78 @@
 .network-name {
     font-size: 14px;
     color: var(--color-gray-light);
+}
+
+/* Menu utilisateur */
+.user-menu {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 25px;
+    background-color: var(--color-dark-lighter);
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.user-menu:hover {
+    background-color: var(--color-gray);
+}
+
+.user-avatar {
+    margin-right: 10px;
+    font-size: 20px;
+    color: var(--color-yellow);
+}
+
+.username {
+    margin-right: 10px;
+    font-weight: 500;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 110%;
+    right: 0;
+    width: 200px;
+    background-color: var(--color-dark-lighter);
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    z-index: 100;
+}
+
+.dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    color: var(--color-white);
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dropdown-item i {
+    margin-right: 10px;
+    width: 16px;
+    text-align: center;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin: 5px 0;
 }
 
 .btn-wallet {
@@ -569,6 +662,26 @@
     display: flex;
     gap: 10px;
     margin-top: 30px;
+}
+
+/* Ajout du menu pour la sidebar */
+.sidebar-nav ul.main-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.sidebar-nav ul.main-menu > li.nav-section {
+    margin-bottom: 20px;
+}
+
+.sidebar-nav ul.main-menu > li.nav-section > .section-title {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--color-gray-light);
+    padding: 10px 20px;
+    margin-bottom: 5px;
+    letter-spacing: 1px;
 }
 
 /* Utils */
