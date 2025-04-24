@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Ethers.js pour Web3 -->
-    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js" type="application/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
     <div class="app-container">
@@ -22,42 +22,63 @@
             </div>
             
             <nav class="sidebar-nav">
-                <ul>
-                    <li class="active">
-                        <a href="#" data-section="collection">
-                            <i class="fas fa-layer-group"></i>
-                            <span>Ma Collection</span>
-                        </a>
+                <ul class="main-menu">
+                    <li class="nav-section">
+                        <div class="section-title">Principal</div>
+                        <ul>
+                            <li class="active">
+                                <a href="#" data-section="collection">
+                                    <i class="fas fa-layer-group"></i>
+                                    <span>Ma Collection</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" data-section="shop">
+                                    <i class="fas fa-store"></i>
+                                    <span>Shop</span>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
-                    <li>
-                        <a href="#" data-section="shop">
-                            <i class="fas fa-store"></i>
-                            <span>Boutique</span>
-                        </a>
+                    <li class="nav-section">
+                        <div class="section-title">Jeu</div>
+                        <ul>
+                            <li>
+                                <a href="#" data-section="solo">
+                                    <i class="fas fa-user"></i>
+                                    <span>Solo</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" data-section="battles">
+                                    <i class="fas fa-gamepad"></i>
+                                    <span>Batailles</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" data-section="tournaments">
+                                    <i class="fas fa-trophy"></i>
+                                    <span>Tournois</span>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
-                    <li>
-                        <a href="#" data-section="fusion">
-                            <i class="fas fa-sync-alt"></i>
-                            <span>Fusion</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" data-section="play">
-                            <i class="fas fa-gamepad"></i>
-                            <span>Jouer</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" data-section="tournaments">
-                            <i class="fas fa-trophy"></i>
-                            <span>Tournois</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" data-section="marketplace">
-                            <i class="fas fa-chart-line"></i>
-                            <span>Marché</span>
-                        </a>
+                    <li class="nav-section">
+                        <div class="section-title">Marché</div>
+                        <ul>
+                            <li>
+                                <a href="#" data-section="marketplace">
+                                    <i class="fas fa-chart-line"></i>
+                                    <span>Marché</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" data-section="fusion">
+                                    <i class="fas fa-sync-alt"></i>
+                                    <span>Fusion</span>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </nav>
@@ -204,8 +225,13 @@
                 <p>Cette fonctionnalité sera disponible prochainement.</p>
             </section>
             
-            <section class="wallet-connected hidden" id="section-play">
-                <h1>Jouer</h1>
+            <section class="wallet-connected hidden" id="section-solo">
+                <h1>Mode Solo</h1>
+                <p>Cette fonctionnalité sera disponible prochainement.</p>
+            </section>
+            
+            <section class="wallet-connected hidden" id="section-battles">
+                <h1>Batailles</h1>
                 <p>Cette fonctionnalité sera disponible prochainement.</p>
             </section>
             
@@ -404,7 +430,7 @@
             
             // Navigation dans la sidebar
             const navLinks = document.querySelectorAll('.sidebar-nav a');
-            const sections = document.querySelectorAll('main section');
+            const sections = document.querySelectorAll('main section.wallet-connected');
             
             navLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
@@ -412,13 +438,19 @@
                     
                     const sectionId = this.getAttribute('data-section');
                     
-                    // Mettre à jour les classes actives
-                    navLinks.forEach(link => link.parentElement.classList.remove('active'));
+                    // Mettre à jour les classes actives pour tous les liens
+                    navLinks.forEach(lnk => lnk.parentElement.classList.remove('active'));
                     this.parentElement.classList.add('active');
                     
                     // Masquer toutes les sections et afficher celle sélectionnée
                     sections.forEach(section => section.classList.add('hidden'));
-                    document.getElementById('section-' + sectionId).classList.remove('hidden');
+                    
+                    const targetSection = document.getElementById('section-' + sectionId);
+                    if (targetSection) {
+                        targetSection.classList.remove('hidden');
+                    } else {
+                        console.warn('Section non trouvée:', 'section-' + sectionId);
+                    }
                 });
             });
             
