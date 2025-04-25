@@ -1,0 +1,56 @@
+<!-- État connecté - Collection de cartes -->
+<section class="wallet-connected hidden" id="section-collection">
+    <div class="collection-header">
+        <h1>Ma Collection</h1>
+        <div class="collection-stats">
+            <div class="stat">
+                <span class="stat-value">0</span>
+                <span class="stat-label">Cartes</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value">0</span>
+                <span class="stat-label">Sets complets</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value">0</span>
+                <span class="stat-label">Cartes Légendaires</span>
+            </div>
+        </div>
+        <div class="collection-actions">
+            <button class="btn btn-secondary" id="filter-cards">
+                <i class="fas fa-filter"></i>
+                Filtrer
+            </button>
+            <button class="btn btn-secondary" id="sort-cards">
+                <i class="fas fa-sort"></i>
+                Trier
+            </button>
+        </div>
+    </div>
+    
+    <!-- Si l'utilisateur n'a pas de cartes -->
+    <div class="no-cards-prompt">
+        <div class="empty-state">
+            <div class="empty-img">
+                <i class="fas fa-box-open fa-5x" style="color: #888;"></i>
+            </div>
+            <h3>Votre collection est vide</h3>
+            <p>Vous n'avez pas encore de cartes dans votre collection. Commencez par acheter des packs ou des cartes individuelles.</p>
+            <div class="empty-actions">
+                <button class="btn btn-primary" id="buy-pack">
+                    <i class="fas fa-shopping-cart"></i>
+                    Acheter un Pack
+                </button>
+                <button class="btn btn-secondary" id="visit-marketplace">
+                    <i class="fas fa-store"></i>
+                    Visiter le Marché
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Si l'utilisateur a des cartes -->
+    <div class="cards-grid hidden">
+        <!-- Cette section sera remplie dynamiquement avec les cartes de l'utilisateur -->
+    </div>
+</section>
