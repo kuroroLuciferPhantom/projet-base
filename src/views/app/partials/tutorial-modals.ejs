@@ -1,0 +1,106 @@
+<!-- Modales de tutoriel pour les nouveaux utilisateurs -->
+<div class="modal tutorial-modal" id="tutorial-welcome">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Bienvenue sur CryptoCards !</h3>
+        </div>
+        <div class="modal-body">
+            <div class="tutorial-illustration">
+                <img src="/img/welcome.svg" alt="Bienvenue" class="tutorial-image">
+            </div>
+            <p>Félicitations pour la création de votre compte ! Plongez dans l'univers fascinant de CryptoCards, où chaque carte est un NFT unique que vous possédez véritablement.</p>
+            <p>Nous allons vous guider à travers les premières étapes pour commencer votre aventure.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary tutorial-next" data-next="tutorial-collection">Commencer</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal tutorial-modal" id="tutorial-collection">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Votre Collection</h3>
+        </div>
+        <div class="modal-body">
+            <div class="tutorial-illustration">
+                <img src="/img/collection.svg" alt="Collection" class="tutorial-image">
+            </div>
+            <p>C'est ici que vous pourrez voir toutes vos cartes. Chaque carte est unique et possède des statistiques différentes.</p>
+            <p>Vous pouvez filtrer et trier votre collection pour trouver facilement les cartes que vous recherchez.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary tutorial-prev" data-prev="tutorial-welcome">Précédent</button>
+            <button class="btn btn-primary tutorial-next" data-next="tutorial-boosters">Suivant</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal tutorial-modal" id="tutorial-boosters">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Les Boosters</h3>
+        </div>
+        <div class="modal-body">
+            <div class="tutorial-illustration">
+                <img src="/img/booster.svg" alt="Boosters" class="tutorial-image">
+            </div>
+            <p>Les boosters contiennent des cartes aléatoires que vous pouvez ajouter à votre collection.</p>
+            <p>Il existe différents types de boosters, chacun avec des probabilités différentes d'obtenir des cartes rares :</p>
+            <ul>
+                <li><strong>Booster Commun</strong> : Principalement des cartes communes</li>
+                <li><strong>Booster Rare</strong> : Plus de chances d'obtenir des cartes rares</li>
+                <li><strong>Booster Épique</strong> : Contient souvent des cartes épiques</li>
+                <li><strong>Booster Légendaire</strong> : Meilleure chance d'obtenir des cartes légendaires</li>
+            </ul>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary tutorial-prev" data-prev="tutorial-collection">Précédent</button>
+            <button class="btn btn-primary tutorial-next" data-next="tutorial-gameplay">Suivant</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal tutorial-modal" id="tutorial-gameplay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Le Gameplay</h3>
+        </div>
+        <div class="modal-body">
+            <div class="tutorial-illustration">
+                <img src="/img/gameplay.svg" alt="Gameplay" class="tutorial-image">
+            </div>
+            <p>Avec vos cartes, vous pourrez :</p>
+            <ul>
+                <li><strong>Jouer</strong> contre d'autres joueurs dans des batailles stratégiques</li>
+                <li><strong>Fusionner</strong> des cartes pour en créer de plus puissantes</li>
+                <li><strong>Échanger</strong> sur le marché pour compléter votre collection</li>
+                <li><strong>Participer</strong> à des tournois pour gagner des récompenses</li>
+            </ul>
+            <p>Plus vous jouez, plus vos cartes gagneront de l'expérience et monteront en niveau !</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary tutorial-prev" data-prev="tutorial-boosters">Précédent</button>
+            <button class="btn btn-primary tutorial-next" data-next="tutorial-reward">Suivant</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal tutorial-modal" id="tutorial-reward">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Votre Premier Booster</h3>
+        </div>
+        <div class="modal-body">
+            <div class="tutorial-illustration">
+                <img src="/img/gift.svg" alt="Récompense" class="tutorial-image">
+            </div>
+            <p>Pour vous aider à démarrer, nous vous offrons un <strong>Booster Commun</strong> gratuit !</p>
+            <p>Cliquez sur le bouton ci-dessous pour le récupérer et commencer à constituer votre collection.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary tutorial-prev" data-prev="tutorial-gameplay">Précédent</button>
+            <button class="btn btn-primary" id="claim-first-booster">Récupérer mon booster</button>
+        </div>
+    </div>
+</div>
