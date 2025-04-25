@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/app.css">
+    <link rel="stylesheet" href="/css/tutorial.css">
+    <link rel="stylesheet" href="/css/layout-fix.css">
+    <link rel="stylesheet" href="/css/card-modal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Ethers.js pour Web3 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+    <div class="app-container">
+        <%- include('./partials/sidebar') %>
+        
+        <main class="app-content">
+            <%- include('./partials/not-connected') %>
+            <%- include('./partials/collection') %>
+            <%- include('./partials/other-sections') %>
+        </main>
+    </div>
+    
+    <%- include('./partials/tutorial-modals') %>
+    <%- include('./partials/booster-modal') %>
+    <%- include('./partials/card-detail-modal') %>
+    
+    <!-- Scripts -->
+    <script src="/js/app/auth.js"></script>
+    <script src="/js/app/cards.js"></script>
+    <script src="/js/app/navigation.js"></script>
+    <script src="/js/app/tutorial.js"></script>
+    <script src="/js/app/boosters.js"></script>
+    <script src="/js/app/card-details.js"></script>
+    <script src="/js/app/main.js"></script>
+</body>
+</html>
