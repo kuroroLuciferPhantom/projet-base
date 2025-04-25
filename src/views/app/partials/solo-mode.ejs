@@ -1,0 +1,244 @@
+<!-- Mode Solo - Exploration des Arcanes -->
+<div class="solo-mode-container">
+    <!-- État initial - Sélection des cartes et lancement du jeu -->
+    <div class="solo-intro" id="solo-intro">
+        <div class="solo-header">
+            <h2>Exploration des Arcanes</h2>
+            <p class="solo-description">Partez à l'aventure avec vos cartes, découvrez des trésors et affrontez des ennemis. Jusqu'où oserez-vous aller?</p>
+        </div>
+        
+        <div class="solo-game-stats">
+            <div class="stat">
+                <i class="fas fa-calendar-day"></i>
+                <span>Parties restantes aujourd'hui: <span id="games-remaining">3</span>/3</span>
+            </div>
+            <div class="stat">
+                <i class="fas fa-trophy"></i>
+                <span>Meilleur score: <span id="best-score">0</span></span>
+            </div>
+            <div class="stat token-cost">
+                <i class="fas fa-coins"></i>
+                <span>Coût: <span id="game-cost">10</span> $CCARD</span>
+            </div>
+        </div>
+        
+        <div class="card-selection">
+            <h3>Sélectionnez 3 cartes pour votre expédition</h3>
+            <p class="selection-note">Chaque carte ne peut participer qu'à une partie par jour</p>
+            
+            <div class="selected-cards-container">
+                <div class="card-slot empty" id="card-slot-1">
+                    <div class="slot-placeholder">
+                        <i class="fas fa-plus"></i>
+                        <span>Sélectionner</span>
+                    </div>
+                </div>
+                <div class="card-slot empty" id="card-slot-2">
+                    <div class="slot-placeholder">
+                        <i class="fas fa-plus"></i>
+                        <span>Sélectionner</span>
+                    </div>
+                </div>
+                <div class="card-slot empty" id="card-slot-3">
+                    <div class="slot-placeholder">
+                        <i class="fas fa-plus"></i>
+                        <span>Sélectionner</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="available-cards">
+                <h4>Vos cartes disponibles</h4>
+                <div class="cards-grid small-cards" id="solo-available-cards">
+                    <!-- Les cartes disponibles seront chargées ici dynamiquement -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="solo-actions">
+            <button class="btn btn-primary btn-large" id="start-expedition" disabled>
+                <i class="fas fa-hiking"></i>
+                Lancer l'expédition
+            </button>
+        </div>
+    </div>
+    
+    <!-- Jeu en cours -->
+    <div class="solo-gameplay hidden" id="solo-gameplay">
+        <div class="solo-game-header">
+            <div class="solo-game-info">
+                <h2>Exploration en cours</h2>
+                <div class="game-progress">
+                    <span>Niveau: <span id="current-level">1</span></span>
+                </div>
+            </div>
+            
+            <div class="player-stats">
+                <div class="stat-item lives">
+                    <i class="fas fa-heart"></i>
+                    <span id="player-lives">10</span>/10
+                </div>
+                <div class="stat-item keys">
+                    <i class="fas fa-key"></i>
+                    <span id="player-keys">0</span>
+                </div>
+                <div class="stat-item chests">
+                    <i class="fas fa-treasure-chest"></i>
+                    <div class="chest-counts">
+                        <span class="common" id="common-chests">0</span>
+                        <span class="rare" id="rare-chests">0</span>
+                        <span class="epic" id="epic-chests">0</span>
+                    </div>
+                </div>
+                <div class="stat-item tokens">
+                    <i class="fas fa-coins"></i>
+                    <span id="earned-tokens">0</span> $CCARD
+                </div>
+            </div>
+        </div>
+        
+        <div class="expedition-team">
+            <h3>Votre équipe</h3>
+            <div class="team-cards" id="team-cards-container">
+                <!-- Les cartes de l'équipe seront affichées ici -->
+            </div>
+        </div>
+        
+        <div class="game-area">
+            <div class="event-container" id="event-container">
+                <div class="event-placeholder" id="event-placeholder">
+                    <i class="fas fa-dice"></i>
+                    <p>Prêt à découvrir ce qui vous attend?</p>
+                    <button class="btn btn-primary" id="reveal-event">Révéler</button>
+                </div>
+                
+                <!-- Conteneur pour les événements -->
+                <div class="event-display hidden" id="event-display">
+                    <!-- Le contenu de l'événement sera inséré ici dynamiquement -->
+                </div>
+            </div>
+            
+            <div class="game-actions hidden" id="game-actions">
+                <button class="btn btn-danger" id="btn-stop">
+                    <i class="fas fa-door-open"></i>
+                    Arrêter et récupérer les gains
+                </button>
+                <button class="btn btn-success" id="btn-continue">
+                    <i class="fas fa-forward"></i>
+                    Continuer l'aventure
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Écran de fin de partie -->
+    <div class="solo-results hidden" id="solo-results">
+        <div class="results-header">
+            <h2>Expédition terminée!</h2>
+            <div class="result-type" id="result-type">
+                <!-- Sera rempli dynamiquement: Victoire, Défaite, Retraite stratégique -->
+            </div>
+        </div>
+        
+        <div class="expedition-summary">
+            <div class="summary-stat">
+                <i class="fas fa-mountain"></i>
+                <div class="stat-info">
+                    <span class="stat-label">Niveaux explorés</span>
+                    <span class="stat-value" id="summary-levels">0</span>
+                </div>
+            </div>
+            <div class="summary-stat">
+                <i class="fas fa-treasure-chest"></i>
+                <div class="stat-info">
+                    <span class="stat-label">Coffres trouvés</span>
+                    <span class="stat-value" id="summary-chests">0</span>
+                </div>
+            </div>
+            <div class="summary-stat">
+                <i class="fas fa-skull"></i>
+                <div class="stat-info">
+                    <span class="stat-label">Ennemis vaincus</span>
+                    <span class="stat-value" id="summary-enemies">0</span>
+                </div>
+            </div>
+            <div class="summary-stat">
+                <i class="fas fa-coins"></i>
+                <div class="stat-info">
+                    <span class="stat-label">Tokens gagnés</span>
+                    <span class="stat-value" id="summary-tokens">0</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="rewards-section">
+            <h3>Récompenses obtenues</h3>
+            <div class="rewards-container" id="rewards-container">
+                <!-- Les récompenses seront affichées ici -->
+            </div>
+        </div>
+        
+        <div class="result-actions">
+            <button class="btn btn-secondary" id="return-to-solo">
+                <i class="fas fa-home"></i>
+                Retour à l'accueil du mode solo
+            </button>
+            <button class="btn btn-primary" id="open-chests-btn">
+                <i class="fas fa-box-open"></i>
+                Ouvrir mes coffres (<span id="keys-available">0</span> clés)
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modales pour le mode solo -->
+<div class="modal" id="chest-opening-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Ouverture de coffres</h3>
+            <span class="modal-close" id="close-chest-modal">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="chest-selection">
+                <h4>Vos coffres</h4>
+                <div class="chest-items" id="available-chests">
+                    <!-- Les coffres disponibles seront affichés ici -->
+                </div>
+            </div>
+            
+            <div class="chest-opening-area hidden" id="chest-opening-area">
+                <div class="chest-animation">
+                    <img src="/img/chest-closed.png" alt="Coffre" id="chest-animation-img">
+                </div>
+                <button class="btn btn-primary" id="open-selected-chest">Ouvrir le coffre</button>
+            </div>
+            
+            <div class="chest-rewards hidden" id="chest-rewards">
+                <h4>Contenu du coffre:</h4>
+                <div class="reward-items" id="chest-reward-items">
+                    <!-- Les récompenses du coffre seront affichées ici -->
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" id="chest-modal-close">Fermer</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="card-selection-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Sélectionnez une carte</h3>
+            <span class="modal-close" id="close-card-selection-modal">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="cards-grid medium-cards" id="selectable-cards">
+                <!-- Les cartes sélectionnables seront affichées ici -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" id="cancel-card-selection">Annuler</button>
+        </div>
+    </div>
+</div>
