@@ -16,12 +16,6 @@
 <body>
     <div class="app-container">
         <aside class="sidebar">
-            <div class="logo">
-                <a href="/">
-                    <span class="logo-text">CRYPTO<span class="logo-text-highlight">CARDS</span></span>
-                </a>
-            </div>
-            
             <nav class="sidebar-nav">
                 <ul class="main-menu">
                     <li class="active">
@@ -34,6 +28,12 @@
                         <a href="#" data-section="shop">
                             <i class="fas fa-store"></i>
                             <span>Shop</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-section="marketplace">
+                            <i class="fas fa-store"></i>
+                            <span>Marketplace</span>
                         </a>
                     </li>
                     <li>
@@ -190,6 +190,11 @@
             <!-- Autres sections (à développer) -->
             <section class="wallet-connected hidden" id="section-shop">
                 <h1>Boutique</h1>
+                <p>Cette fonctionnalité sera disponible prochainement.</p>
+            </section>
+
+            <section class="wallet-connected hidden" id="section-marketplace">
+                <h1>Marketplace</h1>
                 <p>Cette fonctionnalité sera disponible prochainement.</p>
             </section>
             
@@ -353,6 +358,83 @@
             </div>
         </div>
     </div>
+
+    <div class="modal card-modal" id="card-detail-modal">
+        <div class="modal-content card-detail-content">
+            <div class="modal-close" id="close-card-detail">
+                <i class="fas fa-times"></i>
+            </div>
+            <div class="card-detail-container">
+                <div class="card-detail-left">
+                    <div class="card-detail-image">
+                        <!-- L'image de la carte sera insérée ici -->
+                    </div>
+                    <div class="card-metadata">
+                        <div class="metadata-item">
+                            <span class="metadata-label">ID Token:</span>
+                            <span class="metadata-value" id="card-token-id">--</span>
+                        </div>
+                        <div class="metadata-item">
+                            <span class="metadata-label">Contrat:</span>
+                            <span class="metadata-value" id="card-contract">--</span>
+                        </div>
+                        <div class="metadata-item">
+                            <span class="metadata-label">Date d'obtention:</span>
+                            <span class="metadata-value" id="card-obtained-date">--</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-detail-right">
+                    <h2 id="card-detail-name">Nom de la Carte</h2>
+                    <div class="card-detail-rarity" id="card-detail-rarity">Rareté</div>
+                    
+                    <div class="card-stats-detailed">
+                        <h3>Statistiques</h3>
+                        <div class="stat-bar">
+                            <span class="stat-label">ATK</span>
+                            <div class="stat-progress">
+                                <div class="stat-fill" id="card-atk-bar"></div>
+                            </div>
+                            <span class="stat-value" id="card-atk-value">--</span>
+                        </div>
+                        <div class="stat-bar">
+                            <span class="stat-label">DEF</span>
+                            <div class="stat-progress">
+                                <div class="stat-fill" id="card-def-bar"></div>
+                            </div>
+                            <span class="stat-value" id="card-def-value">--</span>
+                        </div>
+                        <div class="stat-bar">
+                            <span class="stat-label">XP</span>
+                            <div class="stat-progress">
+                                <div class="stat-fill" id="card-xp-bar"></div>
+                            </div>
+                            <span class="stat-value" id="card-xp-value">--/100</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card-description" id="card-description">
+                        Description de la carte qui explique ses pouvoirs et son histoire.
+                    </div>
+                    
+                    <div class="card-actions">
+                        <button class="btn btn-primary" id="action-sell">
+                            <i class="fas fa-coins"></i> Vendre
+                        </button>
+                        <button class="btn btn-secondary" id="action-fusion">
+                            <i class="fas fa-sync-alt"></i> Fusionner
+                        </button>
+                        <button class="btn btn-danger" id="action-burn">
+                            <i class="fas fa-fire"></i> Burn
+                        </button>
+                        <button class="btn btn-info" id="action-view-chain">
+                            <i class="fas fa-link"></i> Voir sur la blockchain
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <!-- Scripts -->
     <script>
@@ -381,14 +463,22 @@
             // Fonction pour récupérer les informations de l'utilisateur
             async function fetchUserInfo() {
                 try {
-                    // Simuler la récupération des informations
-                    // Dans une implémentation réelle, il faudrait faire une requête au serveur
                     
-                    // Mettre à jour l'interface
-                    document.querySelector('.username').textContent = 'Joueur';
-                    document.querySelector('.token-amount').textContent = '100 $CCARD';
-                    document.querySelector('.network-name').textContent = 'Arbitrum Goerli';
-                    document.querySelector('.network-status').classList.add('connected');
+                    // Mettre à jour l'interface avec vérification
+                    const usernameElement = document.querySelector('.username');
+                    if (usernameElement) usernameElement.textContent = 'Joueur';
+                    
+                    const tokenAmountElement = document.querySelector('.token-amount');
+                    if (tokenAmountElement) tokenAmountElement.textContent = '100 $CCARD';
+                    
+                    const networkNameElement = document.querySelector('.network-name');
+                    if (networkNameElement) networkNameElement.textContent = 'Arbitrum Goerli';
+                    
+                    const networkStatusElement = document.querySelector('.network-status');
+                    if (networkStatusElement) networkStatusElement.classList.add('connected');
+
+                    // Charger les cartes de l'utilisateur
+                    await loadUserCards();
                     
                     // Si c'est un nouveau utilisateur, afficher le tutoriel
                     if (showTutorial) {
@@ -398,6 +488,191 @@
                     }
                 } catch (error) {
                     console.error('Erreur lors de la récupération des informations:', error);
+                }
+            }
+
+            // Gestion de la modale détaillée des cartes
+            function setupCardDetailModal() {
+                const modal = document.getElementById('card-detail-modal');
+                const closeBtn = document.getElementById('close-card-detail');
+                
+                // Fermer la modale quand on clique sur le bouton de fermeture
+                closeBtn.addEventListener('click', function() {
+                    modal.classList.remove('active');
+                });
+                
+                // Fermer la modale quand on clique en dehors du contenu
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        modal.classList.remove('active');
+                    }
+                });
+                
+                // Empêcher la propagation du clic depuis le contenu
+                const modalContent = modal.querySelector('.modal-content');
+                modalContent.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+                
+                // Actions des boutons
+                document.getElementById('action-sell').addEventListener('click', function() {
+                    alert('Fonctionnalité de vente à venir !');
+                });
+                
+                document.getElementById('action-fusion').addEventListener('click', function() {
+                    alert('Fonctionnalité de fusion à venir !');
+                });
+                
+                document.getElementById('action-burn').addEventListener('click', function() {
+                    if (confirm('Êtes-vous sûr de vouloir détruire cette carte ? Cette action est irréversible.')) {
+                        alert('Carte détruite (simulation). Dans une version réelle, une transaction blockchain serait initiée.');
+                        modal.classList.remove('active');
+                    }
+                });
+                
+                document.getElementById('action-view-chain').addEventListener('click', function() {
+                    const tokenId = document.getElementById('card-token-id').textContent;
+                    const contract = document.getElementById('card-contract').textContent;
+                    if (tokenId !== '--' && contract !== '--') {
+                        // Ouvrir l'explorateur de blockchain dans un nouvel onglet
+                        window.open(`https://goerli.arbiscan.io/token/${contract}?a=${tokenId}`, '_blank');
+                    } else {
+                        alert('Informations blockchain non disponibles pour cette carte.');
+                    }
+                });
+            }
+
+            // Fonction pour afficher les détails d'une carte
+            function showCardDetails(cardData) {
+                const modal = document.getElementById('card-detail-modal');
+                
+                // Mettre à jour le contenu de la modale avec les données de la carte
+                document.getElementById('card-detail-name').textContent = cardData.name;
+                
+                // Mise à jour de la rareté
+                const rarityElement = document.getElementById('card-detail-rarity');
+                rarityElement.textContent = cardData.rarity.charAt(0).toUpperCase() + cardData.rarity.slice(1);
+                rarityElement.className = 'card-detail-rarity ' + cardData.rarity;
+                
+                // Mise à jour de l'image
+                const imageContainer = document.querySelector('.card-detail-image');
+                imageContainer.innerHTML = `<img src="${cardData.image}" alt="${cardData.name}">`;
+                
+                // Mise à jour des statistiques
+                document.getElementById('card-atk-value').textContent = cardData.attack;
+                document.getElementById('card-def-value').textContent = cardData.defense;
+                
+                // Calcul du pourcentage pour les barres de statistiques (sur une base de 100 maximum)
+                const maxStat = 100;
+                const atkPercentage = Math.min((cardData.attack / maxStat) * 100, 100);
+                const defPercentage = Math.min((cardData.defense / maxStat) * 100, 100);
+                
+                // Simulation d'XP (dans une application réelle, cela viendrait des données)
+                const xp = cardData.xp || Math.floor(Math.random() * 100);
+                const xpPercentage = (xp / 100) * 100;
+                
+                document.getElementById('card-atk-bar').style.width = `${atkPercentage}%`;
+                document.getElementById('card-def-bar').style.width = `${defPercentage}%`;
+                document.getElementById('card-xp-bar').style.width = `${xpPercentage}%`;
+                document.getElementById('card-xp-value').textContent = `${xp}/100`;
+                
+                // Mise à jour des métadonnées blockchain (simulées)
+                document.getElementById('card-token-id').textContent = cardData.tokenId || `#${Math.floor(Math.random() * 10000000)}`;
+                document.getElementById('card-contract').textContent = cardData.contract || '0x1234...5678';
+                document.getElementById('card-obtained-date').textContent = cardData.obtainedDate || new Date().toLocaleDateString();
+                
+                // Mise à jour de la description
+                document.getElementById('card-description').textContent = cardData.description || 
+                    `${cardData.name} est une carte ${cardData.rarity} puissante qui offre d'excellentes statistiques d'attaque et de défense. Utilisez-la stratégiquement dans vos batailles pour maximiser vos chances de victoire.`;
+                
+                // Afficher la modale
+                modal.classList.add('active');
+            }
+
+            // Configuration initiale de la modale
+            setupCardDetailModal();
+
+            // NOUVELLE FONCTION : Charger les cartes de l'utilisateur
+            async function loadUserCards() {
+                try {
+                    // Masquer le message "collection vide"
+                    document.querySelector('.no-cards-prompt').classList.add('hidden');
+                    
+                    // Afficher la grille de cartes
+                    const cardsGrid = document.querySelector('.cards-grid');
+                    cardsGrid.classList.remove('hidden');
+                    cardsGrid.innerHTML = '';
+                    
+                    // Définition des cartes avec leurs images correspondantes
+                    const cardsData = [
+                        {
+                            name: 'Guerrier à poils',
+                            rarity: 'common',
+                            image: '/img/cards/3.jpg',
+                            attack: 2,
+                            defense: 3,
+                            energy: 1
+                        },
+                        {
+                            name: 'Bambo',
+                            rarity: 'uncommon',
+                            image: '/img/cards/4.jpg',
+                            attack: 4,
+                            defense: 4,
+                            energy: 2
+                        },
+                        {
+                            name: 'Sursumot',
+                            rarity: 'uncommon',
+                            image: '/img/cards/5.jpg',
+                            attack: 5,
+                            defense: 2,
+                            energy: 2
+                        },
+                        {
+                            name: 'RIG',
+                            rarity: 'epic',
+                            image: '/img/cards/1.jpg',
+                            attack: 6,
+                            defense: 8,
+                            energy: 2
+                        },
+                        {
+                            name: 'Mulk',
+                            rarity: 'legendary',
+                            image: '/img/cards/2.jpg',
+                            attack: 8,
+                            defense: 8,
+                            energy: 3
+                        }
+                    ];
+                    
+                    // Ajouter chaque carte à la grille
+                    cardsData.forEach(cardData => {
+                        const card = document.createElement('div');
+                        card.className = `card-item ${cardData.rarity}`;
+                        
+                        card.innerHTML = `
+                            <div class="card-rarity">${cardData.rarity.charAt(0).toUpperCase() + cardData.rarity.slice(1)}</div>
+                            <div class="card-image">
+                                <img src="${cardData.image}" alt="${cardData.name}" class="card-artwork">
+                            </div>
+                            <div class="card-info">
+                                <h3>${cardData.name}</h3>
+                            </div>
+                        `;
+
+                        card.addEventListener('click', function() {
+                            showCardDetails(cardData);
+                        });
+                        
+                        cardsGrid.appendChild(card);
+                    });
+                    
+                    // Mettre à jour les statistiques
+                    document.querySelector('.collection-stats .stat-value').textContent = cardsData.length.toString();
+                } catch (error) {
+                    console.error('Erreur lors du chargement des cartes:', error);
                 }
             }
             
