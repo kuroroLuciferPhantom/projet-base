@@ -1,0 +1,77 @@
+<!-- Modale de détail de carte -->
+<div class="modal card-modal" id="card-detail-modal">
+    <div class="modal-content card-detail-content">
+        <div class="modal-close" id="close-card-detail">
+            <i class="fas fa-times"></i>
+        </div>
+        <div class="card-detail-container">
+            <div class="card-detail-left">
+                <div class="card-detail-image">
+                    <!-- L'image de la carte sera insérée ici -->
+                </div>
+                <div class="card-metadata">
+                    <div class="metadata-item">
+                        <span class="metadata-label">ID Token:</span>
+                        <span class="metadata-value" id="card-token-id">--</span>
+                    </div>
+                    <div class="metadata-item">
+                        <span class="metadata-label">Contrat:</span>
+                        <span class="metadata-value" id="card-contract">--</span>
+                    </div>
+                    <div class="metadata-item">
+                        <span class="metadata-label">Date d'obtention:</span>
+                        <span class="metadata-value" id="card-obtained-date">--</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-detail-right">
+                <h2 id="card-detail-name">Nom de la Carte</h2>
+                <div class="card-detail-rarity" id="card-detail-rarity">Rareté</div>
+                
+                <div class="card-stats-detailed">
+                    <h3>Statistiques</h3>
+                    <div class="stat-bar">
+                        <span class="stat-label">ATK</span>
+                        <div class="stat-progress">
+                            <div class="stat-fill" id="card-atk-bar"></div>
+                        </div>
+                        <span class="stat-value" id="card-atk-value">--</span>
+                    </div>
+                    <div class="stat-bar">
+                        <span class="stat-label">DEF</span>
+                        <div class="stat-progress">
+                            <div class="stat-fill" id="card-def-bar"></div>
+                        </div>
+                        <span class="stat-value" id="card-def-value">--</span>
+                    </div>
+                    <div class="stat-bar">
+                        <span class="stat-label">XP</span>
+                        <div class="stat-progress">
+                            <div class="stat-fill" id="card-xp-bar"></div>
+                        </div>
+                        <span class="stat-value" id="card-xp-value">--/100</span>
+                    </div>
+                </div>
+                
+                <div class="card-description" id="card-description">
+                    Description de la carte qui explique ses pouvoirs et son histoire.
+                </div>
+                
+                <div class="card-actions">
+                    <button class="btn btn-primary" id="action-sell">
+                        <i class="fas fa-coins"></i> Vendre
+                    </button>
+                    <button class="btn btn-secondary" id="action-fusion">
+                        <i class="fas fa-sync-alt"></i> Fusionner
+                    </button>
+                    <button class="btn btn-danger" id="action-burn">
+                        <i class="fas fa-fire"></i> Burn
+                    </button>
+                    <button class="btn btn-info" id="action-view-chain">
+                        <i class="fas fa-link"></i> Voir sur la blockchain
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
