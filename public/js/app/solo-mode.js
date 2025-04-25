@@ -64,6 +64,7 @@ function initSoloMode() {
     
     // Mettre à jour l'interface
     updateSoloInterfaceState();
+    updateCardSelection();
     
     // Définir les gestionnaires d'événements
     setupEventListeners();

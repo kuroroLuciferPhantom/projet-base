@@ -46,13 +46,6 @@
                     </div>
                 </div>
             </div>
-            
-            <div class="available-cards">
-                <h4>Vos cartes disponibles</h4>
-                <div class="cards-grid small-cards" id="solo-available-cards">
-                    <!-- Les cartes disponibles seront chargées ici dynamiquement -->
-                </div>
-            </div>
         </div>
         
         <div class="solo-actions">
@@ -80,14 +73,14 @@
                 </div>
                 <div class="stat-item keys">
                     <i class="fas fa-key"></i>
-                    <span id="player-keys">0</span>
+                    <span id="player-keys">0</span> clés
                 </div>
                 <div class="stat-item chests">
                     <i class="fas fa-treasure-chest"></i>
                     <div class="chest-counts">
-                        <span class="common" id="common-chests">0</span>
-                        <span class="rare" id="rare-chests">0</span>
-                        <span class="epic" id="epic-chests">0</span>
+                        <span class="common-label">Communs: </span><span class="common" id="common-chests">0</span>
+                        <span class="rare-label">Rares: </span><span class="rare" id="rare-chests">0</span>
+                        <span class="epic-label">Épiques: </span><span class="epic" id="epic-chests">0</span>
                     </div>
                 </div>
                 <div class="stat-item tokens">
@@ -97,36 +90,45 @@
             </div>
         </div>
         
-        <div class="expedition-team">
-            <h3>Votre équipe</h3>
-            <div class="team-cards" id="team-cards-container">
-                <!-- Les cartes de l'équipe seront affichées ici -->
-            </div>
-        </div>
-        
-        <div class="game-area">
-            <div class="event-container" id="event-container">
-                <div class="event-placeholder" id="event-placeholder">
-                    <i class="fas fa-dice"></i>
-                    <p>Prêt à découvrir ce qui vous attend?</p>
-                    <button class="btn btn-primary" id="reveal-event">Révéler</button>
-                </div>
-                
-                <!-- Conteneur pour les événements -->
-                <div class="event-display hidden" id="event-display">
-                    <!-- Le contenu de l'événement sera inséré ici dynamiquement -->
+        <div class="game-container">
+            <div class="expedition-team">
+                <h3>Votre équipe</h3>
+                <div class="team-cards" id="team-cards-container">
+                    <!-- Les cartes de l'équipe seront affichées ici -->
                 </div>
             </div>
             
-            <div class="game-actions hidden" id="game-actions">
-                <button class="btn btn-danger" id="btn-stop">
-                    <i class="fas fa-door-open"></i>
-                    Arrêter et récupérer les gains
-                </button>
-                <button class="btn btn-success" id="btn-continue">
-                    <i class="fas fa-forward"></i>
-                    Continuer l'aventure
-                </button>
+            <div class="event-zone">
+                <div class="event-container" id="event-container">
+                    <div class="event-placeholder" id="event-placeholder">
+                        <i class="fas fa-dice"></i>
+                        <p>Prêt à découvrir ce qui vous attend?</p>
+                        <button class="btn btn-primary btn-large pulse" id="reveal-event">Révéler</button>
+                    </div>
+                    
+                    <!-- Conteneur pour les événements -->
+                    <div class="event-display hidden" id="event-display">
+                        <!-- Le contenu de l'événement sera inséré ici dynamiquement -->
+                    </div>
+                </div>
+                
+                <div class="game-actions hidden" id="game-actions">
+                    <button class="btn btn-danger" id="btn-stop">
+                        <i class="fas fa-door-open"></i>
+                        Fuir et récupérer les gains
+                    </button>
+                    <button class="btn btn-success" id="btn-continue">
+                        <i class="fas fa-forward"></i>
+                        Continuer l'aventure
+                    </button>
+                </div>
+            </div>
+            
+            <div class="events-history">
+                <h3>Historique d'exploration</h3>
+                <div class="history-list" id="events-history-list">
+                    <!-- L'historique des événements sera ajouté ici dynamiquement -->
+                </div>
             </div>
         </div>
     </div>
@@ -230,9 +232,10 @@
     <div class="modal-content">
         <div class="modal-header">
             <h3>Sélectionnez une carte</h3>
-            <span class="modal-close" id="close-card-selection-modal">&times;</span>
+            <span class="modal-close">&times;</span>
         </div>
         <div class="modal-body">
+            <!-- Le header sera inséré ici dynamiquement -->
             <div class="cards-grid medium-cards" id="selectable-cards">
                 <!-- Les cartes sélectionnables seront affichées ici -->
             </div>

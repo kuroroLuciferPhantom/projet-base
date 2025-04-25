@@ -66,13 +66,16 @@ function startGame() {
     
     // Initialiser l'état du jeu
     gameState.inGame = true;
-    gameState.currentLevel = 1;
+    gameState.currentLevel = 1; // S'assurer que le niveau démarre à 1
     gameState.lives = soloConfig.startingLives;
     gameState.keys = 0;
     gameState.chests = { common: 0, rare: 0, epic: 0 };
     gameState.tokensEarned = 0;
     gameState.enemiesDefeated = 0;
     gameState.eventsEncountered = 0;
+    
+    // Mettre à jour explicitement le niveau affiché
+    document.getElementById('current-level').textContent = gameState.currentLevel;
     
     // Mettre à jour l'interface
     updateGameInterface();
@@ -106,8 +109,16 @@ function nextLevel() {
         saveGameState();
     }
     
+    // Réinitialiser l'affichage de l'événement
+    document.getElementById('event-placeholder').classList.remove('hidden');
+    document.getElementById('event-display').classList.add('hidden');
+    document.getElementById('game-actions').classList.add('hidden');
+    
     // Mettre à jour l'interface
-    updateGameInterface();
+    updateGameInterface(false); // Ne pas réinitialiser à nouveau l'affichage
+    
+    // Assurer que le niveau affiché est correct
+    document.getElementById('current-level').textContent = gameState.currentLevel;
 }
 
 // Terminer la partie (arrêter volontairement ou défaite)

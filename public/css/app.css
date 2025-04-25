@@ -593,6 +593,7 @@
     font-weight: 600;
     color: white;
     text-transform: uppercase;
+    z-index: 1;
 }
 
 .card-rarity.common {

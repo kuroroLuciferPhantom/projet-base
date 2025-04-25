@@ -135,6 +135,7 @@ function revealEvent() {
     handleEventOutcome(event);
 }
 
+
 // Générer un événement aléatoire
 function generateRandomEvent() {
     // Déterminer le type d'événement en fonction des probabilités
@@ -254,18 +255,18 @@ function generateEventHTML(event) {
 // Générer le HTML pour un événement de coffre
 function generateChestEventHTML(event) {
     const rarityText = event.rarity === 'common' ? 'Commun' : event.rarity === 'rare' ? 'Rare' : 'Épique';
+    const rarityIconColor = event.rarity === 'common' ? '#bdc3c7' : event.rarity === 'rare' ? '#3498db' : '#9b59b6';
     
     return `
         <div class="event-chest ${event.rarity}">
             <div class="event-icon">
-                <i class="fas fa-treasure-chest"></i>
+                <i class="fas fa-treasure-chest" style="color: ${rarityIconColor};"></i>
             </div>
-            <div class="event-title">Coffre ${rarityText} découvert!</div>
+            <div class="event-title">Vous découvrez un trésor !</div>
+            <div class="event-subtitle">Coffre ${rarityText}</div>
             <div class="event-description">
-                Vous avez trouvé un coffre ${rarityText.toLowerCase()}. Il contient probablement des trésors!
-            </div>
-            <div class="event-note">
-                <p>Vous pouvez l'ouvrir maintenant si vous avez une clé, ou le conserver pour plus tard.</p>
+                <p>Un coffre ancien et mystérieux se trouve devant vous. Sa serrure ouvragée et ses ornements suggèrent qu'il pourrait contenir des objets de valeur.</p>
+                <p>Il est ajouté à votre collection et pourra être ouvert plus tard avec une clé.</p>
             </div>
         </div>
     `;
@@ -277,10 +278,10 @@ function generateEnemyEventHTML(event) {
     
     if (event.result) {
         const resultClass = event.result.victory ? 'victory' : 'defeat';
-        const resultText = event.result.victory ? 'Victoire!' : 'Défaite!';
+        const resultText = event.result.victory ? 'Victoire !' : 'Défaite !';
         const resultDescription = event.result.victory 
-            ? `Vous avez vaincu ${event.enemy.name} et gagné ${event.result.tokensEarned} $CCARD!` 
-            : `${event.enemy.name} vous a vaincu! Vous perdez ${event.result.livesLost} vie(s).`;
+            ? `<p>Vous avez vaincu ${event.enemy.name} après un combat acharné !</p><p>Vous récupérez <span class="highlight">${event.result.tokensEarned} $CCARD</span> sur son cadavre.</p>` 
+            : `<p>${event.enemy.name} était trop puissant pour votre équipe !</p><p>Vous perdez <span class="highlight">${event.result.livesLost} vie(s)</span> dans cette terrible bataille.</p>`;
         
         combatResult = `
             <div class="combat-result ${resultClass}">
@@ -290,22 +291,33 @@ function generateEnemyEventHTML(event) {
         `;
     }
     
+    // Déterminer une phrase d'introduction dramatique selon le type d'ennemi
+    let introPhrase = '';
+    if (event.enemyType === 'weak') {
+        introPhrase = 'Un ennemi surgit de l\'ombre !';
+    } else if (event.enemyType === 'medium') {
+        introPhrase = 'Un adversaire redoutable apparaît !';
+    } else {
+        introPhrase = 'Une créature terrifiante vous attaque !';
+    }
+    
     return `
         <div class="event-enemy">
             <div class="event-icon">
                 <i class="fas fa-skull"></i>
             </div>
-            <div class="event-title">Ennemi: ${event.enemy.name}</div>
+            <div class="event-title">${introPhrase}</div>
+            <div class="event-subtitle">${event.enemy.name}</div>
             <div class="event-description">
                 ${event.enemy.description}
             </div>
             <div class="enemy-stats">
                 <div class="stat">
-                    <span class="stat-label">ATK</span>
+                    <span class="stat-label">ATTAQUE</span>
                     <span class="stat-value">${event.enemy.attack}</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-label">DEF</span>
+                    <span class="stat-label">DÉFENSE</span>
                     <span class="stat-value">${event.enemy.defense}</span>
                 </div>
             </div>
@@ -322,16 +334,17 @@ function generateTrapEventHTML(event) {
         if (event.result.avoided) {
             trapResult = `
                 <div class="trap-result avoided">
-                    <div class="result-title">Piège évité!</div>
+                    <div class="result-title">Piège évité !</div>
                     <div class="result-description">${event.trap.avoidText}</div>
                 </div>
             `;
         } else {
             trapResult = `
                 <div class="trap-result triggered">
-                    <div class="result-title">Piège déclenché!</div>
+                    <div class="result-title">Piège déclenché !</div>
                     <div class="result-description">
-                        Vous n'avez pas pu éviter le piège. Vous perdez ${event.result.livesLost} vie(s).
+                        <p>Vous n'avez pas pu éviter le piège.</p>
+                        <p>Vous perdez <span class="highlight">${event.result.livesLost} vie(s)</span>.</p>
                     </div>
                 </div>
             `;
@@ -343,7 +356,8 @@ function generateTrapEventHTML(event) {
             <div class="event-icon">
                 <i class="fas fa-exclamation-triangle"></i>
             </div>
-            <div class="event-title">Piège: ${event.trap.name}</div>
+            <div class="event-title">Attention, un piège !</div>
+            <div class="event-subtitle">${event.trap.name}</div>
             <div class="event-description">
                 ${event.trap.description}
             </div>
@@ -393,7 +407,65 @@ function generateChoiceEventHTML(event) {
     `;
 }
 
-// Gérer les conséquences d'un événement
+function addToHistory(event) {
+    const historyList = document.getElementById('events-history-list');
+    const historyItem = document.createElement('div');
+    
+    // Déterminer le type d'événement pour le style
+    let eventType = event.type;
+    let eventTitle = '';
+    
+    switch (event.type) {
+        case 'chest':
+            eventTitle = `Coffre ${event.rarity === 'common' ? 'Commun' : event.rarity === 'rare' ? 'Rare' : 'Épique'}`;
+            break;
+        case 'enemy':
+            eventTitle = `Ennemi: ${event.enemy.name}`;
+            break;
+        case 'trap':
+            eventTitle = `Piège: ${event.trap.name}`;
+            break;
+        case 'choice':
+            eventTitle = event.choice.title;
+            break;
+    }
+    
+    historyItem.className = `history-item ${eventType}`;
+    historyItem.innerHTML = `
+        <span class="history-level">Niveau ${gameState.currentLevel}</span>
+        <span class="history-type">${eventTitle}</span>
+        ${event.result ? `<span class="history-result">${getEventResultText(event)}</span>` : ''}
+    `;
+    
+    // Ajouter au début de la liste
+    if (historyList.firstChild) {
+        historyList.insertBefore(historyItem, historyList.firstChild);
+    } else {
+        historyList.appendChild(historyItem);
+    }
+}
+
+// Obtenir un texte court pour le résultat d'un événement
+function getEventResultText(event) {
+    switch (event.type) {
+        case 'chest':
+            return `Coffre ajouté à la collection.`;
+        case 'enemy':
+            return event.result.victory ? 
+                `Victoire! +${event.result.tokensEarned} tokens` : 
+                `Défaite! -${event.result.livesLost} vies`;
+        case 'trap':
+            return event.result.avoided ? 
+                `Piège évité!` : 
+                `Piège déclenché! -${event.result.livesLost} vies`;
+        case 'choice':
+            return `Choix effectué.`;
+        default:
+            return '';
+    }
+}
+
+// Modifier handleEventOutcome pour ajouter à l'historique
 function handleEventOutcome(event) {
     switch (event.type) {
         case 'chest':
@@ -410,8 +482,11 @@ function handleEventOutcome(event) {
             break;
     }
     
-    // Mettre à jour l'interface
-    updateGameInterface();
+    // Ajouter à l'historique
+    addToHistory(event);
+    
+    // Mettre à jour l'interface sans fermer l'événement
+    updateGameInterface(false); // Passer false pour ne pas réinitialiser l'affichage d'événement
 }
 
 // Gérer un événement de coffre
