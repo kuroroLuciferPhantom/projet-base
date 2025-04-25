@@ -1,0 +1,265 @@
+/* Styles pour la modale de détail de carte */
+.card-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.card-modal.active {
+    display: flex;
+}
+
+.card-modal .modal-content {
+    background-color: var(--color-dark);
+    border-radius: 12px;
+    max-width: 900px;
+    width: 100%;
+    position: relative;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+
+.card-modal .modal-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 30px;
+    height: 30px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    cursor: pointer;
+    z-index: 10;
+    transition: background-color 0.2s;
+}
+
+.card-modal .modal-close:hover {
+    background-color: var(--color-red);
+}
+
+.card-modal .card-detail-content {
+    max-width: 1000px;
+    min-height: 600px;
+    padding: 0;
+}
+
+.card-modal .card-detail-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+.card-modal .card-detail-left {
+    width: 50%;
+    background-color: var(--color-black);
+    display: flex;
+    flex-direction: column;
+}
+
+.card-modal .card-detail-image {
+    flex: 1;
+    padding: 20px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.card-modal .card-detail-image img {
+    max-width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.card-modal .card-metadata {
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.card-modal .metadata-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card-modal .metadata-item:last-child {
+    border-bottom: none;
+}
+
+.card-modal .metadata-label {
+    color: var(--color-gray-light);
+    font-size: 14px;
+}
+
+.card-modal .metadata-value {
+    font-family: monospace;
+    font-size: 14px;
+    color: var(--color-white);
+    word-break: break-all;
+}
+
+.card-modal .card-detail-right {
+    width: 50%;
+    padding: 30px;
+    overflow-y: auto;
+}
+
+.card-modal .card-detail-right h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: var(--color-white);
+}
+
+.card-modal .card-detail-rarity {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.card-modal .card-detail-rarity.common {
+    background-color: var(--color-common);
+    color: var(--color-black);
+}
+
+.card-modal .card-detail-rarity.rare {
+    background-color: var(--color-rare);
+    color: var(--color-black);
+}
+
+.card-modal .card-detail-rarity.epic {
+    background-color: var(--color-epic);
+    color: var(--color-white);
+}
+
+.card-modal .card-detail-rarity.legendary {
+    background-color: var(--color-legendary);
+    color: var(--color-white);
+}
+
+.card-modal .card-stats-detailed {
+    margin-bottom: 25px;
+}
+
+.card-modal .card-stats-detailed h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: var(--color-white);
+}
+
+.card-modal .stat-bar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.card-modal .stat-label {
+    width: 40px;
+    color: var(--color-gray-light);
+}
+
+.card-modal .stat-progress {
+    flex: 1;
+    height: 8px;
+    background-color: var(--color-dark-lighter);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 0 15px;
+}
+
+.card-modal .stat-fill {
+    height: 100%;
+    border-radius: 4px;
+}
+
+.card-modal .stat-fill[id="card-atk-bar"] {
+    background: linear-gradient(to right, var(--color-red), var(--color-red-light));
+}
+
+.card-modal .stat-fill[id="card-def-bar"] {
+    background: linear-gradient(to right, var(--color-blue), #5dade2);
+}
+
+.card-modal .stat-fill[id="card-xp-bar"] {
+    background: linear-gradient(to right, var(--color-yellow), var(--color-yellow-light));
+}
+
+.card-modal .stat-value {
+    width: 40px;
+    text-align: right;
+    font-weight: 600;
+}
+
+.card-modal .card-description {
+    margin-bottom: 30px;
+    line-height: 1.6;
+    color: var(--color-gray-light);
+}
+
+.card-modal .card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.card-modal .card-actions .btn {
+    flex: 1 0 calc(50% - 10px);
+    margin-bottom: 10px;
+    min-width: 120px;
+}
+
+.card-modal .btn-danger {
+    background-color: var(--color-red);
+    color: var(--color-white);
+}
+
+.card-modal .btn-danger:hover {
+    background-color: var(--color-red-light);
+}
+
+.card-modal .btn-info {
+    background-color: var(--color-blue);
+    color: var(--color-white);
+}
+
+.card-modal .btn-info:hover {
+    background-color: #5dade2;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .card-modal .card-detail-container {
+        flex-direction: column;
+    }
+    
+    .card-modal .card-detail-left, 
+    .card-modal .card-detail-right {
+        width: 100%;
+    }
+    
+    .card-modal .card-detail-image {
+        height: 300px;
+    }
+    
+    .card-modal .card-actions .btn {
+        flex: 1 0 calc(100% - 10px);
+    }
+}
