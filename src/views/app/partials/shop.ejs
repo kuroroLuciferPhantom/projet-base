@@ -9,143 +9,153 @@
         </div>
     </div>
 
-    <div class="boosters-grid">
-        <!-- Booster Standard -->
-        <div class="booster-card">
-            <div class="booster-image-container">
-                <img src="/img/booster-standard.png" alt="Booster Standard" class="booster-image">
-                <div class="booster-rarity standard">STANDARD</div>
+    <div class="shop-content">
+        <div class="boosters-grid">
+            <!-- Booster Standard -->
+            <div class="booster-card">
+                <div class="booster-image-container">
+                    <img src="/img/booster-standard.svg" alt="Booster Standard" class="booster-image">
+                    <div class="booster-rarity standard">STANDARD</div>
+                </div>
+                <div class="booster-content">
+                    <h3 class="booster-title">Booster Standard</h3>
+                    <p class="booster-description">Un booster contenant 5 cartes avec au moins 1 carte rare.</p>
+                    <div class="booster-stats">
+                        <div class="stat">
+                            <span class="stat-value">5</span>
+                            <span class="stat-label">Cartes</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">8%</span>
+                            <span class="stat-label">Chance Epic</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">2%</span>
+                            <span class="stat-label">Chance Legendary</span>
+                        </div>
+                    </div>
+                    <div class="booster-price">
+                        <span class="price-amount">500</span>
+                        <span class="price-currency">$CCARD</span>
+                    </div>
+                    <button class="btn-buy-booster" data-booster-type="standard" data-booster-price="500">
+                        <i class="fas fa-shopping-cart"></i>
+                        Acheter
+                    </button>
+                </div>
             </div>
-            <div class="booster-content">
-                <h3 class="booster-title">Booster Standard</h3>
-                <p class="booster-description">Un booster contenant 5 cartes avec au moins 1 carte rare.</p>
-                <div class="booster-stats">
-                    <div class="stat">
-                        <span class="stat-value">5</span>
-                        <span class="stat-label">Cartes</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-value">8%</span>
-                        <span class="stat-label">Chance Epic</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-value">2%</span>
-                        <span class="stat-label">Chance Legendary</span>
-                    </div>
+
+            <!-- Booster Premium -->
+            <div class="booster-card">
+                <div class="booster-image-container">
+                    <img src="/img/booster-premium.svg" alt="Booster Premium" class="booster-image">
+                    <div class="booster-rarity premium">PREMIUM</div>
                 </div>
-                <div class="booster-price">
-                    <span class="price-amount">500</span>
-                    <span class="price-currency">$CCARD</span>
+                <div class="booster-content">
+                    <h3 class="booster-title">Booster Premium</h3>
+                    <p class="booster-description">Un booster contenant 5 cartes avec au moins 1 carte épique.</p>
+                    <div class="booster-stats">
+                        <div class="stat">
+                            <span class="stat-value">5</span>
+                            <span class="stat-label">Cartes</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">15%</span>
+                            <span class="stat-label">Chance Epic</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">5%</span>
+                            <span class="stat-label">Chance Legendary</span>
+                        </div>
+                    </div>
+                    <div class="booster-price">
+                        <span class="price-amount">1200</span>
+                        <span class="price-currency">$CCARD</span>
+                    </div>
+                    <button class="btn-buy-booster" data-booster-type="premium" data-booster-price="1200">
+                        <i class="fas fa-shopping-cart"></i>
+                        Acheter
+                    </button>
                 </div>
-                <button class="btn-buy-booster" data-booster-type="standard" data-booster-price="500">
-                    <i class="fas fa-shopping-cart"></i>
-                    Acheter
+            </div>
+
+            <!-- Booster Ultimate -->
+            <div class="booster-card">
+                <div class="booster-image-container">
+                    <img src="/img/booster-ultimate.svg" alt="Booster Ultimate" class="booster-image">
+                    <div class="booster-rarity ultimate">ULTIMATE</div>
+                </div>
+                <div class="booster-content">
+                    <h3 class="booster-title">Booster Ultimate</h3>
+                    <p class="booster-description">Un booster contenant 7 cartes avec au moins 1 carte légendaire.</p>
+                    <div class="booster-stats">
+                        <div class="stat">
+                            <span class="stat-value">7</span>
+                            <span class="stat-label">Cartes</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">25%</span>
+                            <span class="stat-label">Chance Epic</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">10%</span>
+                            <span class="stat-label">Chance Legendary</span>
+                        </div>
+                    </div>
+                    <div class="booster-price">
+                        <span class="price-amount">2500</span>
+                        <span class="price-currency">$CCARD</span>
+                    </div>
+                    <button class="btn-buy-booster" data-booster-type="ultimate" data-booster-price="2500">
+                        <i class="fas fa-shopping-cart"></i>
+                        Acheter
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="distributeur-container">
+            <h2 class="distributeur-title">Distributeur Automatique</h2>
+            <p class="distributeur-description">Appuyez sur le bouton pour obtenir un booster aléatoire !</p>
+            <div class="distributeur">
+                <div class="bouton" id="distributeur-bouton"></div>
+            </div>
+        </div>
+
+        <div class="featured-promotion">
+            <div class="promo-content">
+                <h2>Offre Spéciale</h2>
+                <p>Pack de 3 boosters Ultimate avec 15% de réduction !</p>
+                <div class="promo-price">
+                    <span class="original-price">7500</span>
+                    <span class="discounted-price">6375 $CCARD</span>
+                </div>
+                <button class="btn-promo" data-booster-type="ultimate-pack" data-booster-price="6375">
+                    <i class="fas fa-gem"></i>
+                    Obtenir l'offre
                 </button>
             </div>
-        </div>
-
-        <!-- Booster Premium -->
-        <div class="booster-card">
-            <div class="booster-image-container">
-                <img src="/img/booster-premium.png" alt="Booster Premium" class="booster-image">
-                <div class="booster-rarity premium">PREMIUM</div>
-            </div>
-            <div class="booster-content">
-                <h3 class="booster-title">Booster Premium</h3>
-                <p class="booster-description">Un booster contenant 5 cartes avec au moins 1 carte épique.</p>
-                <div class="booster-stats">
-                    <div class="stat">
-                        <span class="stat-value">5</span>
-                        <span class="stat-label">Cartes</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-value">15%</span>
-                        <span class="stat-label">Chance Epic</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-value">5%</span>
-                        <span class="stat-label">Chance Legendary</span>
-                    </div>
-                </div>
-                <div class="booster-price">
-                    <span class="price-amount">1200</span>
-                    <span class="price-currency">$CCARD</span>
-                </div>
-                <button class="btn-buy-booster" data-booster-type="premium" data-booster-price="1200">
-                    <i class="fas fa-shopping-cart"></i>
-                    Acheter
-                </button>
+            <div class="promo-image">
+                <img src="/img/booster-bundle.svg" alt="Pack Spécial">
             </div>
         </div>
 
-        <!-- Booster Ultimate -->
-        <div class="booster-card">
-            <div class="booster-image-container">
-                <img src="/img/booster-ultimate.png" alt="Booster Ultimate" class="booster-image">
-                <div class="booster-rarity ultimate">ULTIMATE</div>
+        <div class="shop-info-cards">
+            <div class="info-card">
+                <i class="fas fa-question-circle"></i>
+                <h3>Comment ça marche</h3>
+                <p>Achetez des boosters avec vos tokens $CCARD et ouvrez-les pour obtenir des cartes de différentes raretés.</p>
             </div>
-            <div class="booster-content">
-                <h3 class="booster-title">Booster Ultimate</h3>
-                <p class="booster-description">Un booster contenant 7 cartes avec au moins 1 carte légendaire.</p>
-                <div class="booster-stats">
-                    <div class="stat">
-                        <span class="stat-value">7</span>
-                        <span class="stat-label">Cartes</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-value">25%</span>
-                        <span class="stat-label">Chance Epic</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-value">10%</span>
-                        <span class="stat-label">Chance Legendary</span>
-                    </div>
-                </div>
-                <div class="booster-price">
-                    <span class="price-amount">2500</span>
-                    <span class="price-currency">$CCARD</span>
-                </div>
-                <button class="btn-buy-booster" data-booster-type="ultimate" data-booster-price="2500">
-                    <i class="fas fa-shopping-cart"></i>
-                    Acheter
-                </button>
+            <div class="info-card">
+                <i class="fas fa-money-bill-wave"></i>
+                <h3>Obtenir des tokens</h3>
+                <p>Gagnez des tokens en participant à des duels, en complétant des quêtes ou en achetant des packs.</p>
             </div>
-        </div>
-    </div>
-
-    <div class="featured-promotion">
-        <div class="promo-content">
-            <h2>Offre Spéciale</h2>
-            <p>Pack de 3 boosters Ultimate avec 15% de réduction !</p>
-            <div class="promo-price">
-                <span class="original-price">7500</span>
-                <span class="discounted-price">6375 $CCARD</span>
+            <div class="info-card">
+                <i class="fas fa-gifts"></i>
+                <h3>Récompenses</h3>
+                <p>Revenez chaque jour pour obtenir un booster gratuit et des récompenses quotidiennes.</p>
             </div>
-            <button class="btn-promo" data-booster-type="ultimate-pack" data-booster-price="6375">
-                <i class="fas fa-gem"></i>
-                Obtenir l'offre
-            </button>
-        </div>
-        <div class="promo-image">
-            <img src="/img/booster-bundle.png" alt="Pack Spécial">
-        </div>
-    </div>
-
-    <div class="shop-info-cards">
-        <div class="info-card">
-            <i class="fas fa-question-circle"></i>
-            <h3>Comment ça marche</h3>
-            <p>Achetez des boosters avec vos tokens $CCARD et ouvrez-les pour obtenir des cartes de différentes raretés.</p>
-        </div>
-        <div class="info-card">
-            <i class="fas fa-money-bill-wave"></i>
-            <h3>Obtenir des tokens</h3>
-            <p>Gagnez des tokens en participant à des duels, en complétant des quêtes ou en achetant des packs.</p>
-        </div>
-        <div class="info-card">
-            <i class="fas fa-gifts"></i>
-            <h3>Récompenses</h3>
-            <p>Revenez chaque jour pour obtenir un booster gratuit et des récompenses quotidiennes.</p>
         </div>
     </div>
 </div>
