@@ -52,12 +52,18 @@
     opacity: 0.8;
 }
 
+/* Shop content layout */
+.shop-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+}
+
 /* Grille des boosters */
 .boosters-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 30px;
-    margin-bottom: 50px;
 }
 
 /* Carte de booster */
@@ -215,6 +221,83 @@
     transform: none;
 }
 
+/* Distributeur de boosters */
+.distributeur-container {
+    text-align: center;
+    margin: 20px auto 40px;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 20px;
+    max-width: 400px;
+}
+
+.distributeur-title {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    color: var(--color-primary);
+}
+
+.distributeur-description {
+    margin-bottom: 20px;
+    color: var(--color-text-secondary);
+}
+
+.distributeur {
+    position: relative;
+    width: 300px;
+    height: 500px;
+    margin: 0 auto;
+    background-image: url('/img/distributeur-background.png');
+    background-size: cover;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    animation: neonGlow 2s infinite alternate;
+}
+
+.bouton {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 0, 255, 0.1);
+    border: 3px solid rgba(255, 0, 255, 0.5);
+    border-radius: 50%;
+    cursor: pointer;
+    animation: pulse 1.5s infinite;
+    transition: transform 0.2s;
+}
+
+.bouton:hover {
+    transform: translateX(-50%) scale(1.1);
+}
+
+.bouton:active {
+    transform: translateX(-50%) scale(0.95);
+}
+
+@keyframes neonGlow {
+    from {
+        filter: drop-shadow(0 0 5px #00f0ff);
+    }
+    to {
+        filter: drop-shadow(0 0 20px #ff00ff);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 5px #ff00ff;
+    }
+    50% {
+        box-shadow: 0 0 20px #ff00ff;
+    }
+    100% {
+        box-shadow: 0 0 5px #ff00ff;
+    }
+}
+
 /* Promotion spéciale */
 .featured-promotion {
     display: grid;
@@ -237,7 +320,7 @@
 .promo-content h2 {
     font-size: 2rem;
     margin-bottom: 15px;
-    text-shadow: 0 2px 4px rgba(0, a0, 0, 0.2);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .promo-content p {
@@ -433,6 +516,11 @@
     .purchase-notification.show {
         right: 20px;
     }
+    
+    .distributeur {
+        width: 250px;
+        height: 400px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -451,5 +539,10 @@
     
     .purchase-notification.show {
         right: 20px;
+    }
+    
+    .distributeur {
+        width: 220px;
+        height: 350px;
     }
 }
