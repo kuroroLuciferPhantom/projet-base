@@ -75,6 +75,37 @@ Une fois l'application démarrée, vous pouvez y accéder via :
 - http://localhost:3000/login - Page de connexion
 - http://localhost:3000/register - Page d'inscription
 - http://localhost:3000/app - Application principale (nécessite une authentification)
+- http://localhost:3000/marketplace - Marketplace de cartes
+
+### Initialiser la marketplace avec des données de test
+
+Pour avoir des cartes à acheter/vendre sur la marketplace dès le départ, lancez le script d'initialisation :
+
+```bash
+npm run init-marketplace
+```
+
+Ce script va :
+1. Créer un utilisateur administrateur (si ce n'est pas déjà fait)
+2. Créer 10 cartes de test avec différentes raretés et statistiques
+3. Mettre ces cartes en vente sur la marketplace
+4. Générer quelques transactions fictives pour simuler un historique
+
+Une fois le script exécuté, vous pourrez accéder à la marketplace et voir les cartes disponibles à l'achat.
+
+### Fonctionnalités de la marketplace
+
+La marketplace offre les fonctionnalités suivantes :
+
+- **Parcourir les cartes** : Affichage de toutes les cartes en vente
+- **Filtrer et rechercher** : Filtrer par nom, rareté et prix
+- **Voir les détails** : Affichage détaillé des caractéristiques d'une carte
+- **Acheter** : Possibilité d'acheter des cartes mises en vente
+- **Vendre** : Mettre ses propres cartes en vente avec un prix personnalisé
+- **Historique** : Consulter l'historique des transactions
+- **Statistiques** : Voir les statistiques du marché
+
+Pour plus d'informations sur la marketplace, consultez la [documentation dédiée](docs/marketplace.md).
 
 ## API REST
 
@@ -86,14 +117,17 @@ L'application expose également une API REST :
 - `POST /api/connect-wallet` - Connexion avec un wallet blockchain
 - `GET /api/cards` - Récupérer la collection de cartes de l'utilisateur
 - `GET /api/cards/:id` - Récupérer les détails d'une carte spécifique
-- `GET /api/market/cards` - Récupérer les cartes disponibles sur le marché
-- `POST /api/market/buy` - Acheter une carte
-- `POST /api/market/sell` - Mettre une carte en vente
+- `GET /marketplace` - Récupérer les cartes disponibles sur le marché
+- `GET /marketplace/card/:id` - Détails d'une carte sur le marché
+- `POST /marketplace/api/buy` - Acheter une carte
+- `POST /marketplace/api/sell` - Mettre une carte en vente
+- `DELETE /marketplace/api/card/:cardId/listing` - Retirer une carte du marché
 
 ## Commandes npm
 
 - `npm start` : Démarrer l'application en mode production
 - `npm run dev` : Démarrer l'application en mode développement avec nodemon
+- `npm run init-marketplace` : Initialiser la marketplace avec des données de test
 - `npm test` : Exécuter les tests
 
 ## Contribuer
