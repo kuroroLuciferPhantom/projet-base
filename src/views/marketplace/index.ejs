@@ -1,0 +1,203 @@
+<!-- Marketplace - Page principale -->
+<div class="container mx-auto px-4 py-8">
+  <header class="mb-8">
+    <h1 class="text-3xl font-bold text-center mb-4">Marketplace CryptoCards</h1>
+    <p class="text-center text-gray-600 mb-6">Découvrez, achetez et vendez des cartes NFT uniques</p>
+    
+    <!-- Section de filtres et recherche -->
+    <div class="bg-gray-100 rounded-lg p-4 mb-6">
+      <form id="filter-form" action="/marketplace" method="GET" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Recherche par nom -->
+          <div>
+            <label for="search" class="block text-sm font-medium text-gray-700">Recherche</label>
+            <input type="text" id="search" name="search" placeholder="Nom de la carte..." 
+                  value="<%= filters?.search || '' %>"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+          </div>
+          
+          <!-- Filtre par rareté -->
+          <div>
+            <label for="rarity" class="block text-sm font-medium text-gray-700">Rareté</label>
+            <select id="rarity" name="rarity" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+              <option value="">Toutes</option>
+              <option value="common" <%= filters?.rarity === 'common' ? 'selected' : '' %>>Commune</option>
+              <option value="rare" <%= filters?.rarity === 'rare' ? 'selected' : '' %>>Rare</option>
+              <option value="epic" <%= filters?.rarity === 'epic' ? 'selected' : '' %>>Épique</option>
+              <option value="legendary" <%= filters?.rarity === 'legendary' ? 'selected' : '' %>>Légendaire</option>
+            </select>
+          </div>
+          
+          <!-- Tri -->
+          <div>
+            <label for="sort" class="block text-sm font-medium text-gray-700">Trier par</label>
+            <select id="sort" name="sort" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+              <option value="price_asc" <%= filters?.sort === 'price_asc' ? 'selected' : '' %>>Prix croissant</option>
+              <option value="price_desc" <%= filters?.sort === 'price_desc' ? 'selected' : '' %>>Prix décroissant</option>
+              <option value="newest" <%= filters?.sort === 'newest' ? 'selected' : '' %>>Plus récentes</option>
+              <option value="rarity" <%= filters?.sort === 'rarity' ? 'selected' : '' %>>Rareté</option>
+              <option value="name_asc" <%= filters?.sort === 'name_asc' ? 'selected' : '' %>>Nom (A-Z)</option>
+              <option value="name_desc" <%= filters?.sort === 'name_desc' ? 'selected' : '' %>>Nom (Z-A)</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Filtre par prix -->
+          <div>
+            <label for="minPrice" class="block text-sm font-medium text-gray-700">Prix minimum</label>
+            <input type="number" id="minPrice" name="minPrice" min="0" placeholder="0" 
+                  value="<%= filters?.minPrice || '' %>"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+          </div>
+          <div>
+            <label for="maxPrice" class="block text-sm font-medium text-gray-700">Prix maximum</label>
+            <input type="number" id="maxPrice" name="maxPrice" min="0" placeholder="Maximum" 
+                  value="<%= filters?.maxPrice || '' %>"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+          </div>
+        </div>
+        
+        <div class="flex justify-between">
+          <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
+            Appliquer les filtres
+          </button>
+          <a href="/marketplace" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+            Réinitialiser
+          </a>
+        </div>
+      </form>
+    </div>
+    
+    <!-- Liens rapides (statistiques, historique) -->
+    <div class="flex justify-center space-x-4 mb-4">
+      <a href="/marketplace/stats" class="text-indigo-600 hover:text-indigo-800 font-medium">
+        Statistiques du marché
+      </a>
+      <span class="text-gray-300">|</span>
+      <a href="/marketplace/history" class="text-indigo-600 hover:text-indigo-800 font-medium">
+        Historique des transactions
+      </a>
+    </div>
+  </header>
+  
+  <!-- Affichage des résultats -->
+  <div class="mb-6">
+    <p class="text-gray-700 mb-2">
+      <span class="font-medium"><%= pagination.totalItems %></span> cartes trouvées
+    </p>
+  </div>
+  
+  <!-- Grille de cartes -->
+  <% if (marketCards && marketCards.length > 0) { %>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
+      <% marketCards.forEach(card => { %>
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+          <!-- En-tête de la carte avec la rareté -->
+          <div class="p-2 text-center
+                    <% if (card.rarity === 'legendary') { %>bg-yellow-500 text-white<% } %>
+                    <% if (card.rarity === 'epic') { %>bg-purple-600 text-white<% } %>
+                    <% if (card.rarity === 'rare') { %>bg-blue-500 text-white<% } %>
+                    <% if (card.rarity === 'common') { %>bg-gray-500 text-white<% } %>">
+            <span class="font-medium uppercase text-sm">
+              <% if (card.rarity === 'legendary') { %>Légendaire<% } %>
+              <% if (card.rarity === 'epic') { %>Épique<% } %>
+              <% if (card.rarity === 'rare') { %>Rare<% } %>
+              <% if (card.rarity === 'common') { %>Commune<% } %>
+            </span>
+          </div>
+          
+          <!-- Image de la carte -->
+          <div class="relative">
+            <img src="<%= card.imageUrl %>" alt="<%= card.name %>" class="w-full h-48 object-cover">
+            <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 text-white p-2">
+              <h3 class="font-bold"><%= card.name %></h3>
+            </div>
+          </div>
+          
+          <!-- Informations de la carte -->
+          <div class="p-4">
+            <!-- Stats -->
+            <div class="grid grid-cols-2 gap-2 mb-3 text-sm">
+              <div>
+                <span class="text-red-600">ATT: <%= card.stats.attack %></span>
+              </div>
+              <div>
+                <span class="text-blue-600">DEF: <%= card.stats.defense %></span>
+              </div>
+              <div>
+                <span class="text-purple-600">MAG: <%= card.stats.magic %></span>
+              </div>
+              <div>
+                <span class="text-green-600">VIT: <%= card.stats.speed %></span>
+              </div>
+            </div>
+            
+            <!-- Prix et vendeur -->
+            <div class="flex justify-between items-center mb-4">
+              <div>
+                <p class="text-xl font-bold text-indigo-600"><%= card.price %> CRYP</p>
+              </div>
+              <div class="text-gray-500 text-sm">
+                <p>Vendeur: <%= card.owner ? card.owner.username : 'Inconnu' %></p>
+              </div>
+            </div>
+            
+            <a href="/marketplace/card/<%= card._id %>" class="block w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
+              Voir les détails
+            </a>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+    
+    <!-- Pagination -->
+    <% if (pagination.totalPages > 1) { %>
+      <nav class="flex justify-center mt-8" aria-label="Pagination">
+        <ul class="flex space-x-2">
+          <% if (pagination.currentPage > 1) { %>
+            <li>
+              <a href="/marketplace?page=<%= pagination.currentPage - 1 %>&search=<%= filters?.search || '' %>&rarity=<%= filters?.rarity || '' %>&sort=<%= filters?.sort || 'price_asc' %>&minPrice=<%= filters?.minPrice || '' %>&maxPrice=<%= filters?.maxPrice || '' %>" 
+                class="px-3 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300">
+                &laquo; Précédent
+              </a>
+            </li>
+          <% } %>
+          
+          <% for(let i = 1; i <= pagination.totalPages; i++) { %>
+            <li>
+              <a href="/marketplace?page=<%= i %>&search=<%= filters?.search || '' %>&rarity=<%= filters?.rarity || '' %>&sort=<%= filters?.sort || 'price_asc' %>&minPrice=<%= filters?.minPrice || '' %>&maxPrice=<%= filters?.maxPrice || '' %>" 
+                class="px-3 py-1 <%= pagination.currentPage === i ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700' %> rounded-md hover:bg-indigo-500 hover:text-white">
+                <%= i %>
+              </a>
+            </li>
+          <% } %>
+          
+          <% if (pagination.currentPage < pagination.totalPages) { %>
+            <li>
+              <a href="/marketplace?page=<%= pagination.currentPage + 1 %>&search=<%= filters?.search || '' %>&rarity=<%= filters?.rarity || '' %>&sort=<%= filters?.sort || 'price_asc' %>&minPrice=<%= filters?.minPrice || '' %>&maxPrice=<%= filters?.maxPrice || '' %>" 
+                class="px-3 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300">
+                Suivant &raquo;
+              </a>
+            </li>
+          <% } %>
+        </ul>
+      </nav>
+    <% } %>
+    
+  <% } else { %>
+    <div class="text-center py-12">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <h3 class="text-xl font-medium text-gray-900 mb-2">Aucune carte trouvée</h3>
+      <p class="text-gray-500">Aucune carte ne correspond à vos critères de recherche. Essayez de modifier vos filtres.</p>
+    </div>
+  <% } %>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Script pour gérer les filtres et la pagination de manière dynamique si nécessaire
+  });
+</script>
