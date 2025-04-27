@@ -1,0 +1,198 @@
+<!-- Statistiques du marché -->
+<div class="container mx-auto px-4 py-8">
+  <!-- Breadcrumb navigation -->
+  <nav class="flex mb-8" aria-label="Breadcrumb">
+    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+      <li class="inline-flex items-center">
+        <a href="/" class="text-gray-700 hover:text-gray-900">
+          Accueil
+        </a>
+      </li>
+      <li>
+        <div class="flex items-center">
+          <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+          </svg>
+          <a href="/marketplace" class="ml-1 md:ml-2 text-gray-700 hover:text-gray-900">
+            Marketplace
+          </a>
+        </div>
+      </li>
+      <li aria-current="page">
+        <div class="flex items-center">
+          <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+          </svg>
+          <span class="ml-1 md:ml-2 text-gray-500">
+            Statistiques
+          </span>
+        </div>
+      </li>
+    </ol>
+  </nav>
+  
+  <header class="mb-8">
+    <h1 class="text-3xl font-bold text-center mb-4">Statistiques du marché</h1>
+    <p class="text-center text-gray-600">Analysez les tendances et les données du marché CryptoCards</p>
+  </header>
+  
+  <!-- Statistiques principales -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-lg shadow p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold">Cartes en vente</h3>
+        <div class="p-2 bg-indigo-100 rounded-full">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+        </div>
+      </div>
+      <div class="text-3xl font-bold text-gray-900"><%= stats.totalListings %></div>
+      <p class="text-gray-600 mt-2">Annonces actives</p>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold">Prix moyen</h3>
+        <div class="p-2 bg-green-100 rounded-full">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+      </div>
+      <div class="text-3xl font-bold text-gray-900"><%= stats.averagePrice %> CRYP</div>
+      <p class="text-gray-600 mt-2">Pour toutes les raretés</p>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold">Transactions 24h</h3>
+        <div class="p-2 bg-purple-100 rounded-full">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+        </div>
+      </div>
+      <div class="text-3xl font-bold text-gray-900"><%= stats.recentTransactions %></div>
+      <p class="text-gray-600 mt-2">Ventes récentes</p>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold">Volume 24h</h3>
+        <div class="p-2 bg-blue-100 rounded-full">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+          </svg>
+        </div>
+      </div>
+      <div class="text-3xl font-bold text-gray-900"><%= stats.recentVolume %> CRYP</div>
+      <p class="text-gray-600 mt-2">Volume de transactions</p>
+    </div>
+  </div>
+  
+  <!-- Graphiques et statistiques détaillées -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+    <!-- Distribution par rareté -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-xl font-semibold mb-4">Distribution par rareté</h3>
+      
+      <div class="space-y-4">
+        <% stats.rarityDistribution.forEach(rarity => { %>
+          <div>
+            <div class="flex justify-between mb-1">
+              <div class="text-gray-700 font-medium">
+                <% if (rarity._id === 'legendary') { %>
+                  <span class="text-yellow-500">Légendaire</span>
+                <% } else if (rarity._id === 'epic') { %>
+                  <span class="text-purple-600">Épique</span>
+                <% } else if (rarity._id === 'rare') { %>
+                  <span class="text-blue-500">Rare</span>
+                <% } else { %>
+                  <span class="text-gray-500">Commune</span>
+                <% } %>
+              </div>
+              <div class="text-gray-500 text-sm">
+                <%= rarity.count %> cartes / <%= rarity.averagePrice.toFixed(1) %> CRYP (moy.)
+              </div>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2.5">
+              <div class="
+                <% if (rarity._id === 'legendary') { %>bg-yellow-500<% } %>
+                <% if (rarity._id === 'epic') { %>bg-purple-600<% } %>
+                <% if (rarity._id === 'rare') { %>bg-blue-500<% } %>
+                <% if (rarity._id === 'common') { %>bg-gray-500<% } %>
+                h-2.5 rounded-full" style="width: <%= (rarity.count / stats.totalListings * 100).toFixed(1) %>%"></div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+    
+    <!-- Gamme de prix -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-xl font-semibold mb-4">Gamme de prix</h3>
+      
+      <div class="grid grid-cols-3 gap-4 mb-6">
+        <div class="text-center">
+          <p class="text-sm text-gray-500">Prix minimum</p>
+          <p class="text-xl font-bold"><%= stats.lowestPrice %> CRYP</p>
+        </div>
+        <div class="text-center">
+          <p class="text-sm text-gray-500">Prix moyen</p>
+          <p class="text-xl font-bold"><%= stats.averagePrice %> CRYP</p>
+        </div>
+        <div class="text-center">
+          <p class="text-sm text-gray-500">Prix maximum</p>
+          <p class="text-xl font-bold"><%= stats.highestPrice %> CRYP</p>
+        </div>
+      </div>
+      
+      <!-- Représentation visuelle de la gamme de prix -->
+      <div class="relative pt-8 pb-2">
+        <div class="absolute left-0 top-0 text-xs text-gray-500"><%= stats.lowestPrice %> CRYP</div>
+        <div class="absolute right-0 top-0 text-xs text-gray-500"><%= stats.highestPrice %> CRYP</div>
+        <div class="absolute left-1/2 transform -translate-x-1/2 top-0 text-xs text-gray-500"><%= stats.averagePrice %> CRYP</div>
+        
+        <div class="w-full bg-gray-200 rounded-full h-2"></div>
+        
+        <div class="absolute left-1/2 transform -translate-x-1/2 top-0 w-2 h-2 bg-red-500 rounded-full" 
+             style="left: <%= (stats.averagePrice - stats.lowestPrice) / (stats.highestPrice - stats.lowestPrice) * 100 %>%"></div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Conseils du marché -->
+  <div class="bg-white rounded-lg shadow p-6 mb-8">
+    <h3 class="text-xl font-semibold mb-4">Conseils du marché</h3>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <h4 class="text-lg font-medium mb-2">Meilleur moment pour acheter</h4>
+        <p class="text-gray-600">Basé sur les données de marché actuelles, les prix tendent à être plus bas durant les jours de semaine. Les cartes communes et rares sont généralement disponibles à des prix raisonnables.</p>
+      </div>
+      
+      <div>
+        <h4 class="text-lg font-medium mb-2">Cartes les plus recherchées</h4>
+        <p class="text-gray-600">Les cartes avec des statistiques équilibrées et les cartes légendaires sont les plus demandées sur le marché. Elles se vendent généralement plus rapidement que les autres cartes.</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Liens de navigation -->
+  <div class="text-center">
+    <a href="/marketplace" class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg">
+      Retour à la marketplace
+    </a>
+    <a href="/marketplace/history" class="inline-block ml-4 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg">
+      Voir l'historique des transactions
+    </a>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Code JavaScript pour afficher des graphiques interactifs si nécessaire
+    // Par exemple, utiliser Chart.js pour des graphiques plus complexes
+  });
+</script>
