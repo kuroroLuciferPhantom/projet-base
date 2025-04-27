@@ -63,6 +63,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use('/', require('./routes/index'));
 app.use('/api', require('./routes/api'));
 app.use('/auth', require('./routes/auth'));
+app.use('/marketplace', require('./routes/marketplace')); // Nouvelle route pour la marketplace
 
 // Middleware de gestion des erreurs
 app.use((req, res, next) => {
