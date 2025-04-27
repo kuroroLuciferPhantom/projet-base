@@ -1,0 +1,500 @@
+<!-- Détails d'une carte sur la marketplace -->
+<div class="container mx-auto px-4 py-8">
+  <!-- Breadcrumb navigation -->
+  <nav class="flex mb-8" aria-label="Breadcrumb">
+    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+      <li class="inline-flex items-center">
+        <a href="/" class="text-gray-700 hover:text-gray-900">
+          Accueil
+        </a>
+      </li>
+      <li>
+        <div class="flex items-center">
+          <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+          </svg>
+          <a href="/marketplace" class="ml-1 md:ml-2 text-gray-700 hover:text-gray-900">
+            Marketplace
+          </a>
+        </div>
+      </li>
+      <li aria-current="page">
+        <div class="flex items-center">
+          <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+          </svg>
+          <span class="ml-1 md:ml-2 text-gray-500">
+            <%= card.name %>
+          </span>
+        </div>
+      </li>
+    </ol>
+  </nav>
+  
+  <div class="bg-white rounded-lg shadow-xl overflow-hidden mb-8">
+    <div class="md:flex">
+      <!-- Colonne gauche - Image de la carte -->
+      <div class="md:w-1/2 p-6">
+        <div class="rounded-lg overflow-hidden border-2
+                <% if (card.rarity === 'legendary') { %>border-yellow-500<% } %>
+                <% if (card.rarity === 'epic') { %>border-purple-600<% } %>
+                <% if (card.rarity === 'rare') { %>border-blue-500<% } %>
+                <% if (card.rarity === 'common') { %>border-gray-500<% } %>">
+          <img src="<%= card.imageUrl %>" alt="<%= card.name %>" class="w-full object-cover">
+        </div>
+        
+        <!-- Badge de rareté -->
+        <div class="mt-4 text-center">
+          <span class="inline-block px-3 py-1 rounded-full font-semibold text-sm
+                    <% if (card.rarity === 'legendary') { %>bg-yellow-500 text-white<% } %>
+                    <% if (card.rarity === 'epic') { %>bg-purple-600 text-white<% } %>
+                    <% if (card.rarity === 'rare') { %>bg-blue-500 text-white<% } %>
+                    <% if (card.rarity === 'common') { %>bg-gray-500 text-white<% } %>">
+            <% if (card.rarity === 'legendary') { %>Légendaire<% } %>
+            <% if (card.rarity === 'epic') { %>Épique<% } %>
+            <% if (card.rarity === 'rare') { %>Rare<% } %>
+            <% if (card.rarity === 'common') { %>Commune<% } %>
+          </span>
+        </div>
+      </div>
+      
+      <!-- Colonne droite - Informations de la carte -->
+      <div class="md:w-1/2 p-6 md:border-l border-gray-200">
+        <h1 class="text-3xl font-bold mb-4"><%= card.name %></h1>
+        
+        <!-- Statut de mise en vente -->
+        <div class="mb-4">
+          <% if (card.isForSale) { %>
+            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded">
+              <div class="flex">
+                <div class="py-1">
+                  <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <p class="font-bold">En vente</p>
+                  <p>Prix : <span class="font-bold text-xl"><%= card.price %> CRYP</span></p>
+                </div>
+              </div>
+            </div>
+          <% } else { %>
+            <div class="bg-gray-100 border-l-4 border-gray-500 text-gray-700 p-4 rounded">
+              <div class="flex">
+                <div class="py-1">
+                  <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <p class="font-bold">Non disponible</p>
+                  <p>Cette carte n'est pas actuellement en vente</p>
+                </div>
+              </div>
+            </div>
+          <% } %>
+        </div>
+        
+        <!-- Description -->
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold mb-2">Description</h3>
+          <p class="text-gray-700"><%= card.description %></p>
+        </div>
+        
+        <!-- Statistiques -->
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold mb-2">Statistiques</h3>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="flex items-center">
+              <div class="w-2 h-10 bg-red-500 mr-3 rounded-full"></div>
+              <div>
+                <span class="block text-gray-500 text-sm">Attaque</span>
+                <span class="font-bold text-xl"><%= card.stats.attack %></span>
+              </div>
+            </div>
+            <div class="flex items-center">
+              <div class="w-2 h-10 bg-blue-500 mr-3 rounded-full"></div>
+              <div>
+                <span class="block text-gray-500 text-sm">Défense</span>
+                <span class="font-bold text-xl"><%= card.stats.defense %></span>
+              </div>
+            </div>
+            <div class="flex items-center">
+              <div class="w-2 h-10 bg-purple-500 mr-3 rounded-full"></div>
+              <div>
+                <span class="block text-gray-500 text-sm">Magie</span>
+                <span class="font-bold text-xl"><%= card.stats.magic %></span>
+              </div>
+            </div>
+            <div class="flex items-center">
+              <div class="w-2 h-10 bg-green-500 mr-3 rounded-full"></div>
+              <div>
+                <span class="block text-gray-500 text-sm">Vitesse</span>
+                <span class="font-bold text-xl"><%= card.stats.speed %></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Informations du propriétaire -->
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold mb-2">Propriétaire</h3>
+          <div class="flex items-center">
+            <svg class="w-5 h-5 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+            <span><%= card.owner.username %></span>
+          </div>
+          <div class="flex items-center mt-1">
+            <svg class="w-5 h-5 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+            <span class="text-sm text-gray-500 break-all"><%= card.owner.walletAddress ? card.owner.walletAddress.substring(0, 10) + '...' + card.owner.walletAddress.substring(card.owner.walletAddress.length - 6) : 'Non disponible' %></span>
+          </div>
+        </div>
+        
+        <!-- Token ID -->
+        <div class="mb-8">
+          <h3 class="text-lg font-semibold mb-1">ID du Token</h3>
+          <div class="flex items-center">
+            <svg class="w-5 h-5 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+            </svg>
+            <span class="text-sm text-gray-500 break-all"><%= card.tokenId %></span>
+          </div>
+        </div>
+        
+        <!-- Actions -->
+        <div>
+          <% if (card.isForSale && user && !isOwner) { %>
+            <!-- Bouton Acheter - pour les autres utilisateurs -->
+            <button id="buy-button" data-card-id="<%= card._id %>" data-price="<%= card.price %>" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg mb-3">
+              Acheter pour <%= card.price %> CRYP
+            </button>
+          <% } else if (isOwner && !card.isForSale) { %>
+            <!-- Bouton Mettre en vente - pour le propriétaire -->
+            <button id="sell-button" data-card-id="<%= card._id %>" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg mb-3">
+              Mettre en vente
+            </button>
+          <% } else if (isOwner && card.isForSale) { %>
+            <!-- Bouton Retirer du marché - pour le propriétaire -->
+            <button id="remove-button" data-card-id="<%= card._id %>" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg mb-3">
+              Retirer du marché
+            </button>
+          <% } %>
+          
+          <a href="/marketplace" class="block text-center w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-4 rounded-lg">
+            Retour à la marketplace
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Historique des transactions pour cette carte -->
+  <div class="mb-8">
+    <h2 class="text-2xl font-bold mb-4">Historique des transactions</h2>
+    
+    <% if (transactions && transactions.length > 0) { %>
+      <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Date
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Vendeur
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Acheteur
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Prix
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% transactions.forEach(transaction => { %>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <%= new Date(transaction.timestamp).toLocaleDateString() %> <%= new Date(transaction.timestamp).toLocaleTimeString() %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= transaction.seller ? transaction.seller.username : 'Inconnu' %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= transaction.buyer ? transaction.buyer.username : 'Inconnu' %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600">
+                  <%= transaction.price %> CRYP
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } else { %>
+      <div class="text-center py-8 bg-white shadow rounded-lg">
+        <p class="text-gray-500">Aucune transaction enregistrée pour cette carte.</p>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<!-- Modal pour la mise en vente -->
+<div id="sell-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg p-6 w-full max-w-md">
+    <h3 class="text-xl font-bold mb-4">Mettre en vente "<%= card.name %>"</h3>
+    <form id="sell-form">
+      <div class="mb-4">
+        <label for="price" class="block text-gray-700 font-bold mb-2">Prix (CRYP)</label>
+        <input type="number" id="price" name="price" min="1" step="1" placeholder="Entrez un prix" 
+               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-indigo-200">
+        <p class="text-sm text-gray-500 mt-1">Définissez un prix juste pour votre carte.</p>
+      </div>
+      
+      <div class="flex justify-end space-x-3">
+        <button type="button" id="cancel-sell" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">
+          Annuler
+        </button>
+        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+          Mettre en vente
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal de confirmation d'achat -->
+<div id="buy-confirm-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg p-6 w-full max-w-md">
+    <h3 class="text-xl font-bold mb-4">Confirmer l'achat</h3>
+    <p class="mb-4">Êtes-vous sûr de vouloir acheter "<%= card.name %>" pour <span id="confirm-price"><%= card.price %></span> CRYP ?</p>
+    
+    <div class="flex justify-end space-x-3">
+      <button type="button" id="cancel-buy" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">
+        Annuler
+      </button>
+      <button type="button" id="confirm-buy" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
+        Confirmer l'achat
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de confirmation de retrait du marché -->
+<div id="remove-confirm-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg p-6 w-full max-w-md">
+    <h3 class="text-xl font-bold mb-4">Confirmer le retrait</h3>
+    <p class="mb-4">Êtes-vous sûr de vouloir retirer "<%= card.name %>" du marché ?</p>
+    
+    <div class="flex justify-end space-x-3">
+      <button type="button" id="cancel-remove" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">
+        Annuler
+      </button>
+      <button type="button" id="confirm-remove" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+        Retirer du marché
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast de notification -->
+<div id="notification-toast" class="hidden fixed bottom-4 right-4 bg-white rounded-lg shadow-lg p-4 z-50 max-w-md transition-opacity duration-300">
+  <div class="flex items-center">
+    <div id="toast-icon" class="flex-shrink-0 w-6 h-6 mr-3"></div>
+    <div>
+      <p id="toast-title" class="font-bold"></p>
+      <p id="toast-message" class="text-sm text-gray-600"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Références aux éléments du DOM
+  const sellButton = document.getElementById('sell-button');
+  const sellModal = document.getElementById('sell-modal');
+  const sellForm = document.getElementById('sell-form');
+  const cancelSell = document.getElementById('cancel-sell');
+  
+  const buyButton = document.getElementById('buy-button');
+  const buyConfirmModal = document.getElementById('buy-confirm-modal');
+  const cancelBuy = document.getElementById('cancel-buy');
+  const confirmBuy = document.getElementById('confirm-buy');
+  
+  const removeButton = document.getElementById('remove-button');
+  const removeConfirmModal = document.getElementById('remove-confirm-modal');
+  const cancelRemove = document.getElementById('cancel-remove');
+  const confirmRemove = document.getElementById('confirm-remove');
+  
+  const notificationToast = document.getElementById('notification-toast');
+  const toastIcon = document.getElementById('toast-icon');
+  const toastTitle = document.getElementById('toast-title');
+  const toastMessage = document.getElementById('toast-message');
+  
+  // Fonction pour afficher le toast de notification
+  function showToast(type, title, message) {
+    if (type === 'success') {
+      toastIcon.innerHTML = '<svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+    } else if (type === 'error') {
+      toastIcon.innerHTML = '<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+    }
+    
+    toastTitle.textContent = title;
+    toastMessage.textContent = message;
+    notificationToast.classList.remove('hidden');
+    
+    // Cacher le toast après 5 secondes
+    setTimeout(() => {
+      notificationToast.classList.add('hidden');
+    }, 5000);
+  }
+  
+  // Événements pour le bouton "Mettre en vente"
+  if (sellButton) {
+    sellButton.addEventListener('click', function() {
+      sellModal.classList.remove('hidden');
+    });
+  }
+  
+  if (cancelSell) {
+    cancelSell.addEventListener('click', function() {
+      sellModal.classList.add('hidden');
+    });
+  }
+  
+  if (sellForm) {
+    sellForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const cardId = sellButton.dataset.cardId;
+      const price = document.getElementById('price').value;
+      
+      if (!price || price <= 0) {
+        showToast('error', 'Erreur', 'Veuillez entrer un prix valide supérieur à 0.');
+        return;
+      }
+      
+      // Appel API pour mettre la carte en vente
+      fetch('/marketplace/api/sell', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ cardId, price }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          showToast('success', 'Succès', 'Carte mise en vente avec succès!');
+          sellModal.classList.add('hidden');
+          // Recharger la page pour voir les changements
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
+        } else {
+          showToast('error', 'Erreur', data.message || 'Une erreur est survenue');
+        }
+      })
+      .catch(error => {
+        console.error('Erreur:', error);
+        showToast('error', 'Erreur', 'Une erreur est survenue lors de la mise en vente');
+      });
+    });
+  }
+  
+  // Événements pour le bouton "Acheter"
+  if (buyButton) {
+    buyButton.addEventListener('click', function() {
+      buyConfirmModal.classList.remove('hidden');
+    });
+  }
+  
+  if (cancelBuy) {
+    cancelBuy.addEventListener('click', function() {
+      buyConfirmModal.classList.add('hidden');
+    });
+  }
+  
+  if (confirmBuy) {
+    confirmBuy.addEventListener('click', function() {
+      const cardId = buyButton.dataset.cardId;
+      
+      // Appel API pour acheter la carte
+      fetch('/marketplace/api/buy', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ cardId }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          showToast('success', 'Succès', 'Carte achetée avec succès!');
+          buyConfirmModal.classList.add('hidden');
+          // Recharger la page pour voir les changements
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
+        } else {
+          showToast('error', 'Erreur', data.message || 'Une erreur est survenue');
+          buyConfirmModal.classList.add('hidden');
+        }
+      })
+      .catch(error => {
+        console.error('Erreur:', error);
+        showToast('error', 'Erreur', 'Une erreur est survenue lors de l\'achat');
+        buyConfirmModal.classList.add('hidden');
+      });
+    });
+  }
+  
+  // Événements pour le bouton "Retirer du marché"
+  if (removeButton) {
+    removeButton.addEventListener('click', function() {
+      removeConfirmModal.classList.remove('hidden');
+    });
+  }
+  
+  if (cancelRemove) {
+    cancelRemove.addEventListener('click', function() {
+      removeConfirmModal.classList.add('hidden');
+    });
+  }
+  
+  if (confirmRemove) {
+    confirmRemove.addEventListener('click', function() {
+      const cardId = removeButton.dataset.cardId;
+      
+      // Appel API pour retirer la carte du marché
+      fetch(`/marketplace/api/card/${cardId}/listing`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          showToast('success', 'Succès', 'Carte retirée du marché avec succès!');
+          removeConfirmModal.classList.add('hidden');
+          // Recharger la page pour voir les changements
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
+        } else {
+          showToast('error', 'Erreur', data.message || 'Une erreur est survenue');
+          removeConfirmModal.classList.add('hidden');
+        }
+      })
+      .catch(error => {
+        console.error('Erreur:', error);
+        showToast('error', 'Erreur', 'Une erreur est survenue lors du retrait');
+        removeConfirmModal.classList.add('hidden');
+      });
+    });
+  }
+});
+</script>
