@@ -26,10 +26,14 @@ const cardDetailModal = document.getElementById('card-detail-marketplace-modal')
 const buyConfirmModal = document.getElementById('buy-confirm-modal');
 const sellModal = document.getElementById('sell-modal');
 const removeConfirmModal = document.getElementById('remove-confirm-modal');
+const marketplaceToast = document.getElementById('marketplace-toast');
 
 // Initialisation
 document.addEventListener('DOMContentLoaded', () => {
     // Vérifier si nous sommes dans la section marketplace
+    if (!document.getElementById('section-marketplace')) return;
+    
+    // Vérifier si les éléments marketplace existent
     if (!filterForm || !cardsGrid) return;
     
     // Charger les cartes initiales
@@ -70,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 function setupModalEventListeners() {
     // Fermer les modals lors du clic sur la croix
-    document.querySelectorAll('.close-modal').forEach(closeBtn => {
+    document.querySelectorAll('.marketplace-modal .close-modal').forEach(closeBtn => {
         closeBtn.addEventListener('click', function() {
             closeAllModals();
         });
@@ -78,7 +82,7 @@ function setupModalEventListeners() {
     
     // Fermer les modals lors du clic à l'extérieur
     window.addEventListener('click', function(event) {
-        if (event.target.classList.contains('modal')) {
+        if (event.target.classList.contains('marketplace-modal')) {
             closeAllModals();
         }
     });
@@ -124,10 +128,10 @@ function setupModalEventListeners() {
     }
     
     // Fermer le toast lors du clic sur la croix
-    const toastClose = document.querySelector('.toast-close');
+    const toastClose = document.querySelector('.marketplace-toast .toast-close');
     if (toastClose) {
         toastClose.addEventListener('click', function() {
-            document.getElementById('marketplace-toast').classList.remove('show');
+            marketplaceToast.classList.remove('show');
         });
     }
 }
@@ -606,7 +610,6 @@ function closeAllModals() {
  * Affiche un toast de notification
  */
 function showToast(type, title, message) {
-    const toast = document.getElementById('marketplace-toast');
     const toastIcon = document.getElementById('toast-icon');
     const toastTitle = document.getElementById('toast-title');
     const toastText = document.getElementById('toast-text');
@@ -622,11 +625,11 @@ function showToast(type, title, message) {
     toastText.textContent = message;
     
     // Afficher le toast
-    toast.classList.add('show');
+    marketplaceToast.classList.add('show');
     
     // Masquer le toast après 5 secondes
     setTimeout(() => {
-        toast.classList.remove('show');
+        marketplaceToast.classList.remove('show');
     }, 5000);
 }
 
