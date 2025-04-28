@@ -1,0 +1,471 @@
+/* Styles pour les cartes */
+
+.card {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: #fff;
+  margin-bottom: 20px;
+  break-inside: avoid;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.card-header {
+  padding: 8px 12px;
+  font-weight: 600;
+  text-align: center;
+  color: white;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+}
+
+.card-header.common {
+  background-color: #6B7280; /* gray-500 */
+}
+
+.card-header.rare {
+  background-color: #3B82F6; /* blue-500 */
+}
+
+.card-header.epic {
+  background-color: #8B5CF6; /* purple-500 */
+}
+
+.card-header.legendary {
+  background-color: #F59E0B; /* amber-500 */
+  background-image: linear-gradient(135deg, #F59E0B, #FBBF24);
+}
+
+.card-image {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  height: 200px;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.card:hover .card-image img {
+  transform: scale(1.05);
+}
+
+.card-body {
+  padding: 15px;
+}
+
+.card-body h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1F2937; /* gray-800 */
+}
+
+.card-body p {
+  margin: 0 0 15px 0;
+  font-size: 0.9rem;
+  color: #4B5563; /* gray-600 */
+  line-height: 1.5;
+}
+
+.card-price {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #4F46E5; /* indigo-600 */
+  margin-bottom: 15px;
+}
+
+.card-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #F9FAFB; /* gray-50 */
+  border-radius: 8px;
+}
+
+.card-stat {
+  display: flex;
+  align-items: center;
+}
+
+.stat-badge {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+  color: white;
+  font-size: 0.8rem;
+}
+
+.stat-attack {
+  background-color: #EF4444; /* red-500 */
+}
+
+.stat-defense {
+  background-color: #3B82F6; /* blue-500 */
+}
+
+.stat-magic {
+  background-color: #8B5CF6; /* purple-500 */
+}
+
+.stat-speed {
+  background-color: #10B981; /* emerald-500 */
+}
+
+.stat-value {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.card-footer {
+  padding: 10px 15px;
+  background-color: #F3F4F6; /* gray-100 */
+  border-top: 1px solid #E5E7EB; /* gray-200 */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-owner {
+  font-size: 0.8rem;
+  color: #6B7280; /* gray-500 */
+}
+
+.card-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+/* Styles pour les détails de carte */
+.card-detail {
+  display: flex;
+  flex-direction: column;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+@media (min-width: 768px) {
+  .card-detail {
+    flex-direction: row;
+  }
+}
+
+.card-detail-image {
+  flex: 1;
+  min-height: 300px;
+  background-color: #F9FAFB; /* gray-50 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.card-detail-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.card-detail-info {
+  flex: 1;
+  padding: 25px;
+}
+
+.card-detail-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #1F2937; /* gray-800 */
+}
+
+.card-detail-price {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #4F46E5; /* indigo-600 */
+  margin-bottom: 20px;
+}
+
+.card-detail-description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #4B5563; /* gray-600 */
+  margin-bottom: 20px;
+}
+
+.card-detail-rarity {
+  display: inline-block;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.card-detail-rarity.common {
+  background-color: #6B7280; /* gray-500 */
+}
+
+.card-detail-rarity.rare {
+  background-color: #3B82F6; /* blue-500 */
+}
+
+.card-detail-rarity.epic {
+  background-color: #8B5CF6; /* purple-500 */
+}
+
+.card-detail-rarity.legendary {
+  background-color: #F59E0B; /* amber-500 */
+  background-image: linear-gradient(135deg, #F59E0B, #FBBF24);
+}
+
+.card-detail-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.card-detail-stat {
+  display: flex;
+  align-items: center;
+}
+
+.stat-bar {
+  width: 10px;
+  height: 40px;
+  border-radius: 5px;
+  margin-right: 15px;
+}
+
+.stat-bar.attack {
+  background-color: #EF4444; /* red-500 */
+}
+
+.stat-bar.defense {
+  background-color: #3B82F6; /* blue-500 */
+}
+
+.stat-bar.magic {
+  background-color: #8B5CF6; /* purple-500 */
+}
+
+.stat-bar.speed {
+  background-color: #10B981; /* emerald-500 */
+}
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #6B7280; /* gray-500 */
+}
+
+.stat-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1F2937; /* gray-800 */
+}
+
+.card-owner-info {
+  margin-bottom: 25px;
+  padding: 15px;
+  background-color: #F9FAFB; /* gray-50 */
+  border-radius: 10px;
+}
+
+.card-owner-info h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1F2937; /* gray-800 */
+  margin-bottom: 10px;
+}
+
+.owner-detail {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.owner-detail svg {
+  color: #6B7280; /* gray-500 */
+  margin-right: 10px;
+}
+
+.wallet-address {
+  font-family: monospace;
+  font-size: 0.9rem;
+  color: #6B7280; /* gray-500 */
+  word-break: break-all;
+}
+
+.card-token-id {
+  margin-bottom: 25px;
+}
+
+.card-token-id h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1F2937; /* gray-800 */
+  margin-bottom: 10px;
+}
+
+.token-id {
+  font-family: monospace;
+  font-size: 0.9rem;
+  color: #6B7280; /* gray-500 */
+  word-break: break-all;
+  display: flex;
+  align-items: center;
+}
+
+.token-id svg {
+  color: #6B7280; /* gray-500 */
+  margin-right: 10px;
+}
+
+/* Grille de cartes */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* Boutons d'action */
+.card-action-button {
+  display: inline-block;
+  text-align: center;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.btn-buy {
+  background-color: #4F46E5; /* indigo-600 */
+  color: white;
+}
+
+.btn-buy:hover {
+  background-color: #4338CA; /* indigo-700 */
+}
+
+.btn-sell {
+  background-color: #10B981; /* emerald-500 */
+  color: white;
+}
+
+.btn-sell:hover {
+  background-color: #059669; /* emerald-600 */
+}
+
+.btn-remove {
+  background-color: #EF4444; /* red-500 */
+  color: white;
+}
+
+.btn-remove:hover {
+  background-color: #DC2626; /* red-600 */
+}
+
+.btn-secondary {
+  background-color: #F3F4F6; /* gray-100 */
+  color: #4B5563; /* gray-600 */
+  border: 1px solid #E5E7EB; /* gray-200 */
+}
+
+.btn-secondary:hover {
+  background-color: #E5E7EB; /* gray-200 */
+}
+
+/* Historique de transactions */
+.transaction-card {
+  padding: 15px;
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 15px;
+  transition: transform 0.2s ease;
+}
+
+.transaction-card:hover {
+  transform: translateY(-2px);
+}
+
+.transaction-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.transaction-card-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  margin-right: 15px;
+  overflow: hidden;
+}
+
+.transaction-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.transaction-card-details h4 {
+  font-weight: 600;
+  margin: 0 0 5px 0;
+  color: #1F2937; /* gray-800 */
+}
+
+.transaction-price {
+  color: #4F46E5; /* indigo-600 */
+  font-weight: 700;
+}
+
+.transaction-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #E5E7EB; /* gray-200 */
+  padding-top: 10px;
+  font-size: 0.9rem;
+  color: #6B7280; /* gray-500 */
+}
+
+.transaction-users span {
+  margin: 0 5px;
+  color: #4B5563; /* gray-600 */
+  font-weight: 500;
+}
+
+.transaction-date {
+  font-size: 0.8rem;
+}
