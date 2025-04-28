@@ -78,7 +78,7 @@ exports.getMarketCards = async (req, res) => {
     const total = await Card.countDocuments(filter);
     
     // Format de la réponse API
-    if (req.originalUrl && req.originalUrl.startsWith('/api')) {
+    if (req.originalUrl && (req.originalUrl.startsWith('/api') || req.originalUrl.includes('/api'))) {
       return res.status(200).json({
         success: true,
         count: marketCards.length,
@@ -109,7 +109,7 @@ exports.getMarketCards = async (req, res) => {
     console.error('Erreur lors de la récupération des cartes du marché:', error);
     
     // Format de la réponse d'erreur API
-    if (req.originalUrl && req.originalUrl.startsWith('/api')) {
+    if (req.originalUrl && (req.originalUrl.startsWith('/api') || req.originalUrl.includes('/api'))) {
       return res.status(500).json({ 
         success: false, 
         message: 'Erreur lors de la récupération des cartes du marché' 
@@ -156,7 +156,7 @@ exports.getMarketCardDetails = async (req, res) => {
     const card = await Card.findById(id).populate('owner', 'username walletAddress');
     
     if (!card) {
-      if (req.originalUrl && req.originalUrl.startsWith('/api')) {
+      if (req.originalUrl && (req.originalUrl.startsWith('/api') || req.originalUrl.includes('/api'))) {
         return res.status(404).json({ 
           success: false, 
           message: 'Carte non trouvée' 
@@ -176,11 +176,12 @@ exports.getMarketCardDetails = async (req, res) => {
       .sort({ timestamp: -1 });
     
     // Format de la réponse API
-    if (req.originalUrl && req.originalUrl.startsWith('/api')) {
+    if (req.originalUrl && (req.originalUrl.startsWith('/api') || req.originalUrl.includes('/api'))) {
       return res.status(200).json({
         success: true,
         card,
-        transactions
+        transactions,
+        isOwner: req.user ? req.user.id === card.owner._id.toString() : false
       });
     }
     
@@ -199,7 +200,7 @@ exports.getMarketCardDetails = async (req, res) => {
     console.error('Erreur lors de la récupération des détails de la carte:', error);
     
     // Format de la réponse d'erreur API
-    if (req.originalUrl && req.originalUrl.startsWith('/api')) {
+    if (req.originalUrl && (req.originalUrl.startsWith('/api') || req.originalUrl.includes('/api'))) {
       return res.status(500).json({ 
         success: false, 
         message: 'Erreur lors de la récupération des détails de la carte' 
@@ -210,6 +211,36 @@ exports.getMarketCardDetails = async (req, res) => {
     res.status(500).render('error', {
       message: 'Erreur lors de la récupération des détails de la carte',
       error: process.env.NODE_ENV === 'development' ? error : {}
+    });
+  }
+};
+
+// Obtenir mes cartes mises en vente
+exports.getMyListings = async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Authentification requise'
+      });
+    }
+
+    // Récupérer les cartes de l'utilisateur qui sont en vente
+    const myListings = await Card.find({ 
+      owner: req.user.id, 
+      isForSale: true 
+    }).populate('owner', 'username');
+
+    return res.status(200).json({
+      success: true,
+      count: myListings.length,
+      cards: myListings
+    });
+  } catch (error) {
+    console.error('Erreur lors de la récupération de vos cartes en vente:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération de vos cartes en vente'
     });
   }
 };
@@ -417,7 +448,7 @@ exports.getMarketHistory = async (req, res) => {
     const total = await Transaction.countDocuments();
     
     // Format de la réponse API
-    if (req.originalUrl && req.originalUrl.startsWith('/api')) {
+    if (req.originalUrl && (req.originalUrl.startsWith('/api') || req.originalUrl.includes('/api'))) {
       return res.status(200).json({
         success: true,
         count: transactions.length,
@@ -447,7 +478,7 @@ exports.getMarketHistory = async (req, res) => {
     console.error('Erreur lors de la récupération de l\'historique du marché:', error);
     
     // Format de la réponse d'erreur API
-    if (req.originalUrl && req.originalUrl.startsWith('/api')) {
+    if (req.originalUrl && (req.originalUrl.startsWith('/api') || req.originalUrl.includes('/api'))) {
       return res.status(500).json({ 
         success: false, 
         message: 'Erreur lors de la récupération de l\'historique du marché' 
@@ -518,7 +549,7 @@ exports.getMarketStats = async (req, res) => {
     };
     
     // Format de la réponse API
-    if (req.originalUrl && req.originalUrl.startsWith('/api')) {
+    if (req.originalUrl && (req.originalUrl.startsWith('/api') || req.originalUrl.includes('/api'))) {
       return res.status(200).json({
         success: true,
         stats
@@ -538,7 +569,7 @@ exports.getMarketStats = async (req, res) => {
     console.error('Erreur lors de la récupération des statistiques du marché:', error);
     
     // Format de la réponse d'erreur API
-    if (req.originalUrl && req.originalUrl.startsWith('/api')) {
+    if (req.originalUrl && (req.originalUrl.startsWith('/api') || req.originalUrl.includes('/api'))) {
       return res.status(500).json({ 
         success: false, 
         message: 'Erreur lors de la récupération des statistiques du marché' 
