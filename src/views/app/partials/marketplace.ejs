@@ -1,0 +1,212 @@
+<div class="marketplace-container">
+    <div class="marketplace-header">
+        <h1>Marketplace</h1>
+        <p class="marketplace-desc">Découvrez, achetez et vendez des cartes NFT uniques</p>
+    </div>
+
+    <div class="marketplace-content-wrapper">
+        <!-- Colonne de filtres à droite -->
+        <div class="marketplace-filter-column">
+            <div class="filter-section">
+                <h3>Filtres</h3>
+                <form id="marketplace-filter-form" class="filter-form">
+                    <!-- Recherche par nom -->
+                    <div class="filter-group">
+                        <label for="search">Recherche</label>
+                        <input type="text" id="search" name="search" placeholder="Nom de la carte..." class="filter-input">
+                    </div>
+                    
+                    <!-- Filtre par rareté -->
+                    <div class="filter-group">
+                        <label for="rarity">Rareté</label>
+                        <select id="rarity" name="rarity" class="filter-select">
+                            <option value="">Toutes</option>
+                            <option value="common">Commune</option>
+                            <option value="rare">Rare</option>
+                            <option value="epic">Épique</option>
+                            <option value="legendary">Légendaire</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Tri -->
+                    <div class="filter-group">
+                        <label for="sort">Trier par</label>
+                        <select id="sort" name="sort" class="filter-select">
+                            <option value="price_asc">Prix croissant</option>
+                            <option value="price_desc">Prix décroissant</option>
+                            <option value="newest">Plus récentes</option>
+                            <option value="rarity">Rareté</option>
+                            <option value="name_asc">Nom (A-Z)</option>
+                            <option value="name_desc">Nom (Z-A)</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Filtre par prix -->
+                    <div class="filter-group">
+                        <label for="minPrice">Prix minimum</label>
+                        <input type="number" id="minPrice" name="minPrice" min="0" placeholder="0" class="filter-input">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="maxPrice">Prix maximum</label>
+                        <input type="number" id="maxPrice" name="maxPrice" min="0" placeholder="Maximum" class="filter-input">
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <button type="submit" class="filter-button apply-filter">Appliquer</button>
+                        <button type="button" id="reset-filters" class="filter-button reset-filter">Réinitialiser</button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="quick-links">
+                <h3>Liens rapides</h3>
+                <ul>
+                    <li><a href="#" id="view-stats">Statistiques du marché</a></li>
+                    <li><a href="#" id="view-history">Historique des transactions</a></li>
+                    <li><a href="#" id="view-my-listings">Mes cartes en vente</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Grille principale des cartes -->
+        <div class="marketplace-main-content">
+            <div class="marketplace-result-info">
+                <span id="marketplace-total-count">0</span> cartes trouvées
+            </div>
+            
+            <div id="marketplace-cards-grid" class="cards-grid"></div>
+            
+            <!-- Pagination -->
+            <div id="marketplace-pagination" class="pagination-container"></div>
+            
+            <!-- Message si aucune carte trouvée -->
+            <div id="no-cards-message" class="no-cards-message hidden">
+                <div class="no-cards-icon">
+                    <i class="fa-solid fa-face-frown"></i>
+                </div>
+                <h3>Aucune carte trouvée</h3>
+                <p>Aucune carte ne correspond à vos critères de recherche. Essayez de modifier vos filtres.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal pour voir les détails d'une carte -->
+<div id="card-detail-marketplace-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="card-detail-container">
+            <!-- La moitié gauche affiche la carte -->
+            <div class="card-detail-image">
+                <div class="card-image-wrapper">
+                    <img id="modal-card-image" src="" alt="Card Image">
+                </div>
+                <div id="modal-card-rarity" class="card-rarity"></div>
+            </div>
+            
+            <!-- La moitié droite affiche les détails et l'historique -->
+            <div class="card-detail-info">
+                <h2 id="modal-card-name" class="card-name"></h2>
+                
+                <div id="modal-card-price-container" class="card-price-container">
+                    <span id="modal-card-price" class="card-price"></span> CRYP
+                </div>
+                
+                <div class="card-stats">
+                    <h3>Statistiques</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-name">ATT</span>
+                            <span id="modal-card-attack" class="stat-value"></span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-name">DEF</span>
+                            <span id="modal-card-defense" class="stat-value"></span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-name">MAG</span>
+                            <span id="modal-card-magic" class="stat-value"></span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-name">VIT</span>
+                            <span id="modal-card-speed" class="stat-value"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="modal-card-owner" class="card-owner">
+                    <span class="owner-label">Vendeur: </span>
+                    <span id="modal-card-owner-name" class="owner-name"></span>
+                </div>
+                
+                <div id="modal-card-action" class="card-action"></div>
+                
+                <div class="card-history">
+                    <h3>Historique des transactions</h3>
+                    <div id="card-transaction-history" class="transaction-list">
+                        <!-- L'historique des transactions sera chargé ici -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modales pour achat, vente et retrait de carte -->
+<div id="buy-confirm-modal" class="modal">
+    <div class="modal-content modal-sm">
+        <span class="close-modal">&times;</span>
+        <h3>Confirmer l'achat</h3>
+        <p>Êtes-vous sûr de vouloir acheter cette carte pour <span id="confirm-price"></span> CRYP ?</p>
+        
+        <div class="modal-actions">
+            <button type="button" id="cancel-buy" class="btn-secondary">Annuler</button>
+            <button type="button" id="confirm-buy" class="btn-primary">Confirmer l'achat</button>
+        </div>
+    </div>
+</div>
+
+<div id="sell-modal" class="modal">
+    <div class="modal-content modal-sm">
+        <span class="close-modal">&times;</span>
+        <h3>Mettre en vente</h3>
+        <form id="sell-form">
+            <div class="form-group">
+                <label for="price">Prix (CRYP)</label>
+                <input type="number" id="price" name="price" min="1" step="1" placeholder="Entrez un prix" class="form-input">
+                <p class="form-hint">Définissez un prix juste pour votre carte.</p>
+            </div>
+            
+            <div class="modal-actions">
+                <button type="button" id="cancel-sell" class="btn-secondary">Annuler</button>
+                <button type="submit" class="btn-primary">Mettre en vente</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="remove-confirm-modal" class="modal">
+    <div class="modal-content modal-sm">
+        <span class="close-modal">&times;</span>
+        <h3>Confirmer le retrait</h3>
+        <p>Êtes-vous sûr de vouloir retirer cette carte du marché ?</p>
+        
+        <div class="modal-actions">
+            <button type="button" id="cancel-remove" class="btn-secondary">Annuler</button>
+            <button type="button" id="confirm-remove" class="btn-danger">Retirer du marché</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast pour les notifications -->
+<div id="marketplace-toast" class="toast hidden">
+    <div class="toast-content">
+        <i id="toast-icon" class="fas"></i>
+        <div class="toast-message">
+            <span id="toast-title" class="toast-title"></span>
+            <span id="toast-text" class="toast-text"></span>
+        </div>
+        <i class="fas fa-times toast-close"></i>
+    </div>
+</div>
