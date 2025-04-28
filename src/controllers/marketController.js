@@ -91,6 +91,7 @@ exports.getMarketCards = async (req, res) => {
     
     // Format de la réponse pour le rendu de la vue
     res.render('marketplace/index', {
+      title: 'CryptoCards - Marketplace',
       marketCards,
       filters: { search, rarity, minPrice, maxPrice, sort },
       pagination: {
@@ -99,7 +100,10 @@ exports.getMarketCards = async (req, res) => {
         currentPage: Number(page),
         limit: Number(limit)
       },
-      user: req.user || null
+      user: req.user || null,
+      pageCss: 'marketplace',
+      cssFiles: ['card', 'marketplace'],
+      pageJs: 'marketplace'
     });
   } catch (error) {
     console.error('Erreur lors de la récupération des cartes du marché:', error);
@@ -182,10 +186,14 @@ exports.getMarketCardDetails = async (req, res) => {
     
     // Format de la réponse pour le rendu de la vue
     res.render('marketplace/details', {
+      title: `CryptoCards - ${card.name}`,
       card,
       transactions,
       user: req.user || null,
-      isOwner: req.user ? req.user.id === card.owner._id.toString() : false
+      isOwner: req.user ? req.user.id === card.owner._id.toString() : false,
+      pageCss: 'marketplace',
+      cssFiles: ['card', 'marketplace'],
+      pageJs: 'marketplace'
     });
   } catch (error) {
     console.error('Erreur lors de la récupération des détails de la carte:', error);
@@ -422,6 +430,7 @@ exports.getMarketHistory = async (req, res) => {
     
     // Format de la réponse pour le rendu de la vue
     res.render('marketplace/history', {
+      title: 'CryptoCards - Historique des transactions',
       transactions,
       pagination: {
         totalItems: total,
@@ -429,7 +438,10 @@ exports.getMarketHistory = async (req, res) => {
         currentPage: Number(page),
         limit: Number(limit)
       },
-      user: req.user || null
+      user: req.user || null,
+      pageCss: 'marketplace',
+      cssFiles: ['card', 'marketplace'],
+      pageJs: 'marketplace'
     });
   } catch (error) {
     console.error('Erreur lors de la récupération de l\'historique du marché:', error);
@@ -515,8 +527,12 @@ exports.getMarketStats = async (req, res) => {
     
     // Format de la réponse pour le rendu de la vue
     res.render('marketplace/stats', {
+      title: 'CryptoCards - Statistiques du marché',
       stats,
-      user: req.user || null
+      user: req.user || null,
+      pageCss: 'marketplace',
+      cssFiles: ['card', 'marketplace'],
+      pageJs: 'marketplace'
     });
   } catch (error) {
     console.error('Erreur lors de la récupération des statistiques du marché:', error);
