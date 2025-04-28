@@ -26,7 +26,7 @@ app.use(helmet({
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
       scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdnjs.cloudflare.com"],
-      imgSrc: ["'self'", "data:"],
+      imgSrc: ["'self'", "data:", "https://placehold.co"],
       connectSrc: ["'self'", "https://api.etherscan.io"]
     },
   },
@@ -59,11 +59,16 @@ app.use((req, res, next) => {
 // Servir les fichiers statiques
 app.use(express.static(path.join(__dirname, '../public')));
 
+// Route spéciale pour rediriger /market vers /marketplace
+app.get('/market', (req, res) => {
+  res.redirect('/marketplace');
+});
+
 // Routes
 app.use('/', require('./routes/index'));
 app.use('/api', require('./routes/api'));
 app.use('/auth', require('./routes/auth'));
-app.use('/marketplace', require('./routes/marketplace')); // Nouvelle route pour la marketplace
+app.use('/marketplace', require('./routes/marketplace')); // Routes de la marketplace
 
 // Middleware de gestion des erreurs
 app.use((req, res, next) => {
