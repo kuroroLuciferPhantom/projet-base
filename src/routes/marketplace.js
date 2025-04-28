@@ -9,6 +9,9 @@ router.get('/card/:id', marketController.getMarketCardDetails);
 router.get('/history', marketController.getMarketHistory);
 router.get('/stats', marketController.getMarketStats);
 
+// Route API pour obtenir les dernières cartes (pour l'aperçu dans l'application principale)
+router.get('/api/latest', marketController.getLatestCards);
+
 // Routes API nécessitant une authentification
 router.post('/api/buy', isAuthenticatedApi, marketController.buyCard);
 router.post('/api/sell', isAuthenticatedApi, marketController.sellCard);
