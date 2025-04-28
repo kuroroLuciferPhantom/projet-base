@@ -120,6 +120,29 @@ exports.getMarketCards = async (req, res) => {
   }
 };
 
+// Obtenir les dernières cartes mises en vente (pour l'aperçu dans l'app)
+exports.getLatestCards = async (req, res) => {
+  try {
+    // Récupérer les 4 dernières cartes mises en vente
+    const latestCards = await Card.find({ isForSale: true })
+      .sort({ createdAt: -1 })
+      .limit(4)
+      .populate('owner', 'username');
+    
+    return res.status(200).json({
+      success: true,
+      count: latestCards.length,
+      cards: latestCards
+    });
+  } catch (error) {
+    console.error('Erreur lors de la récupération des dernières cartes:', error);
+    return res.status(500).json({ 
+      success: false, 
+      message: 'Erreur lors de la récupération des dernières cartes' 
+    });
+  }
+};
+
 // Obtenir les détails d'une carte sur le marché
 exports.getMarketCardDetails = async (req, res) => {
   try {
