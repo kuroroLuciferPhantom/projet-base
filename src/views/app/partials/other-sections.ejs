@@ -4,12 +4,56 @@
 </section>
 
 <section class="wallet-connected hidden" id="section-marketplace">
-    <script>
-        // Rediriger vers la vraie marketplace
-        window.location.href = '/marketplace';
-    </script>
     <h1>Marketplace</h1>
-    <p>Redirection vers la marketplace en cours...</p>
+    <!-- Intégration de la marketplace dans l'app plutôt que redirection -->
+    <p>Accédez à notre nouvelle marketplace pour acheter et vendre des cartes :</p>
+    <div class="marketplace-buttons">
+        <a href="/marketplace" class="btn btn-primary" target="_blank">Ouvrir la marketplace complète</a>
+    </div>
+    <div class="marketplace-preview">
+        <h2>Dernières cartes mises en vente</h2>
+        <div id="marketplace-latest-cards" class="cards-grid">
+            <p>Chargement des cartes en vente...</p>
+        </div>
+    </div>
+    <script>
+        // Charger un aperçu des dernières cartes mises en vente
+        fetch('/marketplace/api/latest', { method: 'GET' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.cards && data.cards.length > 0) {
+                    const container = document.getElementById('marketplace-latest-cards');
+                    container.innerHTML = '';
+                    
+                    data.cards.forEach(card => {
+                        const cardEl = document.createElement('div');
+                        cardEl.className = 'card';
+                        cardEl.innerHTML = `
+                            <div class="card-header ${card.rarity}">
+                                <span>${card.rarity.charAt(0).toUpperCase() + card.rarity.slice(1)}</span>
+                            </div>
+                            <div class="card-image">
+                                <img src="${card.imageUrl}" alt="${card.name}">
+                            </div>
+                            <div class="card-body">
+                                <h3>${card.name}</h3>
+                                <p class="card-price">${card.price} CRYP</p>
+                                <a href="/marketplace/card/${card._id}" class="btn btn-sm" target="_blank">Voir détails</a>
+                            </div>
+                        `;
+                        container.appendChild(cardEl);
+                    });
+                } else {
+                    document.getElementById('marketplace-latest-cards').innerHTML = 
+                        '<p>Aucune carte n\'est actuellement en vente.</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Erreur lors du chargement des cartes:', error);
+                document.getElementById('marketplace-latest-cards').innerHTML = 
+                    '<p>Impossible de charger les cartes. Veuillez réessayer plus tard.</p>';
+            });
+    </script>
 </section>
 
 <section class="wallet-connected hidden" id="section-fusion">
