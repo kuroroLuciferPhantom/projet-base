@@ -36,7 +36,7 @@ const generateNonce = () => {
 const getSignMessage = (nonce) => {
   // Utiliser la même date pour toute la requête
   const date = new Date().toISOString();
-  return `Bienvenue sur CryptoCards!\n\nCette signature prouve que vous êtes le propriétaire de ce wallet.\n\nNonce: ${nonce}\nDate: ${date}`;
+  return `Bienvenue sur EpicFactionCommunity!\n\nCette signature prouve que vous êtes le propriétaire de ce wallet.\n\nNonce: ${nonce}\nDate: ${date}`;
 };
 
 // Fonction pour obtenir les informations de la chaîne

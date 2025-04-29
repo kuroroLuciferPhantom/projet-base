@@ -7,7 +7,7 @@ const { isAuthenticated } = require('../middleware/auth');
 // Page d'accueil
 router.get('/', (req, res) => {
   res.render('index', { 
-    title: 'CryptoCards - Jeu de cartes à collectionner NFT',
+    title: 'EpicFactionCommunity - Jeu de cartes à collectionner NFT',
     user: req.session.user || null,
     pageCss: 'styles', // Pour s'assurer que styles.css est bien chargé
     pageJs: 'main' // Pour s'assurer que main.js est bien chargé
@@ -17,7 +17,7 @@ router.get('/', (req, res) => {
 // Page de l'application (nécessite authentification)
 router.get('/app', isAuthenticated, (req, res) => {
   res.render('app', { 
-    title: 'CryptoCards - Votre Collection',
+    title: 'EpicFactionCommunity - Votre Collection',
     user: req.session.user,
     pageCss: 'app', // Charge app.css
     pageJs: 'app' // Charge app.js
@@ -32,7 +32,7 @@ router.get('/login', (req, res) => {
   }
   
   res.render('login', { 
-    title: 'CryptoCards - Connexion',
+    title: 'EpicFactionCommunity - Connexion',
     user: null,
     pageCss: 'auth', // Charge auth.css
     layout: false // Ne pas utiliser le layout pour la page de login
@@ -47,7 +47,7 @@ router.get('/register', (req, res) => {
   }
   
   res.render('register', { 
-    title: 'CryptoCards - Inscription',
+    title: 'EpicFactionCommunity - Inscription',
     user: null,
     pageCss: 'auth', // Charge auth.css
     layout: false // Ne pas utiliser le layout pour la page d'inscription

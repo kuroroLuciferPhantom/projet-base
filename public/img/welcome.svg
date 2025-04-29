@@ -7,7 +7,7 @@
       <stop offset="100%" style="stop-color:#2575fc;stop-opacity:1" />
     </linearGradient>
   </defs>
-  <text x="400" y="310" font-family="Arial" font-size="36" text-anchor="middle" fill="white">Bienvenue sur CryptoCards</text>
+  <text x="400" y="310" font-family="Arial" font-size="36" text-anchor="middle" fill="white">Bienvenue sur EpicFactionCommunity</text>
   <rect x="300" y="340" width="200" height="50" rx="10" fill="none" stroke="#4facfe" stroke-width="3"/>
   <text x="400" y="375" font-family="Arial" font-size="24" text-anchor="middle" fill="white">Commencer</text>
 </svg>

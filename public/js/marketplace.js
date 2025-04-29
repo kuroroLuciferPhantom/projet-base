@@ -1,5 +1,5 @@
 /**
- * CryptoCards - JavaScript pour la marketplace
+ * EpicFactionCommunity - JavaScript pour la marketplace
  * Ce fichier contient les fonctions JavaScript pour la marketplace
  */
 

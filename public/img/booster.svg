@@ -7,7 +7,7 @@
       <stop offset="100%" style="stop-color:#2575fc;stop-opacity:1" />
     </linearGradient>
   </defs>
-  <text x="400" y="250" font-family="Arial" font-size="24" text-anchor="middle" fill="white">CRYPTOCARDS</text>
+  <text x="400" y="250" font-family="Arial" font-size="24" text-anchor="middle" fill="white">EpicFactionCommunity</text>
   <text x="400" y="290" font-family="Arial" font-size="36" text-anchor="middle" fill="white">BOOSTER</text>
   <text x="400" y="330" font-family="Arial" font-size="18" text-anchor="middle" fill="white">5 CARTES</text>
   <circle cx="400" cy="370" r="40" fill="#f1c40f" opacity="0.8"/>

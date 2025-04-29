@@ -60,13 +60,13 @@ img {
 }
 
 .btn-primary {
-    background-color: var(--color-red);
+    background-color: var(--color-yellow);
     color: var(--color-white);
     box-shadow: 0 4px 16px rgba(230, 46, 46, 0.3);
 }
 
 .btn-primary:hover {
-    background-color: var(--color-red-light);
+    background-color: var(--color-yellow-light);
     transform: translateY(-3px);
 }
 

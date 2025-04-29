@@ -18,9 +18,7 @@ let currentSort = {
 };
 
 // Fonction d'initialisation appelée au chargement de la page
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("[DEBUG] Initialisation des cartes...");
-    
+document.addEventListener('DOMContentLoaded', function() {    
     // Configuration des écouteurs d'événements pour les filtres et le tri immédiatement
     setupFilterSortListeners();
     
@@ -28,7 +26,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const collectionLink = document.querySelector('a[href="#collection"]');
     if (collectionLink) {
         collectionLink.addEventListener('click', function() {
-            console.log("[DEBUG] Section collection activée");
             setTimeout(loadUserCards, 100); // Petit délai pour s'assurer que la section est affichée
         });
     }
@@ -38,9 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
  * Charge et affiche les cartes de l'utilisateur
  */
 async function loadUserCards() {
-    try {
-        console.log("[DEBUG] Chargement des cartes utilisateur...");
-        
+    try {        
         // Masquer le message "collection vide"
         document.querySelector('.no-cards-prompt').classList.add('hidden');
         
@@ -272,9 +267,7 @@ async function loadUserCards() {
                 tournament: 'silver'
             }
         ];
-        
-        console.log("[DEBUG] Nombre total de cartes: " + userCards.length);
-        
+                
         // Initialiser les filtres et le tri
         filteredCards = [...userCards];
         
@@ -294,30 +287,18 @@ async function loadUserCards() {
 /**
  * Configuration des écouteurs d'événements pour les filtres et le tri
  */
-function setupFilterSortListeners() {
-    console.log("[DEBUG] Configuration des écouteurs pour filtres et tri");
-    
+function setupFilterSortListeners() {    
     // Appliquer les filtres - Configuration de l'écouteur
     const applyFiltersBtn = document.getElementById('apply-filters');
-    if (applyFiltersBtn) {
-        console.log("[DEBUG] Bouton 'apply-filters' trouvé");
-        
+    if (applyFiltersBtn) {        
         // Supprimer les anciens écouteurs si présents
         const newApplyFiltersBtn = applyFiltersBtn.cloneNode(true);
         applyFiltersBtn.parentNode.replaceChild(newApplyFiltersBtn, applyFiltersBtn);
         
-        newApplyFiltersBtn.addEventListener('click', function() {
-            console.log("[DEBUG] Clic sur le bouton 'Appliquer les filtres'");
-            
+        newApplyFiltersBtn.addEventListener('click', function() {            
             const rarityFilter = document.getElementById('filter-rarity').value;
             const energyFilter = document.getElementById('filter-energy').value;
             const tournamentFilter = document.getElementById('filter-tournament').value;
-            
-            console.log("[DEBUG] Filtres sélectionnés:", {
-                rarity: rarityFilter,
-                energy: energyFilter,
-                tournament: tournamentFilter
-            });
             
             // Mettre à jour les filtres actuels
             currentFilters = {
@@ -338,23 +319,15 @@ function setupFilterSortListeners() {
     
     // Appliquer le tri - Configuration de l'écouteur
     const applySortBtn = document.getElementById('apply-sort');
-    if (applySortBtn) {
-        console.log("[DEBUG] Bouton 'apply-sort' trouvé");
-        
+    if (applySortBtn) {        
         // Supprimer les anciens écouteurs si présents
         const newApplySortBtn = applySortBtn.cloneNode(true);
         applySortBtn.parentNode.replaceChild(newApplySortBtn, applySortBtn);
         
         newApplySortBtn.addEventListener('click', function() {
-            console.log("[DEBUG] Clic sur le bouton 'Appliquer le tri'");
             
             const sortBy = document.getElementById('sort-by').value;
             const sortOrder = document.getElementById('sort-order').value;
-            
-            console.log("[DEBUG] Tri sélectionné:", {
-                by: sortBy,
-                order: sortOrder
-            });
             
             // Mettre à jour le tri actuel
             currentSort = {
@@ -375,14 +348,12 @@ function setupFilterSortListeners() {
     // Gérer le bouton de réinitialisation des filtres (dans la section "Aucun résultat")
     const resetFiltersBtn = document.getElementById('reset-filters');
     if (resetFiltersBtn) {
-        console.log("[DEBUG] Bouton 'reset-filters' trouvé");
         
         // Supprimer les anciens écouteurs si présents
         const newResetFiltersBtn = resetFiltersBtn.cloneNode(true);
         resetFiltersBtn.parentNode.replaceChild(newResetFiltersBtn, resetFiltersBtn);
         
         newResetFiltersBtn.addEventListener('click', function() {
-            console.log("[DEBUG] Clic sur le bouton 'Réinitialiser les filtres'");
             resetAllFiltersAndSort();
         });
     } else {
@@ -392,14 +363,12 @@ function setupFilterSortListeners() {
     // Gérer le bouton global de réinitialisation des filtres et tris
     const resetAllFiltersBtn = document.getElementById('reset-all-filters');
     if (resetAllFiltersBtn) {
-        console.log("[DEBUG] Bouton 'reset-all-filters' trouvé");
         
         // Supprimer les anciens écouteurs si présents
         const newResetAllFiltersBtn = resetAllFiltersBtn.cloneNode(true);
         resetAllFiltersBtn.parentNode.replaceChild(newResetAllFiltersBtn, resetAllFiltersBtn);
         
         newResetAllFiltersBtn.addEventListener('click', function() {
-            console.log("[DEBUG] Clic sur le bouton 'Réinitialiser tout'");
             resetAllFiltersAndSort();
         });
     } else {
@@ -448,7 +417,6 @@ function resetAllFiltersAndSort() {
  * Configuration des autres écouteurs d'événements (pagination, boutons d'action)
  */
 function setupOtherListeners() {
-    console.log("[DEBUG] Configuration des écouteurs pour pagination et actions");
     
     // Boutons d'action globaux
     const burnBtn = document.getElementById('btn-burn');
@@ -456,14 +424,12 @@ function setupOtherListeners() {
     
     if (burnBtn) {
         burnBtn.addEventListener('click', function() {
-            console.log("[DEBUG] Clic sur le bouton 'Burn'");
             burnSelectedCards();
         });
     }
     
     if (levelUpBtn) {
         levelUpBtn.addEventListener('click', function() {
-            console.log("[DEBUG] Clic sur le bouton 'Level Up'");
             levelUpSelectedCards();
         });
     }
@@ -478,10 +444,8 @@ function setupOtherListeners() {
         prevPageBtn.parentNode.replaceChild(newPrevPageBtn, prevPageBtn);
         
         newPrevPageBtn.addEventListener('click', function() {
-            console.log("[DEBUG] Clic sur le bouton 'Page précédente'");
             if (currentPage > 1) {
                 currentPage--;
-                console.log("[DEBUG] Nouvelle page: " + currentPage);
                 displayCards();
                 updatePagination();
             }
@@ -494,13 +458,10 @@ function setupOtherListeners() {
         nextPageBtn.parentNode.replaceChild(newNextPageBtn, nextPageBtn);
         
         newNextPageBtn.addEventListener('click', function() {
-            console.log("[DEBUG] Clic sur le bouton 'Page suivante'");
             const totalPages = Math.ceil(filteredCards.length / cardsPerPage);
-            console.log("[DEBUG] Total des pages: " + totalPages + ", Page actuelle: " + currentPage);
             
             if (currentPage < totalPages) {
                 currentPage++;
-                console.log("[DEBUG] Nouvelle page: " + currentPage);
                 displayCards();
                 updatePagination();
             }
@@ -512,10 +473,6 @@ function setupOtherListeners() {
  * Applique les filtres et le tri aux cartes
  */
 function applyFiltersAndSort() {
-    console.log("[DEBUG] Début de l'application des filtres et du tri");
-    console.log('[DEBUG] Filtres appliqués:', currentFilters);
-    console.log('[DEBUG] Tri appliqué:', currentSort);
-    
     // Filtrer les cartes
     filteredCards = userCards.filter(card => {
         // Filtre par rareté
@@ -539,9 +496,7 @@ function applyFiltersAndSort() {
         
         return true;
     });
-    
-    console.log(`[DEBUG] Après filtrage: ${filteredCards.length} cartes restantes`);
-    
+        
     // Trier les cartes
     filteredCards.sort((a, b) => {
         let valueA = a[currentSort.by];
@@ -566,9 +521,7 @@ function applyFiltersAndSort() {
             return valueA < valueB ? 1 : -1;
         }
     });
-    
-    console.log(`[DEBUG] Après tri: Liste triée par ${currentSort.by} en ordre ${currentSort.order}`);
-    
+        
     // Réinitialiser à la première page
     currentPage = 1;
     
@@ -587,13 +540,10 @@ function updatePaginationVisibility() {
     const totalPages = Math.ceil(filteredCards.length / cardsPerPage);
     const paginationContainer = document.querySelector('.pagination-container');
     
-    console.log(`[DEBUG] Mise à jour de la visibilité de la pagination: ${filteredCards.length} cartes, ${totalPages} pages`);
     
     if (totalPages > 1) {
-        console.log("[DEBUG] Affichage de la pagination (plusieurs pages)");
         paginationContainer.classList.remove('hidden');
     } else {
-        console.log("[DEBUG] Masquage de la pagination (une seule page)");
         paginationContainer.classList.add('hidden');
     }
 }
@@ -601,9 +551,7 @@ function updatePaginationVisibility() {
 /**
  * Affiche les cartes pour la page courante
  */
-function displayCards() {
-    console.log(`[DEBUG] Affichage des cartes pour la page ${currentPage}`);
-    
+function displayCards() {    
     const cardsGrid = document.querySelector('.cards-grid');
     const noResultsSection = document.querySelector('.no-results');
     
@@ -613,7 +561,6 @@ function displayCards() {
     
     // Si aucune carte ne correspond aux filtres
     if (filteredCards.length === 0) {
-        console.log("[DEBUG] Aucune carte ne correspond aux filtres");
         noResultsSection.classList.remove('hidden');
         return;
     }
@@ -625,9 +572,7 @@ function displayCards() {
     // Calculer les indices de début et de fin pour la pagination
     const startIndex = (currentPage - 1) * cardsPerPage;
     const endIndex = Math.min(startIndex + cardsPerPage, filteredCards.length);
-    
-    console.log(`[DEBUG] Affichage des cartes ${startIndex + 1} à ${endIndex} sur ${filteredCards.length}`);
-    
+        
     // Ajouter les cartes de la page courante
     for (let i = startIndex; i < endIndex; i++) {
         const cardData = filteredCards[i];
@@ -643,8 +588,6 @@ function displayCards() {
         }
         
         card.innerHTML = `
-            <div class="card-rarity">${cardData.rarity.charAt(0).toUpperCase() + cardData.rarity.slice(1)}</div>
-            <div class="tournament-badge" style="background-color: ${tournamentColor};">${cardData.tournament.charAt(0).toUpperCase() + cardData.tournament.slice(1)}</div>
             <div class="card-image">
                 <img src="${cardData.image}" alt="${cardData.name}" class="card-artwork">
             </div>
@@ -655,7 +598,6 @@ function displayCards() {
 
         // Ajouter l'écouteur d'événement pour afficher les détails de la carte
         card.addEventListener('click', function() {
-            console.log(`[DEBUG] Clic sur la carte "${cardData.name}"`);
             showCardDetails(cardData);
         });
         
@@ -668,9 +610,7 @@ function displayCards() {
  */
 function updatePagination() {
     const totalPages = Math.max(1, Math.ceil(filteredCards.length / cardsPerPage));
-    
-    console.log(`[DEBUG] Mise à jour de la pagination: Page ${currentPage}/${totalPages}`);
-    
+        
     // Mettre à jour les textes
     const currentPageElem = document.getElementById('current-page');
     const totalPagesElem = document.getElementById('total-pages');
@@ -684,12 +624,10 @@ function updatePagination() {
     
     if (prevPageBtn) {
         prevPageBtn.disabled = (currentPage <= 1);
-        console.log(`[DEBUG] Bouton Précédent ${prevPageBtn.disabled ? 'désactivé' : 'activé'}`);
     }
     
     if (nextPageBtn) {
         nextPageBtn.disabled = (currentPage >= totalPages);
-        console.log(`[DEBUG] Bouton Suivant ${nextPageBtn.disabled ? 'désactivé' : 'activé'}`);
     }
 }
 
@@ -697,7 +635,6 @@ function updatePagination() {
  * Fonction pour brûler les cartes sélectionnées (à implémenter plus tard)
  */
 function burnSelectedCards() {
-    console.log('[DEBUG] Fonction burnSelectedCards() appelée');
     alert('Fonctionnalité "Burn" à implémenter');
 }
 
@@ -705,7 +642,6 @@ function burnSelectedCards() {
  * Fonction pour augmenter le niveau des cartes sélectionnées (à implémenter plus tard)
  */
 function levelUpSelectedCards() {
-    console.log('[DEBUG] Fonction levelUpSelectedCards() appelée');
     alert('Fonctionnalité "Level Up" à implémenter');
 }
 
@@ -713,7 +649,6 @@ function levelUpSelectedCards() {
  * Fonction stub pour afficher les détails d'une carte (à implémenter selon vos besoins)
  */
 function showCardDetails(cardData) {
-    console.log('[DEBUG] Affichage des détails de la carte:', cardData);
     // Cette fonction pourrait être définie dans card-details.js
     // Si ce n'est pas le cas, nous affichons simplement le nom de la carte
     alert(`Détails de la carte: ${cardData.name}`);

@@ -91,7 +91,7 @@ exports.getMarketCards = async (req, res) => {
     
     // Format de la réponse pour le rendu de la vue
     res.render('marketplace/index', {
-      title: 'CryptoCards - Marketplace',
+      title: 'EpicFactionCommunity - Marketplace',
       marketCards,
       filters: { search, rarity, minPrice, maxPrice, sort },
       pagination: {
@@ -187,7 +187,7 @@ exports.getMarketCardDetails = async (req, res) => {
     
     // Format de la réponse pour le rendu de la vue
     res.render('marketplace/details', {
-      title: `CryptoCards - ${card.name}`,
+      title: `EpicFactionCommunity - ${card.name}`,
       card,
       transactions,
       user: req.user || null,
@@ -461,7 +461,7 @@ exports.getMarketHistory = async (req, res) => {
     
     // Format de la réponse pour le rendu de la vue
     res.render('marketplace/history', {
-      title: 'CryptoCards - Historique des transactions',
+      title: 'EpicFactionCommunity - Historique des transactions',
       transactions,
       pagination: {
         totalItems: total,
@@ -558,7 +558,7 @@ exports.getMarketStats = async (req, res) => {
     
     // Format de la réponse pour le rendu de la vue
     res.render('marketplace/stats', {
-      title: 'CryptoCards - Statistiques du marché',
+      title: 'EpicFactionCommunity - Statistiques du marché',
       stats,
       user: req.user || null,
       pageCss: 'marketplace',

@@ -1,10 +1,10 @@
-# Marketplace CryptoCards
+# Marketplace EpicFactionCommunity
 
-Ce document présente la fonctionnalité de marketplace pour l'application CryptoCards, permettant aux utilisateurs d'acheter et de vendre leurs cartes NFT.
+Ce document présente la fonctionnalité de marketplace pour l'application EpicFactionCommunity, permettant aux utilisateurs d'acheter et de vendre leurs cartes NFT.
 
 ## Fonctionnalités
 
-La marketplace CryptoCards offre les fonctionnalités suivantes :
+La marketplace EpicFactionCommunity offre les fonctionnalités suivantes :
 
 - Affichage de toutes les cartes mises en vente
 - Filtrage et recherche des cartes par nom, rareté et prix
@@ -262,4 +262,4 @@ Voici quelques idées d'améliorations futures pour la marketplace :
 
 ### Support
 
-Pour tout problème persistant avec la marketplace, contactez le support à support@cryptocards.com ou ouvrez un ticket sur le GitHub du projet.
+Pour tout problème persistant avec la marketplace, contactez le support à support@EpicFactionCommunity.com ou ouvrez un ticket sur le GitHub du projet.

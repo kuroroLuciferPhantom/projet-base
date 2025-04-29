@@ -1,10 +1,10 @@
-# CryptoCards - Application Web Node.js
+# EpicFactionCommunity - Application Web Node.js
 
-Application web pour le jeu de cartes NFT CryptoCards, utilisant Node.js, Express et MongoDB.
+Application web pour le jeu de cartes NFT EpicFactionCommunity, utilisant Node.js, Express et MongoDB.
 
 ## Description
 
-CryptoCards est une plateforme de jeu de cartes à collectionner basée sur la blockchain. Cette application permet aux utilisateurs de collectionner, échanger et jouer avec des cartes NFT.
+EpicFactionCommunity est une plateforme de jeu de cartes à collectionner basée sur la blockchain. Cette application permet aux utilisateurs de collectionner, échanger et jouer avec des cartes NFT.
 
 ## Technologies utilisées
 
