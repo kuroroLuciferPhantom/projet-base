@@ -273,8 +273,8 @@
     box-shadow: 0 8px 15px rgba(251, 191, 36, 0.2);
 }
 
-/* Styles pour l'état "collection vide" */
-.no-cards-prompt {
+/* Styles pour l'état "collection vide" et "aucun résultat" */
+.no-cards-prompt, .no-results {
     padding: 50px;
     text-align: center;
     background-color: #1f2937;
@@ -313,7 +313,7 @@
     gap: 20px;
 }
 
-.empty-actions button {
+.empty-actions button, .empty-state button {
     padding: 12px 24px;
     font-weight: 600;
 }
