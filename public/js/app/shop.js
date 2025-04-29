@@ -8,6 +8,7 @@ const BOOSTER_TYPES = {
         name: 'Booster Standard',
         price: 500,
         cardCount: 5,
+        image: '/img/booster-standard.svg',
         rarities: {
             common: 0.70,
             rare: 0.20,
@@ -19,6 +20,7 @@ const BOOSTER_TYPES = {
         name: 'Booster Premium',
         price: 1200,
         cardCount: 5,
+        image: '/img/booster-premium.svg',
         rarities: {
             common: 0.55,
             rare: 0.25,
@@ -30,6 +32,7 @@ const BOOSTER_TYPES = {
         name: 'Booster Ultimate',
         price: 2500,
         cardCount: 7,
+        image: '/img/booster-ultimate.svg',
         rarities: {
             common: 0.40,
             rare: 0.25,
@@ -151,6 +154,7 @@ function handleDistributeurClick() {
     // Animation du distributeur
     const distributeur = document.querySelector('.distributeur');
     const bouton = document.querySelector('.bouton');
+    const fente = document.querySelector('.fente-light');
     
     // Ajouter des classes d'animation
     distributeur.classList.add('active');
@@ -163,26 +167,41 @@ function handleDistributeurClick() {
     // Afficher la notification d'achat réussi
     showSuccessNotification(BOOSTER_TYPES['random'].name);
     
-    // Simuler le processus aléatoire
+    // Simuler le processus aléatoire avec animation
     setTimeout(() => {
+        // Activer la lumière de la fente
+        fente.classList.add('active');
+        
         // Déterminer quel type de booster l'utilisateur obtient
         const randomBoosterType = getRandomBoosterType();
-        
-        // Afficher à l'utilisateur ce qu'il a obtenu
         const randomBooster = BOOSTER_TYPES[randomBoosterType];
-        showSuccessNotification(`Vous avez obtenu un ${randomBooster.name} !`);
         
-        // Ouvrir la modale d'ouverture pour ce booster
+        // Après un délai, faire apparaître le booster
         setTimeout(() => {
-            // Réinitialiser l'animation
-            distributeur.classList.remove('active');
-            bouton.classList.remove('pressed');
-            distributeurAnimating = false;
+            // Préparer l'animation du booster
+            const boosterContainer = document.getElementById('booster-animation-container');
+            boosterContainer.innerHTML = `<img src="${randomBooster.image || '/img/booster-' + randomBoosterType + '.svg'}" alt="${randomBooster.name}">`;
+            boosterContainer.className = 'booster-animating active ' + randomBoosterType;
             
-            // Ouvrir le booster obtenu
-            openBoosterModal(randomBoosterType);
+            // Afficher à l'utilisateur ce qu'il a obtenu
+            showSuccessNotification(`Vous avez obtenu un ${randomBooster.name} !`);
+            
+            // Une fois l'animation terminée
+            setTimeout(() => {
+                // Réinitialiser l'animation
+                fente.classList.remove('active');
+                distributeur.classList.remove('active');
+                bouton.classList.remove('pressed');
+                
+                // Ouvrir la modale du booster
+                setTimeout(() => {
+                    boosterContainer.className = 'booster-animating';
+                    distributeurAnimating = false;
+                    openBoosterModal(randomBoosterType);
+                }, 500);
+            }, 2000);
         }, 1000);
-    }, 3000);
+    }, 1000);
 }
 
 /**
@@ -221,7 +240,7 @@ function openBoosterModal(boosterType) {
     
     // Mettre à jour l'image du booster dans la modale
     const boosterImg = document.getElementById('booster-pack-img');
-    boosterImg.src = `/img/booster-${boosterType}.svg`;
+    boosterImg.src = booster.image || `/img/booster-${boosterType}.svg`;
     boosterImg.alt = booster.name;
     boosterImg.classList.remove('hidden', 'opening');
     
