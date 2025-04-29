@@ -127,6 +127,18 @@
         <!-- Cette section sera remplie dynamiquement avec les cartes de l'utilisateur -->
     </div>
 
+    <!-- Message "Aucun résultat" pour les filtres -->
+    <div class="no-results hidden">
+        <div class="empty-state">
+            <div class="empty-img">
+                <i class="fas fa-search fa-3x" style="color: #6b7280;"></i>
+            </div>
+            <h3>Aucune carte ne correspond à vos critères</h3>
+            <p>Essayez de modifier vos filtres pour voir plus de résultats.</p>
+            <button class="btn btn-primary" id="reset-filters">Réinitialiser les filtres</button>
+        </div>
+    </div>
+
     <!-- Pagination -->
     <div class="pagination-container hidden">
         <button class="btn btn-secondary" id="prev-page" disabled>
