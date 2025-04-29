@@ -16,22 +16,25 @@
 
 .collection-stats {
     display: flex;
+    flex-wrap: wrap;
     margin-bottom: 20px;
+    gap: 15px;
 }
 
 .collection-stats .stat {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-right: 40px;
     background-color: #f9fafb;
     padding: 12px 20px;
     border-radius: 8px;
     min-width: 100px;
+    flex: 1;
+    max-width: 180px;
 }
 
 .collection-stats .stat-value {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     font-weight: 700;
     color: #4f46e5;
 }
@@ -45,11 +48,34 @@
 .collection-actions {
     display: flex;
     position: relative;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
-.collection-actions button {
+.filter-tools, .sort-tools, .global-actions {
+    display: flex;
+    position: relative;
+}
+
+.filter-tools button, .sort-tools button {
     margin-right: 10px;
+}
+
+.global-actions {
+    gap: 10px;
+}
+
+.global-actions button {
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+}
+
+.global-actions button i {
+    margin-right: 8px;
 }
 
 /* Styles pour les cartes dans la collection */
@@ -116,39 +142,11 @@
 }
 
 .card-info h3 {
-    margin: 0 0 10px 0;
+    margin: 0;
     font-size: 1rem;
     font-weight: 600;
     color: #111827;
-}
-
-.card-stats {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    margin-bottom: 15px;
-    font-size: 0.8rem;
-}
-
-.card-stats .stat {
-    display: flex;
-    align-items: center;
-    background-color: #f9fafb;
-    padding: 4px 8px;
-    border-radius: 4px;
-    color: #4b5563;
-}
-
-.card-actions {
-    display: flex;
-    justify-content: space-between;
-    gap: 8px;
-}
-
-.card-actions button {
-    flex: 1;
-    padding: 6px;
-    font-size: 0.8rem;
+    text-align: center;
 }
 
 /* Style pour les cartes selon leur rareté */
@@ -308,35 +306,63 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 992px) {
     .collection-stats {
-        flex-wrap: wrap;
+        justify-content: flex-start;
     }
     
     .collection-stats .stat {
-        margin-bottom: 10px;
-        min-width: 80px;
+        min-width: 110px;
+        max-width: 150px;
+    }
+    
+    .collection-actions {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .global-actions {
+        margin-top: 10px;
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 768px) {
+    .collection-stats {
+        justify-content: center;
+    }
+    
+    .collection-stats .stat {
+        min-width: 100px;
+        flex: 0 0 calc(50% - 10px);
+        max-width: none;
     }
     
     .cards-grid {
         grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     }
     
-    .card-stats {
-        display: flex;
-        flex-wrap: wrap;
-    }
-    
-    .card-stats .stat {
-        flex: 0 0 calc(50% - 5px);
-    }
-    
-    .collection-actions {
-        flex-wrap: wrap;
+    .global-actions {
+        justify-content: center;
     }
     
     .pagination-container button {
         padding: 6px 12px;
         font-size: 0.85rem;
+    }
+    
+    .filter-tools, .sort-tools {
+        width: 100%;
+    }
+    
+    .filter-tools button, .sort-tools button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .collection-stats .stat {
+        flex: 0 0 100%;
     }
 }
