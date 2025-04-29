@@ -3,71 +3,100 @@
     <div class="collection-header">
         <h1>Ma Collection</h1>
         <div class="collection-stats">
-            <div class="stat">
+            <div class="stat cards-count">
                 <span class="stat-value">0</span>
                 <span class="stat-label">Cartes</span>
             </div>
+            <div class="stat">
+                <span class="stat-value">12</span>
+                <span class="stat-label">Victoires</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value">4</span>
+                <span class="stat-label">Défaites</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value">Silver #42</span>
+                <span class="stat-label">Classement</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value">5 240</span>
+                <span class="stat-label">$CCARD</span>
+            </div>
         </div>
         <div class="collection-actions">
-            <button class="btn btn-secondary" id="filter-cards">
-                <i class="fas fa-filter"></i>
-                Filtrer
-            </button>
-            <div class="filter-dropdown hidden" id="filter-dropdown">
-                <div class="filter-option">
-                    <label>Rareté:</label>
-                    <select id="filter-rarity">
-                        <option value="all">Toutes</option>
-                        <option value="common">Commune</option>
-                        <option value="uncommon">Peu commune</option>
-                        <option value="epic">Épique</option>
-                        <option value="legendary">Légendaire</option>
-                    </select>
+            <div class="filter-tools">
+                <button class="btn btn-secondary" id="filter-cards">
+                    <i class="fas fa-filter"></i>
+                    Filtrer
+                </button>
+                <div class="filter-dropdown hidden" id="filter-dropdown">
+                    <div class="filter-option">
+                        <label>Rareté:</label>
+                        <select id="filter-rarity">
+                            <option value="all">Toutes</option>
+                            <option value="common">Commune</option>
+                            <option value="uncommon">Peu commune</option>
+                            <option value="epic">Épique</option>
+                            <option value="legendary">Légendaire</option>
+                        </select>
+                    </div>
+                    <div class="filter-option">
+                        <label>Énergie:</label>
+                        <select id="filter-energy">
+                            <option value="all">Toutes</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4+">4+</option>
+                        </select>
+                    </div>
+                    <div class="filter-option">
+                        <label>Catégorie tournoi:</label>
+                        <select id="filter-tournament">
+                            <option value="all">Toutes</option>
+                            <option value="bronze">Bronze</option>
+                            <option value="silver">Argent</option>
+                            <option value="gold">Or</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary btn-sm" id="apply-filters">Appliquer</button>
                 </div>
-                <div class="filter-option">
-                    <label>Énergie:</label>
-                    <select id="filter-energy">
-                        <option value="all">Toutes</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4+">4+</option>
-                    </select>
-                </div>
-                <div class="filter-option">
-                    <label>Catégorie tournoi:</label>
-                    <select id="filter-tournament">
-                        <option value="all">Toutes</option>
-                        <option value="bronze">Bronze</option>
-                        <option value="silver">Argent</option>
-                        <option value="gold">Or</option>
-                    </select>
-                </div>
-                <button class="btn btn-primary btn-sm" id="apply-filters">Appliquer</button>
             </div>
             
-            <button class="btn btn-secondary" id="sort-cards">
-                <i class="fas fa-sort"></i>
-                Trier
-            </button>
-            <div class="sort-dropdown hidden" id="sort-dropdown">
-                <div class="sort-option">
-                    <select id="sort-by">
-                        <option value="name">Nom</option>
-                        <option value="rarity">Rareté</option>
-                        <option value="attack">Attaque</option>
-                        <option value="defense">Défense</option>
-                        <option value="energy">Énergie</option>
-                        <option value="rank">Rank</option>
-                    </select>
+            <div class="sort-tools">
+                <button class="btn btn-secondary" id="sort-cards">
+                    <i class="fas fa-sort"></i>
+                    Trier
+                </button>
+                <div class="sort-dropdown hidden" id="sort-dropdown">
+                    <div class="sort-option">
+                        <select id="sort-by">
+                            <option value="name">Nom</option>
+                            <option value="rarity">Rareté</option>
+                            <option value="attack">Attaque</option>
+                            <option value="defense">Défense</option>
+                            <option value="energy">Énergie</option>
+                            <option value="rank">Rank</option>
+                        </select>
+                    </div>
+                    <div class="sort-option">
+                        <select id="sort-order">
+                            <option value="asc">Croissant</option>
+                            <option value="desc">Décroissant</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary btn-sm" id="apply-sort">Appliquer</button>
                 </div>
-                <div class="sort-option">
-                    <select id="sort-order">
-                        <option value="asc">Croissant</option>
-                        <option value="desc">Décroissant</option>
-                    </select>
-                </div>
-                <button class="btn btn-primary btn-sm" id="apply-sort">Appliquer</button>
+            </div>
+            
+            <div class="global-actions">
+                <button class="btn btn-danger" id="btn-burn">
+                    <i class="fas fa-fire"></i> Burn
+                </button>
+                <button class="btn btn-success" id="btn-level-up">
+                    <i class="fas fa-arrow-up"></i> Level Up
+                </button>
             </div>
         </div>
     </div>
