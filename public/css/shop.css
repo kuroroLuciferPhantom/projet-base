@@ -297,6 +297,45 @@
     transform: translateX(-50%) scale(0.95);
 }
 
+/* Booster qui tourne en permanence */
+.rotating-booster {
+    position: absolute;
+    top: 170px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 180px;
+    perspective: 1000px;
+    z-index: 10;
+}
+
+.rotating-booster img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    animation: rotate3D 8s infinite linear;
+    transform-style: preserve-3d;
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.7));
+}
+
+@keyframes rotate3D {
+    0% {
+        transform: rotateY(0) rotateX(0);
+    }
+    25% {
+        transform: rotateY(90deg) rotateX(10deg);
+    }
+    50% {
+        transform: rotateY(180deg) rotateX(0);
+    }
+    75% {
+        transform: rotateY(270deg) rotateX(-10deg);
+    }
+    100% {
+        transform: rotateY(360deg) rotateX(0);
+    }
+}
+
 /* Fente du distributeur */
 .fente {
     position: absolute;
@@ -363,6 +402,195 @@
 
 .booster-animating.ultimate img {
     filter: drop-shadow(0 0 15px rgba(231, 76, 60, 0.8));
+}
+
+/* Modal "Vous êtes pauvre" */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    position: relative;
+    background-color: #fff;
+    margin: auto;
+    width: 90%;
+    max-width: 800px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.broke-modal .modal-content {
+    max-width: 600px;
+    border-radius: 15px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e2e5ea 100%);
+}
+
+.broke-modal .modal-header {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    color: white;
+    padding: 15px 20px;
+    border-bottom: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.broke-modal .modal-header h3 {
+    margin: 0;
+    font-size: 1.4rem;
+}
+
+.close-modal {
+    font-size: 1.8rem;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.close-modal:hover {
+    transform: scale(1.1);
+}
+
+.broke-modal .modal-body {
+    padding: 25px;
+    text-align: center;
+}
+
+.broke-image {
+    margin: 0 auto 20px;
+    width: 200px;
+    height: 200px;
+    overflow: hidden;
+    border-radius: 50%;
+    border: 5px solid #e74c3c;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.broke-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.broke-message {
+    margin-bottom: 20px;
+}
+
+.broke-message p {
+    font-size: 1.1rem;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+.required-amount {
+    font-weight: bold;
+    color: #e74c3c;
+}
+
+.how-to-earn {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: left;
+    margin-top: 20px;
+}
+
+.how-to-earn h4 {
+    color: #2c3e50;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.how-to-earn ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.how-to-earn li {
+    padding: 10px 0;
+    font-size: 1rem;
+    color: #34495e;
+    border-bottom: 1px solid #eeeeee;
+    display: flex;
+    align-items: center;
+}
+
+.how-to-earn li:last-child {
+    border-bottom: none;
+}
+
+.how-to-earn li i {
+    color: #e74c3c;
+    margin-right: 10px;
+    font-size: 1.2rem;
+    width: 24px;
+    text-align: center;
+}
+
+.broke-modal .modal-footer {
+    padding: 15px 20px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.broke-modal .btn {
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: 600;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.broke-modal .btn-secondary {
+    background-color: #95a5a6;
+    color: white;
+    border: none;
+}
+
+.broke-modal .btn-secondary:hover {
+    background-color: #7f8c8d;
+    transform: translateY(-2px);
+}
+
+.broke-modal .btn-primary {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+}
+
+.broke-modal .btn-primary:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
 }
 
 @keyframes neonGlow {
@@ -670,6 +898,12 @@
         width: 120px;
         height: 160px;
     }
+    
+    .rotating-booster {
+        top: 140px;
+        width: 90px;
+        height: 140px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -716,5 +950,29 @@
         bottom: 170px;
         width: 90px;
         height: 120px;
+    }
+    
+    .rotating-booster {
+        top: 110px;
+        width: 70px;
+        height: 110px;
+    }
+    
+    .broke-modal .modal-content {
+        max-width: 90%;
+    }
+    
+    .broke-image {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .broke-modal .modal-footer {
+        flex-direction: column;
+    }
+    
+    .broke-modal .btn {
+        width: 100%;
+        margin-bottom: 10px;
     }
 }
