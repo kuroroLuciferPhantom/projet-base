@@ -7,6 +7,7 @@
     padding: 20px;
     max-width: 1200px;
     margin: 0 auto;
+    text-align: center;
 }
 
 /* En-tête de la boutique */
@@ -54,8 +55,9 @@
 
 /* Shop content layout */
 .shop-content {
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 40px;
 }
 
@@ -64,6 +66,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 30px;
+    justify-items: center;
 }
 
 /* Carte de booster */
@@ -74,6 +77,8 @@
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative;
+    width: 100%;
+    max-width: 300px;
 }
 
 .booster-card:hover {
@@ -228,7 +233,8 @@
     padding: 20px;
     background-color: rgba(0, 0, 0, 0.05);
     border-radius: 20px;
-    max-width: 400px;
+    max-width: 550px;
+    width: 100%;
 }
 
 .distributeur-title {
@@ -267,6 +273,20 @@
     cursor: pointer;
     animation: pulse 1.5s infinite;
     transition: transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bouton-price {
+    color: #ffffff;
+    font-weight: bold;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.8), 0 0 15px rgba(255, 0, 255, 0.8);
+    font-size: 1rem;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 5px 10px;
+    border-radius: 15px;
+    white-space: nowrap;
 }
 
 .bouton:hover {
@@ -275,6 +295,74 @@
 
 .bouton:active {
     transform: translateX(-50%) scale(0.95);
+}
+
+/* Fente du distributeur */
+.fente {
+    position: absolute;
+    bottom: 280px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 180px;
+    height: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.fente-light {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0) 100%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.fente-light.active {
+    opacity: 1;
+    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0.1) 100%);
+    animation: flicker 0.5s infinite alternate;
+}
+
+/* Animation de sortie du booster */
+.booster-animating {
+    position: absolute;
+    bottom: 300px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 200px;
+    display: none;
+    z-index: 100;
+}
+
+.booster-animating.active {
+    display: block;
+    animation: slideUp 1.5s ease forwards;
+}
+
+.booster-animating img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transform-origin: bottom center;
+    animation: wiggle 0.5s infinite alternate;
+}
+
+/* Rareté des boosters animés */
+.booster-animating.standard img {
+    filter: drop-shadow(0 0 10px rgba(52, 152, 219, 0.8));
+}
+
+.booster-animating.premium img {
+    filter: drop-shadow(0 0 10px rgba(155, 89, 182, 0.8));
+}
+
+.booster-animating.ultimate img {
+    filter: drop-shadow(0 0 15px rgba(231, 76, 60, 0.8));
 }
 
 @keyframes neonGlow {
@@ -298,6 +386,38 @@
     }
 }
 
+@keyframes flicker {
+    0% {
+        opacity: 0.7;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    0% {
+        transform: translateX(-50%) translateY(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-50%) translateY(-250px);
+        opacity: 1;
+    }
+}
+
+@keyframes wiggle {
+    0% {
+        transform: rotate(-2deg);
+    }
+    100% {
+        transform: rotate(2deg);
+    }
+}
+
 /* Promotion spéciale */
 .featured-promotion {
     display: grid;
@@ -308,6 +428,10 @@
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
     margin-bottom: 50px;
     color: white;
+    max-width: 900px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .promo-content {
@@ -384,6 +508,8 @@
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
     margin-bottom: 40px;
+    width: 100%;
+    max-width: 900px;
 }
 
 .info-card {
@@ -518,8 +644,31 @@
     }
     
     .distributeur {
-        width: 250px;
-        height: 400px;
+        width: 350px;
+        height: 500px;
+    }
+    
+    .bouton {
+        bottom: 60px;
+        width: 90px;
+        height: 90px;
+    }
+    
+    .bouton-price {
+        font-size: 0.8rem;
+        padding: 3px 6px;
+    }
+    
+    .fente {
+        bottom: 200px;
+        width: 140px;
+        height: 15px;
+    }
+    
+    .booster-animating {
+        bottom: 215px;
+        width: 120px;
+        height: 160px;
     }
 }
 
@@ -542,7 +691,30 @@
     }
     
     .distributeur {
-        width: 220px;
-        height: 350px;
+        width: 280px;
+        height: 400px;
+    }
+    
+    .bouton {
+        bottom: 50px;
+        width: 70px;
+        height: 70px;
+    }
+    
+    .bouton-price {
+        font-size: 0.7rem;
+        padding: 2px 4px;
+    }
+    
+    .fente {
+        bottom: 160px;
+        width: 100px;
+        height: 10px;
+    }
+    
+    .booster-animating {
+        bottom: 170px;
+        width: 90px;
+        height: 120px;
     }
 }
