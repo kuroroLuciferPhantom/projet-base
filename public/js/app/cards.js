@@ -85,28 +85,77 @@ async function loadUserCards() {
                 energy: 3,
                 rank: 5,
                 tournament: 'gold'
+            },
+            {
+                id: 6,
+                name: 'Zorg',
+                rarity: 'epic',
+                image: '/img/cards/3.jpg',
+                attack: 7,
+                defense: 5,
+                energy: 3,
+                rank: 4,
+                tournament: 'gold'
+            },
+            {
+                id: 7,
+                name: 'Vortex',
+                rarity: 'uncommon',
+                image: '/img/cards/4.jpg',
+                attack: 3,
+                defense: 6,
+                energy: 2,
+                rank: 2,
+                tournament: 'bronze'
+            },
+            {
+                id: 8,
+                name: 'Drakonid',
+                rarity: 'legendary',
+                image: '/img/cards/5.jpg',
+                attack: 9,
+                defense: 7,
+                energy: 4,
+                rank: 5,
+                tournament: 'gold'
+            },
+            {
+                id: 9,
+                name: 'Pyrox',
+                rarity: 'common',
+                image: '/img/cards/1.jpg',
+                attack: 1,
+                defense: 2,
+                energy: 1,
+                rank: 1,
+                tournament: 'bronze'
+            },
+            {
+                id: 10,
+                name: 'Luna',
+                rarity: 'epic',
+                image: '/img/cards/2.jpg',
+                attack: 5,
+                defense: 6,
+                energy: 3,
+                rank: 4,
+                tournament: 'silver'
             }
         ];
+        
+        // Initialiser les filtres et le tri
+        filteredCards = [...userCards];
         
         // Appliquer les filtres et afficher les cartes
         applyFiltersAndSort();
         
         // Afficher la pagination seulement s'il y a plus d'une page
-        const totalPages = Math.ceil(filteredCards.length / cardsPerPage);
-        const paginationContainer = document.querySelector('.pagination-container');
-        
-        if (totalPages > 1) {
-            paginationContainer.classList.remove('hidden');
-        } else {
-            paginationContainer.classList.add('hidden');
-        }
-        
-        updatePagination();
+        updatePaginationVisibility();
         
         // Mettre à jour les statistiques
         document.querySelector('.collection-stats .cards-count .stat-value').textContent = userCards.length.toString();
         
-        // Ajouter les écouteurs d'événements pour les filtres et le tri
+        // Ajouter les écouteurs d'événements pour les filtres et le tri s'ils n'existent pas déjà
         setupEventListeners();
     } catch (error) {
         console.error('Erreur lors du chargement des cartes:', error);
@@ -117,43 +166,50 @@ async function loadUserCards() {
  * Configuration des écouteurs d'événements
  */
 function setupEventListeners() {
-    // Filtrage
-    document.getElementById('filter-cards').addEventListener('click', function() {
-        const dropdown = document.getElementById('filter-dropdown');
-        dropdown.classList.toggle('hidden');
-        
-        // Cacher le dropdown de tri si ouvert
-        document.getElementById('sort-dropdown').classList.add('hidden');
+    // Boutons d'action globaux
+    document.getElementById('btn-burn').addEventListener('click', function() {
+        burnSelectedCards();
     });
     
+    document.getElementById('btn-level-up').addEventListener('click', function() {
+        levelUpSelectedCards();
+    });
+    
+    // Appliquer les filtres
     document.getElementById('apply-filters').addEventListener('click', function() {
+        const rarityFilter = document.getElementById('filter-rarity').value;
+        const energyFilter = document.getElementById('filter-energy').value;
+        const tournamentFilter = document.getElementById('filter-tournament').value;
+        
+        // Mettre à jour les filtres actuels
         currentFilters = {
-            rarity: document.getElementById('filter-rarity').value,
-            energy: document.getElementById('filter-energy').value,
-            tournament: document.getElementById('filter-tournament').value
+            rarity: rarityFilter,
+            energy: energyFilter,
+            tournament: tournamentFilter
         };
         
-        currentPage = 1;
+        // Appliquer les filtres et le tri
         applyFiltersAndSort();
-        document.getElementById('filter-dropdown').classList.add('hidden');
-    });
-    
-    // Tri
-    document.getElementById('sort-cards').addEventListener('click', function() {
-        const dropdown = document.getElementById('sort-dropdown');
-        dropdown.classList.toggle('hidden');
         
-        // Cacher le dropdown de filtre si ouvert
+        // Cacher le menu déroulant
         document.getElementById('filter-dropdown').classList.add('hidden');
     });
     
+    // Appliquer le tri
     document.getElementById('apply-sort').addEventListener('click', function() {
+        const sortBy = document.getElementById('sort-by').value;
+        const sortOrder = document.getElementById('sort-order').value;
+        
+        // Mettre à jour le tri actuel
         currentSort = {
-            by: document.getElementById('sort-by').value,
-            order: document.getElementById('sort-order').value
+            by: sortBy,
+            order: sortOrder
         };
         
+        // Appliquer les filtres et le tri
         applyFiltersAndSort();
+        
+        // Cacher le menu déroulant
         document.getElementById('sort-dropdown').classList.add('hidden');
     });
     
@@ -174,21 +230,15 @@ function setupEventListeners() {
             updatePagination();
         }
     });
-    
-    // Boutons d'action globaux
-    document.getElementById('btn-burn').addEventListener('click', function() {
-        burnSelectedCards();
-    });
-    
-    document.getElementById('btn-level-up').addEventListener('click', function() {
-        levelUpSelectedCards();
-    });
 }
 
 /**
  * Applique les filtres et le tri aux cartes
  */
 function applyFiltersAndSort() {
+    console.log('Applying filters:', currentFilters);
+    console.log('Applying sort:', currentSort);
+    
     // Filtrer les cartes
     filteredCards = userCards.filter(card => {
         // Filtre par rareté
@@ -232,12 +282,29 @@ function applyFiltersAndSort() {
         }
     });
     
+    console.log('Filtered cards count:', filteredCards.length);
+    
     // Réinitialiser à la première page
     currentPage = 1;
     
     // Afficher les cartes filtrées et triées
     displayCards();
     updatePagination();
+    updatePaginationVisibility();
+}
+
+/**
+ * Met à jour la visibilité de la pagination
+ */
+function updatePaginationVisibility() {
+    const totalPages = Math.ceil(filteredCards.length / cardsPerPage);
+    const paginationContainer = document.querySelector('.pagination-container');
+    
+    if (totalPages > 1) {
+        paginationContainer.classList.remove('hidden');
+    } else {
+        paginationContainer.classList.add('hidden');
+    }
 }
 
 /**
@@ -250,6 +317,47 @@ function displayCards() {
     // Calculer les indices de début et de fin pour la pagination
     const startIndex = (currentPage - 1) * cardsPerPage;
     const endIndex = Math.min(startIndex + cardsPerPage, filteredCards.length);
+    
+    // Si aucune carte ne correspond aux filtres
+    if (filteredCards.length === 0) {
+        const noResults = document.createElement('div');
+        noResults.className = 'no-results';
+        noResults.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-img">
+                    <i class="fas fa-search fa-3x" style="color: #6b7280;"></i>
+                </div>
+                <h3>Aucune carte ne correspond à vos critères</h3>
+                <p>Essayez de modifier vos filtres pour voir plus de résultats.</p>
+                <button class="btn btn-primary" id="reset-filters">Réinitialiser les filtres</button>
+            </div>
+        `;
+        
+        noResults.querySelector('#reset-filters').addEventListener('click', function() {
+            // Réinitialiser les filtres et le tri
+            document.getElementById('filter-rarity').value = 'all';
+            document.getElementById('filter-energy').value = 'all';
+            document.getElementById('filter-tournament').value = 'all';
+            document.getElementById('sort-by').value = 'name';
+            document.getElementById('sort-order').value = 'asc';
+            
+            currentFilters = {
+                rarity: 'all',
+                energy: 'all',
+                tournament: 'all'
+            };
+            
+            currentSort = {
+                by: 'name',
+                order: 'asc'
+            };
+            
+            applyFiltersAndSort();
+        });
+        
+        cardsGrid.appendChild(noResults);
+        return;
+    }
     
     // Ajouter les cartes de la page courante
     for (let i = startIndex; i < endIndex; i++) {
