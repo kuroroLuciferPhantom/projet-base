@@ -24,3 +24,106 @@
         </div>
     </div>
 </div>
+
+<style>
+/* Styles supplémentaires pour l'animation du booster */
+.booster-image img {
+    transition: transform 1s ease-out, opacity 0.5s ease;
+}
+
+.booster-image img.opening {
+    transform: scale(1.2) translateY(-30px);
+    opacity: 0.6;
+}
+
+.reveal-cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.reveal-card {
+    width: 180px;
+    height: 250px;
+    border-radius: 10px;
+    background-color: var(--color-bg-secondary);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+    position: relative;
+    transform: scale(0.9);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.reveal-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    z-index: 10;
+}
+
+.card-rarity {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(0,0,0,0.6);
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    color: white;
+    font-weight: bold;
+}
+
+.card-image {
+    height: 120px;
+    background-size: cover;
+    background-position: center;
+}
+
+.card-info {
+    padding: 12px;
+}
+
+.card-info h3 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: var(--color-text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+}
+
+/* Styles pour les différentes raretés */
+.reveal-card.common .card-rarity {
+    background-color: rgba(52, 152, 219, 0.8);
+}
+
+.reveal-card.rare .card-rarity {
+    background-color: rgba(39, 174, 96, 0.8);
+}
+
+.reveal-card.epic .card-rarity {
+    background-color: rgba(142, 68, 173, 0.8);
+}
+
+.reveal-card.legendary .card-rarity {
+    background-color: rgba(230, 126, 34, 0.8);
+    animation: legendaryGlow 2s infinite alternate;
+}
+
+@keyframes legendaryGlow {
+    0% {
+        box-shadow: 0 0 5px rgba(230, 126, 34, 0.5);
+    }
+    100% {
+        box-shadow: 0 0 15px rgba(230, 126, 34, 0.8);
+    }
+}
+</style>
