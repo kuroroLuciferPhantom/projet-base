@@ -14,6 +14,11 @@
             <h2 class="distributeur-title">Distributeur Automatique</h2>
             <p class="distributeur-description">Appuyez sur le bouton pour obtenir un booster aléatoire !</p>
             <div class="distributeur">
+                <!-- Booster qui tourne en permanence -->
+                <div class="rotating-booster">
+                    <img src="/img/booster-standard.svg" alt="Booster Pack">
+                </div>
+                
                 <div class="bouton" id="distributeur-bouton">
                     <span class="bouton-price">800 $CCARD</span>
                 </div>
@@ -65,5 +70,37 @@
     <div class="notification-content">
         <h3>Erreur</h3>
         <p id="error-message">Vous n'avez pas assez de tokens pour cet achat.</p>
+    </div>
+</div>
+
+<!-- Modal "Vous êtes pauvre" -->
+<div id="broke-modal" class="modal">
+    <div class="modal-content broke-modal">
+        <div class="modal-header">
+            <h3>Vous êtes pauvre !</h3>
+            <span class="close-modal">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="broke-image">
+                <img src="/img/broke.jpg" alt="Portefeuille vide" onerror="this.src='/img/gift.svg';">
+            </div>
+            <div class="broke-message">
+                <p>Oups ! Votre portefeuille est aussi vide que votre chance aujourd'hui !</p>
+                <p>Vous avez besoin d'au moins <span class="required-amount">800</span> <span class="balance-currency">$CCARD</span> pour obtenir un booster aléatoire.</p>
+            </div>
+            <div class="how-to-earn">
+                <h4>Comment gagner plus de tokens ?</h4>
+                <ul>
+                    <li><i class="fas fa-gamepad"></i> Participez à des duels contre d'autres joueurs</li>
+                    <li><i class="fas fa-tasks"></i> Complétez des quêtes quotidiennes</li>
+                    <li><i class="fas fa-calendar-day"></i> Revenez chaque jour pour votre récompense quotidienne</li>
+                    <li><i class="fas fa-shopping-cart"></i> Achetez des tokens dans la boutique</li>
+                </ul>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" id="broke-close-btn">Je reviendrai plus riche</button>
+            <button class="btn btn-primary" id="buy-tokens-btn">Acheter des tokens</button>
+        </div>
     </div>
 </div>
