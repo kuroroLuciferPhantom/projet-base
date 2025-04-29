@@ -7,24 +7,68 @@
                 <span class="stat-value">0</span>
                 <span class="stat-label">Cartes</span>
             </div>
-            <div class="stat">
-                <span class="stat-value">0</span>
-                <span class="stat-label">Sets complets</span>
-            </div>
-            <div class="stat">
-                <span class="stat-value">0</span>
-                <span class="stat-label">Cartes Légendaires</span>
-            </div>
         </div>
         <div class="collection-actions">
             <button class="btn btn-secondary" id="filter-cards">
                 <i class="fas fa-filter"></i>
                 Filtrer
             </button>
+            <div class="filter-dropdown hidden" id="filter-dropdown">
+                <div class="filter-option">
+                    <label>Rareté:</label>
+                    <select id="filter-rarity">
+                        <option value="all">Toutes</option>
+                        <option value="common">Commune</option>
+                        <option value="uncommon">Peu commune</option>
+                        <option value="epic">Épique</option>
+                        <option value="legendary">Légendaire</option>
+                    </select>
+                </div>
+                <div class="filter-option">
+                    <label>Énergie:</label>
+                    <select id="filter-energy">
+                        <option value="all">Toutes</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4+">4+</option>
+                    </select>
+                </div>
+                <div class="filter-option">
+                    <label>Catégorie tournoi:</label>
+                    <select id="filter-tournament">
+                        <option value="all">Toutes</option>
+                        <option value="bronze">Bronze</option>
+                        <option value="silver">Argent</option>
+                        <option value="gold">Or</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary btn-sm" id="apply-filters">Appliquer</button>
+            </div>
+            
             <button class="btn btn-secondary" id="sort-cards">
                 <i class="fas fa-sort"></i>
                 Trier
             </button>
+            <div class="sort-dropdown hidden" id="sort-dropdown">
+                <div class="sort-option">
+                    <select id="sort-by">
+                        <option value="name">Nom</option>
+                        <option value="rarity">Rareté</option>
+                        <option value="attack">Attaque</option>
+                        <option value="defense">Défense</option>
+                        <option value="energy">Énergie</option>
+                        <option value="rank">Rank</option>
+                    </select>
+                </div>
+                <div class="sort-option">
+                    <select id="sort-order">
+                        <option value="asc">Croissant</option>
+                        <option value="desc">Décroissant</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary btn-sm" id="apply-sort">Appliquer</button>
+            </div>
         </div>
     </div>
     
@@ -52,5 +96,16 @@
     <!-- Si l'utilisateur a des cartes -->
     <div class="cards-grid hidden">
         <!-- Cette section sera remplie dynamiquement avec les cartes de l'utilisateur -->
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container hidden">
+        <button class="btn btn-secondary" id="prev-page" disabled>
+            <i class="fas fa-chevron-left"></i> Précédent
+        </button>
+        <span class="page-info">Page <span id="current-page">1</span> sur <span id="total-pages">1</span></span>
+        <button class="btn btn-secondary" id="next-page">
+            Suivant <i class="fas fa-chevron-right"></i>
+        </button>
     </div>
 </section>
