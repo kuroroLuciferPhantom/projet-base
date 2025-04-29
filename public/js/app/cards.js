@@ -6,7 +6,7 @@
 let userCards = [];
 let filteredCards = [];
 let currentPage = 1;
-const cardsPerPage = 8;
+const cardsPerPage = 16; // 4 lignes de 4 cartes (avec le responsive, ça s'ajustera automatiquement)
 let currentFilters = {
     rarity: 'all',
     energy: 'all',
@@ -159,6 +159,117 @@ async function loadUserCards() {
                 energy: 3,
                 rank: 4,
                 tournament: 'silver'
+            },
+            // Ajoutons plus de cartes pour tester la pagination avec 4 lignes
+            {
+                id: 11,
+                name: 'Fenrir',
+                rarity: 'legendary',
+                image: '/img/cards/3.jpg',
+                attack: 10,
+                defense: 7,
+                energy: 4,
+                rank: 5,
+                tournament: 'gold'
+            },
+            {
+                id: 12,
+                name: 'Gobelin',
+                rarity: 'common',
+                image: '/img/cards/4.jpg',
+                attack: 2,
+                defense: 1,
+                energy: 1,
+                rank: 1,
+                tournament: 'bronze'
+            },
+            {
+                id: 13,
+                name: 'Chimère',
+                rarity: 'epic',
+                image: '/img/cards/5.jpg',
+                attack: 6,
+                defense: 7,
+                energy: 3,
+                rank: 4,
+                tournament: 'silver'
+            },
+            {
+                id: 14,
+                name: 'Valkyrie',
+                rarity: 'uncommon',
+                image: '/img/cards/1.jpg',
+                attack: 4,
+                defense: 5,
+                energy: 2,
+                rank: 3,
+                tournament: 'bronze'
+            },
+            {
+                id: 15,
+                name: 'Sphinx',
+                rarity: 'epic',
+                image: '/img/cards/2.jpg',
+                attack: 7,
+                defense: 7,
+                energy: 3,
+                rank: 4,
+                tournament: 'silver'
+            },
+            {
+                id: 16,
+                name: 'Minotaure',
+                rarity: 'uncommon',
+                image: '/img/cards/3.jpg',
+                attack: 5,
+                defense: 4,
+                energy: 2,
+                rank: 3,
+                tournament: 'bronze'
+            },
+            {
+                id: 17,
+                name: 'Phénix',
+                rarity: 'legendary',
+                image: '/img/cards/4.jpg',
+                attack: 8,
+                defense: 6,
+                energy: 4,
+                rank: 5,
+                tournament: 'gold'
+            },
+            {
+                id: 18,
+                name: 'Zombie',
+                rarity: 'common',
+                image: '/img/cards/5.jpg',
+                attack: 1,
+                defense: 4,
+                energy: 1,
+                rank: 1,
+                tournament: 'bronze'
+            },
+            {
+                id: 19,
+                name: 'Centaure',
+                rarity: 'uncommon',
+                image: '/img/cards/1.jpg',
+                attack: 4,
+                defense: 3,
+                energy: 2,
+                rank: 2,
+                tournament: 'bronze'
+            },
+            {
+                id: 20,
+                name: 'Cyclope',
+                rarity: 'epic',
+                image: '/img/cards/2.jpg',
+                attack: 6,
+                defense: 5,
+                energy: 3,
+                rank: 4,
+                tournament: 'silver'
             }
         ];
         
@@ -261,7 +372,7 @@ function setupFilterSortListeners() {
         console.log("[ERROR] Bouton 'apply-sort' non trouvé");
     }
     
-    // Gérer le bouton de réinitialisation des filtres
+    // Gérer le bouton de réinitialisation des filtres (dans la section "Aucun résultat")
     const resetFiltersBtn = document.getElementById('reset-filters');
     if (resetFiltersBtn) {
         console.log("[DEBUG] Bouton 'reset-filters' trouvé");
@@ -272,38 +383,65 @@ function setupFilterSortListeners() {
         
         newResetFiltersBtn.addEventListener('click', function() {
             console.log("[DEBUG] Clic sur le bouton 'Réinitialiser les filtres'");
-            
-            // Réinitialiser les filtres et le tri dans l'interface
-            const filterRarity = document.getElementById('filter-rarity');
-            const filterEnergy = document.getElementById('filter-energy');
-            const filterTournament = document.getElementById('filter-tournament');
-            const sortBy = document.getElementById('sort-by');
-            const sortOrder = document.getElementById('sort-order');
-            
-            if (filterRarity) filterRarity.value = 'all';
-            if (filterEnergy) filterEnergy.value = 'all';
-            if (filterTournament) filterTournament.value = 'all';
-            if (sortBy) sortBy.value = 'name';
-            if (sortOrder) sortOrder.value = 'asc';
-            
-            // Réinitialiser les valeurs actuelles
-            currentFilters = {
-                rarity: 'all',
-                energy: 'all',
-                tournament: 'all'
-            };
-            
-            currentSort = {
-                by: 'name',
-                order: 'asc'
-            };
-            
-            // Appliquer les filtres et tri
-            applyFiltersAndSort();
+            resetAllFiltersAndSort();
         });
     } else {
         console.log("[ERROR] Bouton 'reset-filters' non trouvé");
     }
+    
+    // Gérer le bouton global de réinitialisation des filtres et tris
+    const resetAllFiltersBtn = document.getElementById('reset-all-filters');
+    if (resetAllFiltersBtn) {
+        console.log("[DEBUG] Bouton 'reset-all-filters' trouvé");
+        
+        // Supprimer les anciens écouteurs si présents
+        const newResetAllFiltersBtn = resetAllFiltersBtn.cloneNode(true);
+        resetAllFiltersBtn.parentNode.replaceChild(newResetAllFiltersBtn, resetAllFiltersBtn);
+        
+        newResetAllFiltersBtn.addEventListener('click', function() {
+            console.log("[DEBUG] Clic sur le bouton 'Réinitialiser tout'");
+            resetAllFiltersAndSort();
+        });
+    } else {
+        console.log("[ERROR] Bouton 'reset-all-filters' non trouvé");
+    }
+}
+
+/**
+ * Réinitialise tous les filtres et le tri
+ */
+function resetAllFiltersAndSort() {
+    // Réinitialiser les filtres et le tri dans l'interface
+    const filterRarity = document.getElementById('filter-rarity');
+    const filterEnergy = document.getElementById('filter-energy');
+    const filterTournament = document.getElementById('filter-tournament');
+    const sortBy = document.getElementById('sort-by');
+    const sortOrder = document.getElementById('sort-order');
+    
+    if (filterRarity) filterRarity.value = 'all';
+    if (filterEnergy) filterEnergy.value = 'all';
+    if (filterTournament) filterTournament.value = 'all';
+    if (sortBy) sortBy.value = 'name';
+    if (sortOrder) sortOrder.value = 'asc';
+    
+    // Réinitialiser les valeurs actuelles
+    currentFilters = {
+        rarity: 'all',
+        energy: 'all',
+        tournament: 'all'
+    };
+    
+    currentSort = {
+        by: 'name',
+        order: 'asc'
+    };
+    
+    // Fermer les dropdowns
+    document.getElementById('filter-dropdown').classList.add('hidden');
+    document.getElementById('sort-dropdown').classList.add('hidden');
+    
+    // Appliquer les filtres et tri
+    applyFiltersAndSort();
 }
 
 /**
