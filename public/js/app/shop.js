@@ -66,6 +66,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Mettre à jour l'affichage du solde de l'utilisateur
     updateUserBalance();
+
+    // Initialiser les événements pour la modal "Vous êtes pauvre"
+    initBrokeModalEvents();
 });
 
 /**
@@ -90,6 +93,59 @@ function initShopEvents() {
         notification.addEventListener('click', () => {
             notification.classList.remove('show');
         });
+    });
+}
+
+/**
+ * Initialise les événements pour la modal "Vous êtes pauvre"
+ */
+function initBrokeModalEvents() {
+    // Éléments de la modal
+    const brokeModal = document.getElementById('broke-modal');
+    const closeModal = document.querySelector('.close-modal');
+    const brokeCloseBtn = document.getElementById('broke-close-btn');
+    const buyTokensBtn = document.getElementById('buy-tokens-btn');
+    
+    // Mettre à jour le montant requis dans la modal
+    const requiredAmount = document.querySelector('.required-amount');
+    if (requiredAmount) {
+        requiredAmount.textContent = BOOSTER_TYPES['random'].price;
+    }
+
+    // Fermer la modal quand on clique sur X
+    if (closeModal) {
+        closeModal.addEventListener('click', () => {
+            brokeModal.classList.remove('show');
+        });
+    }
+
+    // Fermer la modal avec le bouton "Je reviendrai plus riche"
+    if (brokeCloseBtn) {
+        brokeCloseBtn.addEventListener('click', () => {
+            brokeModal.classList.remove('show');
+        });
+    }
+
+    // Bouton "Acheter des tokens" (simulé pour la démo)
+    if (buyTokensBtn) {
+        buyTokensBtn.addEventListener('click', () => {
+            // Simuler l'achat de tokens
+            userBalance += 1000; // Ajouter 1000 tokens
+            updateUserBalance(); // Mettre à jour l'affichage
+            
+            // Message de succès
+            showSuccessNotification("Vous avez acheté 1000 $CCARD !");
+            
+            // Fermer la modal
+            brokeModal.classList.remove('show');
+        });
+    }
+
+    // Fermer la modal quand on clique en dehors
+    window.addEventListener('click', (event) => {
+        if (event.target === brokeModal) {
+            brokeModal.classList.remove('show');
+        }
     });
 }
 
@@ -144,7 +200,14 @@ function handleDistributeurClick() {
     
     // Vérifier si l'utilisateur a assez de tokens
     if (userBalance < boosterPrice) {
-        showErrorNotification("Vous n'avez pas assez de tokens pour utiliser le distributeur.");
+        // Afficher la modal "Vous êtes pauvre"
+        const brokeModal = document.getElementById('broke-modal');
+        if (brokeModal) {
+            brokeModal.classList.add('show');
+        } else {
+            // Fallback si la modal n'existe pas
+            showErrorNotification("Vous n'avez pas assez de tokens pour utiliser le distributeur.");
+        }
         return;
     }
     
@@ -317,9 +380,12 @@ function updateUserBalance() {
     // Vérifier si le solde est suffisant pour le distributeur
     const distributeurBtn = document.getElementById('distributeur-bouton');
     if (distributeurBtn) {
+        // Note: On ne désactive pas réellement le bouton pour permettre d'afficher la modal "Vous êtes pauvre"
         if (userBalance < BOOSTER_TYPES['random'].price) {
             distributeurBtn.classList.add('disabled');
-            distributeurBtn.style.pointerEvents = 'none';
+            // Mais on garde le pointeur en mode "pointer" pour pouvoir cliquer et montrer la modal
+            distributeurBtn.style.pointerEvents = 'auto';
+            distributeurBtn.style.cursor = 'pointer';
         } else {
             distributeurBtn.classList.remove('disabled');
             distributeurBtn.style.pointerEvents = 'auto';
