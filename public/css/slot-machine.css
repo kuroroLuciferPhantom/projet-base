@@ -286,15 +286,12 @@
 }
 
 .result-image-container {
-    width: 180px;
-    height: 180px;
+    width: 322px;
+    height: 440px;
     margin: 0 auto 20px;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #f9f9f9;
-    border-radius: 50%;
-    border: 5px solid;
     overflow: hidden;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }

@@ -50,6 +50,7 @@ function setupCardDetailModal() {
 
 // Fonction pour afficher les détails d'une carte
 function showCardDetails(cardData) {
+    console.log('Données de la carte:', cardData);
     const modal = document.getElementById('card-detail-modal');
     
     // Mettre à jour le contenu de la modale avec les données de la carte
@@ -61,8 +62,22 @@ function showCardDetails(cardData) {
     rarityElement.className = 'card-detail-rarity ' + cardData.rarity;
     
     // Mise à jour de l'image
-    const imageContainer = document.querySelector('.card-detail-image');
-    imageContainer.innerHTML = `<img src="${cardData.image}" alt="${cardData.name}">`;
+    const imageContainer = document.querySelector('.card-detail-image-modal');
+    const img = new Image();  // Crée un nouvel élément Image
+    img.src = cardData.image;
+    img.alt = cardData.name;
+
+    img.onload = function() {
+        console.log('Image loaded:', cardData.image);
+        // Une fois l'image chargée, insère-la dans le conteneur
+        imageContainer.innerHTML = ''; // Effacer le contenu existant (si nécessaire)
+        imageContainer.appendChild(img);
+    };
+
+    img.onerror = function() {
+        console.error('Image not found:', cardData.image);
+        // Optionnel : afficher une image par défaut ou un message d'erreur
+    };
     
     // Mise à jour des statistiques
     document.getElementById('card-atk-value').textContent = cardData.attack;
@@ -86,10 +101,6 @@ function showCardDetails(cardData) {
     document.getElementById('card-token-id').textContent = cardData.tokenId || `#${Math.floor(Math.random() * 10000000)}`;
     document.getElementById('card-contract').textContent = cardData.contract || '0x1234...5678';
     document.getElementById('card-obtained-date').textContent = cardData.obtainedDate || new Date().toLocaleDateString();
-    
-    // Mise à jour de la description
-    document.getElementById('card-description').textContent = cardData.description || 
-        `${cardData.name} est une carte ${cardData.rarity} puissante qui offre d'excellentes statistiques d'attaque et de défense. Utilisez-la stratégiquement dans vos batailles pour maximiser vos chances de victoire.`;
     
     // Afficher la modale
     modal.classList.add('active');
