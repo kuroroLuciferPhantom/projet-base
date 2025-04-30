@@ -31,6 +31,42 @@
             </div>
         </div>
 
+        <!-- Machine à sous style casino -->
+        <div class="slot-machine-container">
+            <h2 class="slot-machine-title">Machine à Chance</h2>
+            <p class="slot-machine-description">Tentez votre chance une fois par jour gratuitement ou pour 100 $CCARD !</p>
+            
+            <div class="daily-free-play">
+                <span class="daily-free-text">Essai gratuit disponible</span>
+                <div class="countdown-timer" id="free-play-timer">23:59:59</div>
+            </div>
+            
+            <div class="slot-machine">
+                <div class="slot-display">
+                    <div class="slot-window">
+                        <div class="slot-items" id="slot-reel">
+                            <!-- Les éléments seront générés dynamiquement en JS -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slot-lever-container">
+                    <div class="slot-lever" id="slot-lever">
+                        <div class="lever-handle"></div>
+                        <div class="lever-base"></div>
+                    </div>
+                </div>
+                
+                <div class="slot-button-container">
+                    <button class="slot-button" id="play-slot-button">
+                        <i class="fas fa-play"></i>
+                        <span class="slot-button-text">JOUER</span>
+                        <span class="slot-price">GRATUIT</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div class="shop-info-cards">
             <div class="info-card">
                 <i class="fas fa-question-circle"></i>
@@ -101,6 +137,29 @@
         <div class="modal-footer">
             <button class="btn btn-secondary" id="broke-close-btn">Je reviendrai plus riche</button>
             <button class="btn btn-primary" id="buy-tokens-btn">Acheter des tokens</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal pour les résultats de la machine à sous -->
+<div id="slot-result-modal" class="modal">
+    <div class="modal-content slot-result-modal">
+        <div class="modal-header" id="slot-result-header">
+            <h3 id="slot-result-title">Résultat</h3>
+            <span class="close-modal">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="result-image-container">
+                <img id="slot-result-image" src="" alt="Résultat">
+            </div>
+            <div class="result-message">
+                <p id="slot-result-message">Félicitations !</p>
+                <p id="slot-result-details">Vous avez gagné un booster commun.</p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" id="slot-result-close-btn">Fermer</button>
+            <button class="btn btn-primary" id="slot-play-again-btn">Rejouer (100 $CCARD)</button>
         </div>
     </div>
 </div>
