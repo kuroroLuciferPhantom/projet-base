@@ -7,7 +7,7 @@ const SLOT_ITEMS = [
     {
         id: 'booster-common',
         name: 'Booster Commun',
-        image: '/img/booster-standard.svg',
+        image: '/img/booster/booster-commun.png',
         probability: 0.30,
         type: 'win',
         category: 'booster'
@@ -15,7 +15,7 @@ const SLOT_ITEMS = [
     {
         id: 'booster-rare',
         name: 'Booster Rare',
-        image: '/img/booster-premium.svg',
+        image: '/img/booster/booster-rare.png',
         probability: 0.10,
         type: 'win',
         category: 'booster'
@@ -23,7 +23,7 @@ const SLOT_ITEMS = [
     {
         id: 'booster-epic',
         name: 'Booster Épique',
-        image: '/img/booster-ultimate.svg',
+        image: '/img/booster/booster-epic.png',
         probability: 0.05,
         type: 'win',
         category: 'booster'
@@ -40,7 +40,7 @@ const SLOT_ITEMS = [
     {
         id: 'lose',
         name: 'Perdu',
-        image: '/illustrations/rekt.png',
+        image: '/img/illustrations/rekt.png',
         probability: 0.50,
         type: 'lose',
         category: 'none'
