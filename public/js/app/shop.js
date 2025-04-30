@@ -8,7 +8,7 @@ const BOOSTER_TYPES = {
         name: 'Booster Standard',
         price: 500,
         cardCount: 5,
-        image: '/img/booster-standard.svg',
+        image: '/img/booster/booster-commun.png',
         rarities: {
             common: 0.70,
             rare: 0.20,
@@ -20,7 +20,7 @@ const BOOSTER_TYPES = {
         name: 'Booster Premium',
         price: 1200,
         cardCount: 5,
-        image: '/img/booster-premium.svg',
+        image: '/img/booster/booster-rare.png',
         rarities: {
             common: 0.55,
             rare: 0.25,
@@ -32,7 +32,7 @@ const BOOSTER_TYPES = {
         name: 'Booster Ultimate',
         price: 2500,
         cardCount: 7,
-        image: '/img/booster-ultimate.svg',
+        image: '/img/booster/booster-epic.png',
         rarities: {
             common: 0.40,
             rare: 0.25,
