@@ -1,6 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const { isAuthenticatedApi } = require('../middleware/auth');
+const { 
+  validateMarketSearch, 
+  validateSellCard, 
+  validateBuyCard, 
+  validateOpenBooster, 
+  validateUpdateProfile 
+} = require('../middleware/validate');
 
 // Contrôleurs
 const cardsController = require('../controllers/cardsController');
@@ -39,24 +46,24 @@ router.use('/v1', (() => {
   v1Router.get('/cards/:id', isAuthenticatedApi, apiController.getCardById);
   v1Router.get('/users/me/cards', isAuthenticatedApi, cardsController.getUserCards);
 
-  // Routes pour le marché
-  v1Router.get('/market', apiController.getMarketListings);
-  v1Router.post('/market/transactions', isAuthenticatedApi, apiController.createTransaction);
-  v1Router.post('/market/buy', isAuthenticatedApi, marketController.buyCard);
-  v1Router.post('/market/sell', isAuthenticatedApi, marketController.sellCard);
+  // Routes pour le marché avec validation
+  v1Router.get('/market', validateMarketSearch, apiController.getMarketListings);
+  v1Router.post('/market/transactions', isAuthenticatedApi, validateBuyCard, apiController.createTransaction);
+  v1Router.post('/market/buy', isAuthenticatedApi, validateBuyCard, marketController.buyCard);
+  v1Router.post('/market/sell', isAuthenticatedApi, validateSellCard, marketController.sellCard);
 
-  // Routes pour les utilisateurs
+  // Routes pour les utilisateurs avec validation
   v1Router.get('/users/me', isAuthenticatedApi, apiController.getUserProfile);
-  v1Router.put('/users/me', isAuthenticatedApi, apiController.updateUserProfile);
+  v1Router.put('/users/me', isAuthenticatedApi, validateUpdateProfile, apiController.updateUserProfile);
   v1Router.put('/users/me/tutorial', isAuthenticatedApi, authController.updateTutorialStatus);
 
   // Routes pour l'authentification
   v1Router.get('/auth/wallet/nonce/:address', authController.getNonce);
   v1Router.post('/auth/wallet/connect', authController.connectWallet);
 
-  // Routes pour les boosters
+  // Routes pour les boosters avec validation
   v1Router.get('/boosters', isAuthenticatedApi, boosterController.getUserBoosters);
-  v1Router.post('/boosters/open', isAuthenticatedApi, boosterController.openBooster);
+  v1Router.post('/boosters/open', isAuthenticatedApi, validateOpenBooster, boosterController.openBooster);
   v1Router.post('/boosters/buy', isAuthenticatedApi, boosterController.buyBooster);
   v1Router.post('/boosters/first', isAuthenticatedApi, boosterController.getFirstBooster);
 
@@ -76,14 +83,14 @@ router.use('/v1', (() => {
 // Ces routes seront dépréciées dans les futures versions
 router.get('/cards', isAuthenticatedApi, cardsController.getUserCards);
 router.get('/cards/:id', isAuthenticatedApi, cardsController.getCardDetails);
-router.get('/market/cards', marketController.getMarketCards);
-router.post('/market/buy', isAuthenticatedApi, marketController.buyCard);
-router.post('/market/sell', isAuthenticatedApi, marketController.sellCard);
+router.get('/market/cards', validateMarketSearch, marketController.getMarketCards);
+router.post('/market/buy', isAuthenticatedApi, validateBuyCard, marketController.buyCard);
+router.post('/market/sell', isAuthenticatedApi, validateSellCard, marketController.sellCard);
 router.get('/wallet/nonce/:address', authController.getNonce);
 router.post('/wallet/connect', authController.connectWallet);
 router.put('/user/:userId/tutorial', isAuthenticatedApi, authController.updateTutorialStatus);
 router.get('/boosters', isAuthenticatedApi, boosterController.getUserBoosters);
-router.post('/boosters/open', isAuthenticatedApi, boosterController.openBooster);
+router.post('/boosters/open', isAuthenticatedApi, validateOpenBooster, boosterController.openBooster);
 router.post('/boosters/buy', isAuthenticatedApi, boosterController.buyBooster);
 router.post('/boosters/first', isAuthenticatedApi, boosterController.getFirstBooster);
 router.get('/token-balance', isAuthenticatedApi, (req, res) => {
