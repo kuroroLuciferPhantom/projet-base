@@ -7,6 +7,7 @@ const session = require('express-session');
 const dotenv = require('dotenv');
 const connectDB = require('./config/database');
 const expressLayouts = require('express-ejs-layouts');
+const logger = require('./utils/logger');
 
 // Charger les variables d'environnement
 dotenv.config();
@@ -34,7 +35,11 @@ app.use(helmet({
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(morgan('dev'));
+
+// Utilisation de morgan avec notre logger
+app.use(morgan('combined', { stream: logger.stream }));
+
+// Middleware pour la session
 app.use(session({
   secret: process.env.SESSION_SECRET || 'secret-temporaire',
   resave: false,
@@ -50,9 +55,24 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(expressLayouts);
 app.set('layout', 'layouts/main');
 
-// Middleware pour logger les requêtes statiques (pour déboguer)
+// Middleware pour mesurer les performances
 app.use((req, res, next) => {
-  console.log('Request URL:', req.url);
+  const start = Date.now();
+  
+  // Fonction à exécuter après que la réponse soit envoyée au client
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    logger.logApiAccess(req, res, duration);
+    
+    // Log des performances si la requête est lente (plus de 1000ms)
+    if (duration > 1000) {
+      logger.logPerformance(req.originalUrl, duration, {
+        method: req.method,
+        statusCode: res.statusCode
+      });
+    }
+  });
+  
   next();
 });
 
@@ -78,11 +98,16 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
+  // Journaliser l'erreur
+  logger.logError(err, req);
+  
+  // Définir le statut de la réponse
   res.status(err.status || 500);
   
   // Si c'est une requête API, renvoyer une erreur JSON
   if (req.originalUrl && req.originalUrl.startsWith('/api')) {
     return res.json({
+      success: false,
       error: {
         message: err.message,
         status: err.status
@@ -96,7 +121,21 @@ app.use((err, req, res, next) => {
 
 // Démarrer le serveur
 app.listen(PORT, () => {
-  console.log(`Serveur démarré sur http://localhost:${PORT}`);
+  logger.info(`Serveur démarré sur http://localhost:${PORT}`);
+});
+
+// Gestion des erreurs non capturées
+process.on('uncaughtException', (error) => {
+  logger.error('Erreur non capturée:', { error: error.stack });
+  // Arrêter le processus en cas d'erreur critique
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  logger.error('Promesse rejetée non gérée:', { 
+    reason: reason, 
+    promise: promise 
+  });
 });
 
 module.exports = app;
