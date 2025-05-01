@@ -23,6 +23,11 @@ function initializeMarketplace() {
   
   // Initialiser les filtres
   initializeFilters();
+  
+  // Initialiser les statistiques (si la page contient une section stats)
+  if (document.getElementById('market-stats')) {
+    loadMarketStats();
+  }
 }
 
 /**
@@ -74,36 +79,29 @@ function initializeForms() {
       e.preventDefault();
       
       const cardId = document.getElementById('sell-button').dataset.cardId;
-      const price = document.getElementById('price').value;
+      const price = parseFloat(document.getElementById('price').value);
       
       if (!price || price <= 0) {
         showToast('error', 'Erreur', 'Le prix doit être supérieur à 0.');
         return;
       }
       
-      // Envoyer la requête pour mettre la carte en vente
-      fetch('/marketplace/api/sell', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ cardId, price }),
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          showToast('success', 'Succès', 'Carte mise en vente avec succès !');
-          setTimeout(() => {
-            window.location.reload();
-          }, 1500);
-        } else {
-          showToast('error', 'Erreur', data.message || 'Une erreur est survenue');
-        }
-      })
-      .catch(error => {
-        console.error('Erreur:', error);
-        showToast('error', 'Erreur', 'Une erreur est survenue lors de la mise en vente');
-      });
+      // Utiliser le service API pour mettre la carte en vente
+      window.apiService.sellCard(cardId, price)
+        .then(data => {
+          if (data.success) {
+            showToast('success', 'Succès', 'Carte mise en vente avec succès !');
+            setTimeout(() => {
+              window.location.reload();
+            }, 1500);
+          } else {
+            showToast('error', 'Erreur', data.error?.message || 'Une erreur est survenue');
+          }
+        })
+        .catch(error => {
+          console.error('Erreur:', error);
+          showToast('error', 'Erreur', 'Une erreur est survenue lors de la mise en vente');
+        });
     });
   }
   
@@ -131,32 +129,25 @@ function initializeMarketActions() {
     buyButton.addEventListener('click', function() {
       const cardId = document.getElementById('buy-button').dataset.cardId;
       
-      // Envoyer la requête pour acheter la carte
-      fetch('/marketplace/api/buy', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ cardId }),
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
+      // Utiliser le service API pour acheter la carte
+      window.apiService.buyCard(cardId)
+        .then(data => {
+          if (data.success) {
+            document.getElementById('buy-confirm-modal').classList.add('hidden');
+            showToast('success', 'Succès', 'Carte achetée avec succès !');
+            setTimeout(() => {
+              window.location.reload();
+            }, 1500);
+          } else {
+            document.getElementById('buy-confirm-modal').classList.add('hidden');
+            showToast('error', 'Erreur', data.error?.message || 'Une erreur est survenue');
+          }
+        })
+        .catch(error => {
+          console.error('Erreur:', error);
           document.getElementById('buy-confirm-modal').classList.add('hidden');
-          showToast('success', 'Succès', 'Carte achetée avec succès !');
-          setTimeout(() => {
-            window.location.reload();
-          }, 1500);
-        } else {
-          document.getElementById('buy-confirm-modal').classList.add('hidden');
-          showToast('error', 'Erreur', data.message || 'Une erreur est survenue');
-        }
-      })
-      .catch(error => {
-        console.error('Erreur:', error);
-        document.getElementById('buy-confirm-modal').classList.add('hidden');
-        showToast('error', 'Erreur', 'Une erreur est survenue lors de l\'achat');
-      });
+          showToast('error', 'Erreur', 'Une erreur est survenue lors de l\'achat');
+        });
     });
   }
   
@@ -166,31 +157,25 @@ function initializeMarketActions() {
     removeButton.addEventListener('click', function() {
       const cardId = document.getElementById('remove-button').dataset.cardId;
       
-      // Envoyer la requête pour retirer la carte du marché
-      fetch(`/marketplace/api/card/${cardId}/listing`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
+      // Utiliser le service API pour retirer la carte du marché
+      window.apiService.removeFromMarket(cardId)
+        .then(data => {
+          if (data.success) {
+            document.getElementById('remove-confirm-modal').classList.add('hidden');
+            showToast('success', 'Succès', 'Carte retirée du marché avec succès !');
+            setTimeout(() => {
+              window.location.reload();
+            }, 1500);
+          } else {
+            document.getElementById('remove-confirm-modal').classList.add('hidden');
+            showToast('error', 'Erreur', data.error?.message || 'Une erreur est survenue');
+          }
+        })
+        .catch(error => {
+          console.error('Erreur:', error);
           document.getElementById('remove-confirm-modal').classList.add('hidden');
-          showToast('success', 'Succès', 'Carte retirée du marché avec succès !');
-          setTimeout(() => {
-            window.location.reload();
-          }, 1500);
-        } else {
-          document.getElementById('remove-confirm-modal').classList.add('hidden');
-          showToast('error', 'Erreur', data.message || 'Une erreur est survenue');
-        }
-      })
-      .catch(error => {
-        console.error('Erreur:', error);
-        document.getElementById('remove-confirm-modal').classList.add('hidden');
-        showToast('error', 'Erreur', 'Une erreur est survenue lors du retrait');
-      });
+          showToast('error', 'Erreur', 'Une erreur est survenue lors du retrait');
+        });
     });
   }
 }
@@ -217,6 +202,109 @@ function initializeFilters() {
       }
     });
   }
+}
+
+/**
+ * Charger les statistiques du marché
+ */
+function loadMarketStats() {
+  const statsContainer = document.getElementById('market-stats');
+  if (!statsContainer) return;
+  
+  // Afficher un loader
+  statsContainer.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Chargement...</span></div></div>';
+  
+  // Utiliser le service API pour récupérer les statistiques
+  window.apiService.getStats()
+    .then(data => {
+      if (data.success && data.data?.stats) {
+        renderMarketStats(data.data.stats);
+      } else {
+        statsContainer.innerHTML = '<div class="alert alert-danger">Impossible de charger les statistiques.</div>';
+      }
+    })
+    .catch(error => {
+      console.error('Erreur lors du chargement des statistiques:', error);
+      statsContainer.innerHTML = '<div class="alert alert-danger">Une erreur est survenue lors du chargement des statistiques.</div>';
+    });
+}
+
+/**
+ * Afficher les statistiques du marché
+ * @param {Object} stats - Données statistiques du marché
+ */
+function renderMarketStats(stats) {
+  const statsContainer = document.getElementById('market-stats');
+  if (!statsContainer) return;
+  
+  statsContainer.innerHTML = `
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white p-4 rounded-lg shadow-md">
+        <h3 class="text-lg font-semibold text-gray-700 mb-2">Utilisateurs</h3>
+        <p class="text-3xl font-bold text-indigo-500">${stats.totalUsers || 0}</p>
+      </div>
+      <div class="bg-white p-4 rounded-lg shadow-md">
+        <h3 class="text-lg font-semibold text-gray-700 mb-2">Cartes uniques</h3>
+        <p class="text-3xl font-bold text-indigo-500">${stats.totalCards || 0}</p>
+      </div>
+      <div class="bg-white p-4 rounded-lg shadow-md">
+        <h3 class="text-lg font-semibold text-gray-700 mb-2">Cartes possédées</h3>
+        <p class="text-3xl font-bold text-indigo-500">${stats.totalPlayerCards || 0}</p>
+      </div>
+      <div class="bg-white p-4 rounded-lg shadow-md">
+        <h3 class="text-lg font-semibold text-gray-700 mb-2">Cartes en vente</h3>
+        <p class="text-3xl font-bold text-indigo-500">${stats.cardsForSale || 0}</p>
+      </div>
+    </div>
+    <div class="mt-6">
+      <h3 class="text-xl font-semibold text-gray-700 mb-3">Transactions récentes</h3>
+      <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Carte</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vendeur</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acheteur</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prix</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            ${renderRecentTransactions(stats.recentTransactions || [])}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * Générer le HTML pour les transactions récentes
+ * @param {Array} transactions - Liste des transactions récentes
+ * @returns {string} - HTML généré
+ */
+function renderRecentTransactions(transactions) {
+  if (!transactions || transactions.length === 0) {
+    return '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Aucune transaction récente</td></tr>';
+  }
+  
+  return transactions.map(tx => {
+    const date = new Date(tx.date);
+    const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+    const cardName = tx.card?.card?.name || 'Carte inconnue';
+    const sellerName = tx.seller?.username || 'Utilisateur inconnu';
+    const buyerName = tx.buyer?.username || 'Utilisateur inconnu';
+    
+    return `
+      <tr>
+        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${cardName}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${sellerName}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${buyerName}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${tx.price} tokens</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formattedDate}</td>
+      </tr>
+    `;
+  }).join('');
 }
 
 /**

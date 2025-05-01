@@ -25,8 +25,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Métadonnées de l'application -->
+    <meta name="api-version" content="v1">
+    <meta name="app-version" content="0.1.0">
+    <% if (typeof user !== 'undefined') { %>
+        <meta name="user-id" content="<%= user._id %>">
+    <% } %>
 </head>
-<body>
+<body class="<%= typeof bodyClass !== 'undefined' ? bodyClass : '' %>">
     <%- include('../partials/header') %>
     
     <!-- Contenu principal injecté par express-ejs-layouts -->
@@ -34,12 +41,33 @@
     
     <%- include('../partials/footer') %>
     
+    <!-- Conteneur de toasts pour les notifications -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col space-y-2"></div>
+    
+    <!-- Scripts des services -->
+    <script src="/js/app/api.service.js"></script>
+    
     <!-- Scripts communs à toutes les pages -->
     <script src="/js/main.js"></script>
     
     <!-- Scripts spécifiques aux pages -->
     <% if (typeof pageJs !== 'undefined') { %>
         <script src="/js/<%= pageJs %>.js"></script>
+    <% } %>
+    
+    <!-- Scripts multiples si nécessaire -->
+    <% if (typeof jsFiles !== 'undefined' && Array.isArray(jsFiles)) { %>
+        <% jsFiles.forEach(function(jsFile) { %>
+            <script src="/js/<%= jsFile %>.js"></script>
+        <% }); %>
+    <% } %>
+    
+    <!-- Initialisation de l'API avec les données utilisateur -->
+    <% if (typeof token !== 'undefined' && token) { %>
+        <script>
+            // Initialiser le token d'authentification s'il est disponible
+            window.apiService.setToken('<%= token %>');
+        </script>
     <% } %>
 </body>
 </html>
