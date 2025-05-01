@@ -8,6 +8,7 @@ const dotenv = require('dotenv');
 const connectDB = require('./config/database');
 const expressLayouts = require('express-ejs-layouts');
 const logger = require('./utils/logger');
+const setupSwagger = require('./utils/swagger');
 
 // Charger les variables d'environnement
 dotenv.config();
@@ -76,6 +77,9 @@ app.use((req, res, next) => {
   next();
 });
 
+// Configuration de Swagger
+setupSwagger(app);
+
 // Servir les fichiers statiques
 app.use(express.static(path.join(__dirname, '../public')));
 
@@ -122,6 +126,7 @@ app.use((err, req, res, next) => {
 // Démarrer le serveur
 app.listen(PORT, () => {
   logger.info(`Serveur démarré sur http://localhost:${PORT}`);
+  logger.info(`Documentation API disponible sur http://localhost:${PORT}/api/docs`);
 });
 
 // Gestion des erreurs non capturées
