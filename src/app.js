@@ -9,6 +9,7 @@ const connectDB = require('./config/database');
 const expressLayouts = require('express-ejs-layouts');
 const logger = require('./utils/logger');
 const setupSwagger = require('./utils/swagger');
+const { tokenMiddleware } = require('./middleware/token');
 
 // Charger les variables d'environnement
 dotenv.config();
@@ -47,6 +48,9 @@ app.use(session({
   saveUninitialized: false,
   cookie: { secure: process.env.NODE_ENV === 'production' }
 }));
+
+// Middleware pour la gestion des tokens
+app.use(tokenMiddleware);
 
 // Configuration des vues EJS
 app.set('view engine', 'ejs');
@@ -119,7 +123,15 @@ app.use((err, req, res, next) => {
     });
   }
   
-  // Sinon, afficher un message d'erreur simple
+  // Sinon, afficher un message d'erreur simple ou une page d'erreur
+  if (req.views && err.status === 404) {
+    return res.render('errors/404', { 
+      title: 'Page non trouvée',
+      message: err.message
+    });
+  }
+  
+  // Fallback pour les erreurs sans template
   res.send(`<h1>Erreur ${err.status || 500}</h1><p>${err.message}</p>`);
 });
 
