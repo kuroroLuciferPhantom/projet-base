@@ -194,7 +194,7 @@ function displayRewards() {
                 <i class="fas fa-coins" style="color: #f1c40f;"></i>
             </div>
             <div class="reward-value">${gameState.tokensEarned}</div>
-            <div class="reward-label">$CCARD</div>
+            <div class="reward-label">$EFC</div>
         `;
         rewardsContainer.appendChild(tokenReward);
     }

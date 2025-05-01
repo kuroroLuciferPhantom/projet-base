@@ -134,7 +134,7 @@ function initBrokeModalEvents() {
             updateUserBalance(); // Mettre à jour l'affichage
             
             // Message de succès
-            showSuccessNotification("Vous avez acheté 1000 $CCARD !");
+            showSuccessNotification("Vous avez acheté 1000 $EFC !");
             
             // Fermer la modal
             brokeModal.classList.remove('show');
@@ -361,7 +361,7 @@ function updateUserBalance() {
     // Mettre à jour l'affichage du solde dans la sidebar
     const sidebarTokenAmount = document.querySelector('.token-amount');
     if (sidebarTokenAmount) {
-        sidebarTokenAmount.textContent = `${userBalance} $CCARD`;
+        sidebarTokenAmount.textContent = `${userBalance} $EFC`;
     }
     
     // Désactiver les boutons si le solde est insuffisant

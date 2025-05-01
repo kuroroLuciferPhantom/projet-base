@@ -280,7 +280,7 @@ function generateEnemyEventHTML(event) {
         const resultClass = event.result.victory ? 'victory' : 'defeat';
         const resultText = event.result.victory ? 'Victoire !' : 'Défaite !';
         const resultDescription = event.result.victory 
-            ? `<p>Vous avez vaincu ${event.enemy.name} après un combat acharné !</p><p>Vous récupérez <span class="highlight">${event.result.tokensEarned} $CCARD</span> sur son cadavre.</p>` 
+            ? `<p>Vous avez vaincu ${event.enemy.name} après un combat acharné !</p><p>Vous récupérez <span class="highlight">${event.result.tokensEarned} $EFC</span> sur son cadavre.</p>` 
             : `<p>${event.enemy.name} était trop puissant pour votre équipe !</p><p>Vous perdez <span class="highlight">${event.result.livesLost} vie(s)</span> dans cette terrible bataille.</p>`;
         
         combatResult = `

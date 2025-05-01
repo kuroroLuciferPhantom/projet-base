@@ -79,7 +79,7 @@ async function fetchUserInfo() {
         if (usernameElement) usernameElement.textContent = 'Joueur';
         
         const tokenAmountElement = document.querySelector('.token-amount');
-        if (tokenAmountElement) tokenAmountElement.textContent = '100 $CCARD';
+        if (tokenAmountElement) tokenAmountElement.textContent = '100 $EFC';
         
         const networkNameElement = document.querySelector('.network-name');
         if (networkNameElement) networkNameElement.textContent = 'Arbitrum Goerli';

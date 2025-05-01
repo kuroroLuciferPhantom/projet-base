@@ -30,7 +30,7 @@ const SLOT_ITEMS = [
     },
     {
         id: 'tokens',
-        name: '200 $CCARD',
+        name: '200 $EFC',
         image: '/img/gift.svg',
         probability: 0.05,
         type: 'win',
@@ -247,7 +247,7 @@ function setFreePlayAvailable(available) {
         playButton.classList.remove('disabled');
         playButton.disabled = false;
     } else {
-        priceSpan.textContent = `${PLAY_COST} $CCARD`;
+        priceSpan.textContent = `${PLAY_COST} $EFC`;
         
         // Vérifier si l'utilisateur a assez de tokens
         if (userBalance < PLAY_COST) {
@@ -377,7 +377,7 @@ function handleSlotPlay(useFreePlay = true) {
             const selectedItem = resultItems[randomIndex];
             
             // Calculer la position pour centrer cet élément
-            const itemHeight = 120; // Hauteur d'un item en pixels
+            const itemHeight = 123; // Hauteur d'un item en pixels
             const itemIndex = parseInt(selectedItem.getAttribute('data-index'));
             const targetPosition = -itemIndex * itemHeight + itemHeight/2;
             
@@ -454,9 +454,33 @@ function showSlotResult(result) {
         if (result.category === 'booster') {
             resultMessage.textContent = 'Vous avez gagné un booster !';
             resultDetails.textContent = `Vous avez obtenu un ${result.name}.`;
+            
+            // Stocker le type de booster pour l'ouverture ultérieure
+            resultModal.setAttribute('data-booster-type', result.id.replace('booster-', ''));
+            
+            // Ajouter un écouteur d'événement pour ouvrir le booster après la fermeture de la modal
+            const openBoosterAfterClose = () => {
+                // Extraire le type de booster (common, rare, epic)
+                const boosterType = result.id.replace('booster-', '');
+                
+                // Ouvrir la modal du booster
+                setTimeout(() => {
+                    if (typeof openBoosterModal === 'function') {
+                        openBoosterModal(boosterType);
+                    }
+                }, 500);
+                
+                // Retirer l'écouteur d'événement après utilisation
+                resultCloseBtn.removeEventListener('click', openBoosterAfterClose);
+                closeBtn.removeEventListener('click', openBoosterAfterClose);
+            };
+            
+            // Ajouter les écouteurs d'événements pour les boutons de fermeture
+            resultCloseBtn.addEventListener('click', openBoosterAfterClose);
+            closeBtn.addEventListener('click', openBoosterAfterClose);
         } else if (result.category === 'token') {
             resultMessage.textContent = 'Vous avez gagné des tokens !';
-            resultDetails.textContent = `Vous avez obtenu ${result.amount} $CCARD.`;
+            resultDetails.textContent = `Vous avez obtenu ${result.amount} $EFC.`;
             
             // Ajouter les tokens au solde
             userBalance += result.amount;
@@ -483,7 +507,7 @@ function showSlotResult(result) {
     if (dailyFreePlayAvailable) {
         playAgainBtn.textContent = 'Rejouer (Gratuit)';
     } else {
-        playAgainBtn.textContent = `Rejouer (${PLAY_COST} $CCARD)`;
+        playAgainBtn.textContent = `Rejouer (${PLAY_COST} $EFC)`;
     }
     
     // Afficher la modal
