@@ -22,7 +22,6 @@
     animation: fadeInUp 0.6s ease forwards;
 }
 
-/* Hero section */
 .hero-cards {
     display: flex;
     position: relative;
@@ -66,6 +65,34 @@
     left: 10%;
     top: 40px;
     transform-origin: bottom left;
+}
+
+/* Blob animation */
+.hero-blob {
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+    background: linear-gradient(45deg, rgba(230, 46, 46, 0.3), rgba(255, 204, 0, 0.3));
+    animation: blob-animation 10s infinite alternate;
+}
+
+@keyframes blob-animation {
+    0% {
+        border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+    }
+    25% {
+        border-radius: 45% 55% 49% 51% / 36% 51% 49% 64%;
+    }
+    50% {
+        border-radius: 61% 39% 52% 48% / 44% 59% 41% 56%;
+    }
+    75% {
+        border-radius: 35% 65% 31% 69% / 57% 59% 41% 43%;
+    }
+    100% {
+        border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+    }
 }
 
 /* Section des cartes */
