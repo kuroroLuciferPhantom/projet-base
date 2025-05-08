@@ -10,7 +10,8 @@ router.get('/', (req, res) => {
     title: 'EpicFactionCommunity - Jeu de cartes à collectionner NFT',
     user: req.session.user || null,
     pageCss: 'styles', // Pour s'assurer que styles.css est bien chargé
-    pageJs: 'main' // Pour s'assurer que main.js est bien chargé
+    pageJs: 'main', // Pour s'assurer que main.js est bien chargé
+    page: 'home' // Indiquer que c'est la page d'accueil pour charger homepage.css
   });
 });
 

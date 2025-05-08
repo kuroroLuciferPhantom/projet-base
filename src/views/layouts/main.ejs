@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= typeof title !== 'undefined' ? title : 'CryptoCards' %></title>
+    <title><%= typeof title !== 'undefined' ? title : 'EpicFactionCommunity' %></title>
     
     <!-- Feuilles de style principale -->
     <link rel="stylesheet" href="/css/styles.css">
@@ -11,6 +11,11 @@
     <!-- Feuilles de style spécifiques aux pages -->
     <% if (typeof pageCss !== 'undefined') { %>
         <link rel="stylesheet" href="/css/<%= pageCss %>.css">
+    <% } %>
+
+    <!-- Feuilles de style pour la page d'accueil -->
+    <% if (typeof page !== 'undefined' && page === 'home') { %>
+        <link rel="stylesheet" href="/css/homepage.css">
     <% } %>
 
     <!-- Feuilles de style multiples si nécessaire -->
