@@ -6,11 +6,15 @@
     </div>
     <nav>
         <ul>
-            
+            <% if (typeof page !== 'undefined' && page === 'home') { %>
+                <li><a href="#features">Fonctionnalités</a></li>
+                <li><a href="#tokenomics">Token EFC</a></li>
+                <li><a href="#coming-soon">Roadmap</a></li>
+            <% } %>
         </ul>
     </nav>
     <div class="auth-buttons">
-        <% if (user) { %>
+        <% if (typeof user !== 'undefined' && user) { %>
             <a href="/app" class="btn btn-primary">Mon Espace</a>
             <a href="#" class="btn btn-secondary logout-btn">Déconnexion</a>
         <% } else { %>
