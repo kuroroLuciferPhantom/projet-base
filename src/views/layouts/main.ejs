@@ -34,7 +34,7 @@
     <!-- Métadonnées de l'application -->
     <meta name="api-version" content="v1">
     <meta name="app-version" content="0.1.0">
-    <% if (typeof user !== 'undefined') { %>
+    <% if (typeof user !== 'undefined' && user && user._id) { %>
         <meta name="user-id" content="<%= user._id %>">
     <% } %>
 </head>
