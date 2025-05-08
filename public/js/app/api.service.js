@@ -1,11 +1,25 @@
 /**
  * Service API
  * Gère toutes les communications avec le serveur API
+ * Préparé pour l'intégration blockchain
  */
 class ApiService {
   constructor() {
     this.baseUrl = '/api/v1';
     this.token = localStorage.getItem('token');
+    this.userId = null; // ID de l'utilisateur connecté
+    
+    // Essayer de récupérer l'ID utilisateur depuis le token JWT
+    if (this.token) {
+      try {
+        const tokenData = JSON.parse(atob(this.token.split('.')[1]));
+        if (tokenData && tokenData.id) {
+          this.userId = tokenData.id;
+        }
+      } catch (error) {
+        console.error('Erreur lors du décodage du token JWT:', error);
+      }
+    }
   }
 
   /**
@@ -15,6 +29,16 @@ class ApiService {
   setToken(token) {
     this.token = token;
     localStorage.setItem('token', token);
+    
+    // Mettre à jour l'ID utilisateur
+    try {
+      const tokenData = JSON.parse(atob(token.split('.')[1]));
+      if (tokenData && tokenData.id) {
+        this.userId = tokenData.id;
+      }
+    } catch (error) {
+      console.error('Erreur lors du décodage du token JWT:', error);
+    }
   }
 
   /**
@@ -22,7 +46,16 @@ class ApiService {
    */
   clearToken() {
     this.token = null;
+    this.userId = null;
     localStorage.removeItem('token');
+  }
+
+  /**
+   * Retourne l'ID de l'utilisateur connecté
+   * @returns {string|null} - ID de l'utilisateur
+   */
+  getUserId() {
+    return this.userId;
   }
 
   /**
@@ -181,6 +214,26 @@ class ApiService {
   async getUserCards() {
     return this.get('/users/me/cards');
   }
+  
+  /**
+   * Met à jour une carte
+   * @param {string} cardId - ID de la carte
+   * @param {Object} data - Données à mettre à jour
+   * @returns {Promise} - Carte mise à jour
+   */
+  async updateCard(cardId, data) {
+    return this.put(`/cards/${cardId}`, data);
+  }
+  
+  /**
+   * Transfère une carte à un autre utilisateur/wallet
+   * @param {string} cardId - ID de la carte
+   * @param {Object} data - Données de transfert (toAddress, etc.)
+   * @returns {Promise} - Résultat du transfert
+   */
+  async transferCard(cardId, data) {
+    return this.post(`/cards/${cardId}/transfer`, data);
+  }
 
   // Services de marché
   
@@ -199,7 +252,7 @@ class ApiService {
    * @returns {Promise} - Résultat de la transaction
    */
   async buyCard(cardId) {
-    return this.post('/market/transactions', { cardId });
+    return this.post('/market/buy', { cardId });
   }
 
   /**
@@ -269,6 +322,16 @@ class ApiService {
   async getWalletNonce(address) {
     return this.get(`/auth/wallet/nonce/${address}`);
   }
+  
+  /**
+   * Synchronise l'état du wallet blockchain avec le backend
+   * @param {string} address - Adresse du wallet
+   * @param {Object} data - Données blockchain à synchroniser
+   * @returns {Promise} - Résultat de la synchronisation
+   */
+  async syncBlockchainState(address, data) {
+    return this.post(`/blockchain/sync/${address}`, data);
+  }
 
   // Services de boosters
   
@@ -283,19 +346,20 @@ class ApiService {
   /**
    * Achète un booster
    * @param {string} boosterType - Type de booster
+   * @param {number} quantity - Quantité (optionnel, défaut: 1)
    * @returns {Promise} - Résultat de l'achat
    */
-  async buyBooster(boosterType) {
-    return this.post('/boosters/buy', { type: boosterType });
+  async buyBooster(boosterType, quantity = 1) {
+    return this.post('/boosters/buy', { type: boosterType, quantity });
   }
 
   /**
    * Ouvre un booster
-   * @param {string} boosterId - ID du booster à ouvrir
+   * @param {string} boosterType - Type du booster à ouvrir
    * @returns {Promise} - Cartes obtenues
    */
-  async openBooster(boosterId) {
-    return this.post('/boosters/open', { boosterId });
+  async openBooster(boosterType) {
+    return this.post('/boosters/open', { boosterType });
   }
 
   // Statistiques
@@ -306,6 +370,150 @@ class ApiService {
    */
   async getStats() {
     return this.get('/stats');
+  }
+  
+  // Transactions blockchain
+  
+  /**
+   * Enregistre une transaction blockchain
+   * @param {Object} transaction - Données de la transaction
+   * @returns {Promise} - Transaction enregistrée
+   */
+  async recordBlockchainTransaction(transaction) {
+    return this.post('/blockchain/transactions', transaction);
+  }
+  
+  /**
+   * Vérifie le statut d'une transaction blockchain
+   * @param {string} txHash - Hash de la transaction
+   * @returns {Promise} - Statut de la transaction
+   */
+  async checkTransactionStatus(txHash) {
+    return this.get(`/blockchain/transactions/${txHash}`);
+  }
+  
+  /**
+   * Récupère l'historique des transactions blockchain
+   * @param {Object} params - Paramètres de filtrage (optionnel)
+   * @returns {Promise} - Liste des transactions
+   */
+  async getBlockchainTransactions(params = {}) {
+    return this.get('/blockchain/transactions', params);
+  }
+  
+  /**
+   * Récupère la configuration blockchain
+   * @returns {Promise} - Configuration blockchain
+   */
+  async getBlockchainConfig() {
+    return this.get('/blockchain/config');
+  }
+  
+  /**
+   * Vérifie si un NFT appartient à l'utilisateur
+   * @param {string} tokenId - ID du token NFT
+   * @returns {Promise} - Résultat de la vérification
+   */
+  async verifyNFTOwnership(tokenId) {
+    return this.get(`/blockchain/nft/${tokenId}/verify`);
+  }
+  
+  /**
+   * Crée un NFT à partir d'une carte
+   * @param {string} cardId - ID de la carte
+   * @param {Object} metadata - Métadonnées du NFT
+   * @returns {Promise} - Résultat de la création
+   */
+  async mintCardAsNFT(cardId, metadata) {
+    return this.post(`/blockchain/nft/mint`, { cardId, metadata });
+  }
+  
+  /**
+   * Transfert un NFT de l'utilisateur vers une autre adresse
+   * @param {string} tokenId - ID du token NFT
+   * @param {string} toAddress - Adresse de destination
+   * @returns {Promise} - Résultat du transfert
+   */
+  async transferNFT(tokenId, toAddress) {
+    return this.post(`/blockchain/nft/${tokenId}/transfer`, { toAddress });
+  }
+  
+  /**
+   * Récupère les événements blockchain récents
+   * @param {Object} params - Paramètres de filtrage (optionnel)
+   * @returns {Promise} - Liste des événements
+   */
+  async getBlockchainEvents(params = {}) {
+    return this.get('/blockchain/events', params);
+  }
+  
+  /**
+   * Récupère le solde de tokens de l'utilisateur sur la blockchain
+   * @returns {Promise} - Solde de tokens
+   */
+  async getBlockchainTokenBalance() {
+    return this.get('/blockchain/balance');
+  }
+  
+  /**
+   * Génère un rapport de réconciliation entre la base de données et la blockchain
+   * @returns {Promise} - Rapport de réconciliation
+   */
+  async getBlockchainReconciliationReport() {
+    return this.get('/blockchain/reconciliation');
+  }
+  
+  /**
+   * Achète des tokens avec de la cryptomonnaie
+   * @param {number} amount - Montant de tokens à acheter
+   * @param {string} paymentMethod - Méthode de paiement (eth, matic, etc.)
+   * @returns {Promise} - Résultat de l'achat
+   */
+  async buyTokensWithCrypto(amount, paymentMethod = 'eth') {
+    return this.post('/blockchain/tokens/buy', { amount, paymentMethod });
+  }
+  
+  /**
+   * Vend des tokens contre de la cryptomonnaie
+   * @param {number} amount - Montant de tokens à vendre
+   * @param {string} paymentMethod - Méthode de paiement (eth, matic, etc.)
+   * @returns {Promise} - Résultat de la vente
+   */
+  async sellTokensForCrypto(amount, paymentMethod = 'eth') {
+    return this.post('/blockchain/tokens/sell', { amount, paymentMethod });
+  }
+  
+  /**
+   * Récupère les taux de change actuels entre tokens et cryptomonnaies
+   * @returns {Promise} - Taux de change
+   */
+  async getTokenExchangeRates() {
+    return this.get('/blockchain/tokens/rates');
+  }
+  
+  /**
+   * Ajoute un nouveau réseau blockchain au wallet
+   * @param {Object} networkParams - Paramètres du réseau
+   * @returns {Promise} - Résultat de l'ajout
+   */
+  async addBlockchainNetwork(networkParams) {
+    return this.post('/blockchain/networks', networkParams);
+  }
+  
+  /**
+   * Récupère la liste des réseaux blockchain supportés
+   * @returns {Promise} - Liste des réseaux
+   */
+  async getSupportedNetworks() {
+    return this.get('/blockchain/networks');
+  }
+  
+  /**
+   * Vérifie si le service blockchain est disponible
+   * @returns {Promise} - Statut du service
+   */
+  async checkBlockchainServiceStatus() {
+    return this.get('/blockchain/status');
   }
 }
 

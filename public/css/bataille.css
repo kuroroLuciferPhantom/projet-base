@@ -1,0 +1,897 @@
+/* Styles pour la section Bataille
+-------------------------------------------------- */
+
+/* Structure générale de la page */
+.bataille-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.bataille-header h1 {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+}
+
+.bataille-description {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+}
+
+.bataille-content {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+@media (max-width: 992px) {
+  .bataille-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Conteneurs des sections */
+.player-stats-container,
+.deck-management-container,
+.leaderboard-container,
+.battle-section {
+  background-color: var(--bg-card);
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.player-stats-container,
+.deck-management-container {
+  grid-column: 1;
+}
+
+.leaderboard-container,
+.battle-section {
+  grid-column: 2;
+}
+
+@media (max-width: 992px) {
+  .player-stats-container,
+  .deck-management-container,
+  .leaderboard-container,
+  .battle-section {
+    grid-column: 1;
+  }
+}
+
+/* En-têtes des sections */
+.player-stats-header,
+.deck-management-header,
+.leaderboard-header,
+.battle-header {
+  padding: 1.25rem 1.5rem;
+  background-color: var(--bg-card-header);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.player-stats-header h2,
+.deck-management-header h2,
+.leaderboard-header h2,
+.battle-header h2 {
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+/* Contenus des sections */
+.player-stats-content,
+.deck-management-content,
+.leaderboard-content,
+.battle-content {
+  padding: 1.5rem;
+}
+
+/* Zone de chargement */
+.stats-loading,
+.decks-loading,
+.leaderboard-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border-color);
+  border-top: 3px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Stats du joueur */
+.player-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.player-league {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.league-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: white;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Icônes de ligue */
+.league-bronze-3 {
+  background-image: url(/img/leagues/bronze-3.png);
+}
+
+.league-bronze-2 {
+  background-image: url(/img/leagues/bronze-2.png);
+}
+
+.league-bronze-1 {
+  background-image: url(/img/leagues/bronze-1.png);
+}
+
+.league-silver-3 {
+  background-image: url(/img/leagues/silver-3.png);
+}
+
+.league-silver-2 {
+  background-image: url(/img/leagues/silver-2.png);
+}
+
+.league-silver-1 {
+  background-image: url(/img/leagues/silver-1.png);
+}
+
+.league-gold-3 {
+  background-image: url(/img/leagues/gold-3.png);
+}
+
+.league-gold-2 {
+  background-image: url(/img/leagues/gold-2.png);
+}
+
+.league-gold-1 {
+  background-image: url(/img/leagues/gold-1.png);
+}
+
+.league-info h3 {
+  font-size: 1.5rem;
+  margin: 0 0 0.25rem 0;
+  color: var(--text-primary);
+}
+
+.league-info p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.player-record {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.record-item {
+  background-color: var(--bg-card-secondary);
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.record-item i {
+  display: block;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+}
+
+.record-item span {
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+/* Gestion des decks */
+.decks-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.decks-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.deck-card {
+  background-color: var(--bg-card-secondary);
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--border-color);
+  transition: all 0.2s ease;
+}
+
+.deck-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.deck-header {
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--bg-card-header);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.deck-name {
+  font-size: 1.2rem;
+  margin: 0;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+
+.deck-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.deck-actions .btn-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: transparent;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.deck-actions .btn-icon:hover {
+  background-color: var(--bg-hover);
+}
+
+.deck-info {
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.deck-card-count,
+.deck-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.deck-description {
+  padding: 0 1rem 1rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  max-height: 3rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.deck-preview {
+  padding: 0.5rem 1rem;
+  display: flex;
+  gap: 5px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none; /* Firefox */
+}
+
+.deck-preview::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
+.deck-preview .card-preview {
+  width: 40px;
+  height: 60px;
+  border-radius: 5px;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.deck-preview .card-preview::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 5px;
+  border: 2px solid transparent;
+}
+
+.deck-preview .card-preview.common::before {
+  border-color: #8e8e8e;
+}
+
+.deck-preview .card-preview.rare::before {
+  border-color: #3498db;
+}
+
+.deck-preview .card-preview.epic::before {
+  border-color: #9b59b6;
+}
+
+.deck-preview .card-preview.legendary::before {
+  border-color: #f1c40f;
+}
+
+.deck-status {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.active-badge {
+  background-color: var(--success-color);
+  color: white;
+  font-size: 0.8rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.no-decks {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-secondary);
+}
+
+/* Leaderboard */
+.leaderboard-table-container {
+  overflow-x: auto;
+}
+
+.leaderboard-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.leaderboard-legend {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.promotion-zone,
+.demotion-zone {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legend-color {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+.legend-color.promotion {
+  background-color: rgba(46, 204, 113, 0.2);
+}
+
+.legend-color.demotion {
+  background-color: rgba(231, 76, 60, 0.2);
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.leaderboard-table th,
+.leaderboard-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.leaderboard-table th {
+  background-color: var(--bg-card-header);
+  font-weight: 600;
+  color: var(--text-primary);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.leaderboard-table tbody tr {
+  background-color: var(--bg-card-secondary);
+  transition: background-color 0.2s ease;
+}
+
+.leaderboard-table tbody tr:hover {
+  background-color: var(--bg-hover);
+}
+
+.leaderboard-table .promotion-row {
+  background-color: rgba(46, 204, 113, 0.2);
+}
+
+.leaderboard-table .demotion-row {
+  background-color: rgba(231, 76, 60, 0.2);
+}
+
+.leaderboard-table .current-player-row {
+  font-weight: 600;
+  background-color: rgba(52, 152, 219, 0.2);
+}
+
+/* Section de combat */
+.battle-deck-selection {
+  margin-bottom: 2rem;
+}
+
+.battle-deck-selection h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.deck-selection-container {
+  display: flex;
+  overflow-x: auto;
+  gap: 1.5rem;
+  padding: 0.5rem 0;
+  scroll-snap-type: x mandatory;
+}
+
+.battle-deck-option {
+  background-color: var(--bg-card-secondary);
+  border-radius: 8px;
+  min-width: 250px;
+  max-width: 300px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  scroll-snap-align: start;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.battle-deck-option:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.battle-deck-option.selected {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px var(--primary-color);
+}
+
+.battle-deck-header {
+  padding: 1rem;
+  background-color: var(--bg-card-header);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.battle-deck-name {
+  font-size: 1.1rem;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+
+.battle-deck-count {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.battle-deck-preview {
+  padding: 0.5rem 1rem;
+  display: flex;
+  gap: 5px;
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+}
+
+.battle-deck-preview::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
+.battle-deck-stats {
+  padding: 0.75rem 1rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  font-size: 0.9rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.battle-deck-select {
+  padding: 0.75rem 1rem;
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid var(--border-color);
+}
+
+.select-deck-btn {
+  width: 100%;
+}
+
+.battle-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  gap: 1rem;
+}
+
+.btn-large {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+}
+
+.battle-note {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* Modaux */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.modal-content {
+  background-color: var(--bg-card);
+  margin: 2rem auto;
+  border-radius: 12px;
+  max-width: 800px;
+  width: 90%;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.modal-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.close-modal {
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+}
+
+.close-modal:hover {
+  color: var(--text-primary);
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+/* Formulaire de deck */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background-color: var(--bg-input);
+  color: var(--text-primary);
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.deck-card-selection {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 1.5rem;
+  max-height: 400px;
+}
+
+@media (max-width: 768px) {
+  .deck-card-selection {
+    grid-template-columns: 1fr;
+    max-height: unset;
+  }
+}
+
+.selected-cards,
+.available-cards {
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background-color: var(--bg-card-secondary);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.selected-cards h4,
+.available-cards h4 {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  background-color: var(--bg-card-header);
+  border-bottom: 1px solid var(--border-color);
+  font-size: 1rem;
+}
+
+.selected-cards-list,
+.available-cards-list {
+  padding: 1rem;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.card-filter {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  gap: 0.5rem;
+}
+
+.card-filter input,
+.card-filter select {
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--bg-input);
+  color: var(--text-primary);
+}
+
+.card-filter input {
+  flex-grow: 1;
+}
+
+.card-selection-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  border-radius: 6px;
+  background-color: var(--bg-card);
+  margin-bottom: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.card-selection-item:last-child {
+  margin-bottom: 0;
+}
+
+.card-selection-item:hover {
+  background-color: var(--bg-hover);
+}
+
+.card-selection-image {
+  width: 50px;
+  height: 70px;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  margin-right: 1rem;
+  flex-shrink: 0;
+}
+
+.card-selection-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-rarity {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 2px solid transparent;
+  border-radius: 4px;
+}
+
+.card-rarity.common {
+  border-color: #8e8e8e;
+}
+
+.card-rarity.rare {
+  border-color: #3498db;
+}
+
+.card-rarity.epic {
+  border-color: #9b59b6;
+}
+
+.card-rarity.legendary {
+  border-color: #f1c40f;
+}
+
+.card-selection-info {
+  flex-grow: 1;
+}
+
+.card-selection-info h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.8rem;
+}
+
+.card-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.card-stat i {
+  color: var(--text-secondary);
+}
+
+.card-selection-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 0.5rem;
+}
+
+.card-selection-btn:hover {
+  background-color: var(--primary-color-dark);
+}
+
+.card-selection-btn .add-icon,
+.card-selection-btn .remove-icon {
+  font-size: 1rem;
+}
+
+/* Styles pour les cartes dans les decks */
+.card-stat.attack .attack-value { color: #e74c3c; }
+.card-stat.defense .defense-value { color: #3498db; }
+.card-stat.magic .magic-value { color: #9b59b6; }
+.card-stat.speed .speed-value { color: #2ecc71; }
+
+/* Boutons */
+.btn {
+  padding: 0.75rem 1.25rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-color-dark);
+}
+
+.btn-secondary {
+  background-color: var(--bg-card-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+  background-color: var(--bg-hover);
+}
+
+.btn-danger {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #c0392b;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
