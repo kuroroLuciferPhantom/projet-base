@@ -1,43 +1,44 @@
 {
-  "name": "crypto-cards",
-  "version": "0.1.0",
-  "description": "Jeu de cartes NFT",
-  "main": "src/app.js",
+  "name": "epic-faction-community-contracts",
+  "version": "1.0.0",
+  "description": "Smart contracts for the Epic Faction Community card game",
+  "main": "index.js",
   "scripts": {
-    "start": "node src/app.js",
-    "dev": "nodemon src/app.js",
-    "init-marketplace": "node src/utils/initMarketplace.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint src/",
-    "lint:fix": "eslint src/ --fix"
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy:local": "hardhat run scripts/deploy.js --network localhost",
+    "deploy:goerli": "hardhat run scripts/deploy.js --network arbitrumGoerli",
+    "deploy:mainnet": "hardhat run scripts/deploy.js --network arbitrumOne",
+    "test:booster": "hardhat run scripts/test-booster.js --network localhost",
+    "node": "hardhat node",
+    "verify": "hardhat verify"
   },
   "keywords": [
-    "nft",
     "blockchain",
-    "cards",
-    "game"
+    "ethereum",
+    "nft",
+    "game",
+    "cards"
   ],
-  "author": "",
+  "author": "Epic Faction Community Team",
   "license": "MIT",
-  "dependencies": {
-    "bcrypt": "^5.1.1",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "ejs": "^3.1.9",
-    "ethers": "^5.7.2",
-    "express": "^4.18.2",
-    "express-ejs-layouts": "^2.5.1",
-    "express-session": "^1.17.3",
-    "helmet": "^7.1.0",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.0.3",
-    "morgan": "^1.10.0",
-    "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.0",
-    "winston": "^3.11.0"
-  },
   "devDependencies": {
-    "eslint": "^8.56.0",
-    "nodemon": "^3.0.2"
+    "@nomicfoundation/hardhat-chai-matchers": "^1.0.6",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.8",
+    "@nomicfoundation/hardhat-toolbox": "^2.0.2",
+    "@nomiclabs/hardhat-ethers": "^2.2.3",
+    "@nomiclabs/hardhat-etherscan": "^3.1.7",
+    "@typechain/ethers-v5": "^10.2.1",
+    "@typechain/hardhat": "^6.1.6",
+    "chai": "^4.3.7",
+    "dotenv": "^16.3.1",
+    "ethers": "^5.7.2",
+    "hardhat": "^2.17.1",
+    "hardhat-gas-reporter": "^1.0.9",
+    "solidity-coverage": "^0.8.4",
+    "typechain": "^8.3.1"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.9.3"
   }
 }

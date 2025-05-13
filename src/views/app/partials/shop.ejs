@@ -9,7 +9,199 @@
         </div>
     </div>
 
-    <div class="shop-content">            
+    <div class="shop-content">
+        <!-- Section des boosters classiques -->
+        <div class="boosters-section">
+            <h2 class="section-title">Boosters Classiques</h2>
+            <p class="section-description">Achetez des boosters avec vos tokens $EFC</p>
+            
+            <div class="boosters-grid">
+                <!-- Booster Standard -->
+                <div class="booster-card common">
+                    <div class="booster-image">
+                        <img src="/img/booster/booster-commun.png" alt="Booster Standard">
+                    </div>
+                    <div class="booster-info">
+                        <h3>Booster Standard</h3>
+                        <div class="booster-rarity">
+                            <span class="rarity-label">Contenu:</span>
+                            <span class="rarity-chance common">70% Commune</span>
+                            <span class="rarity-chance rare">20% Rare</span>
+                            <span class="rarity-chance epic">8% Épique</span>
+                            <span class="rarity-chance legendary">2% Légendaire</span>
+                        </div>
+                        <div class="booster-price">
+                            <span class="price-amount">100</span>
+                            <span class="price-currency">$EFC</span>
+                        </div>
+                        <div class="booster-actions">
+                            <button class="btn btn-buy-booster" data-booster-type="common" data-booster-price="100">Acheter</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Booster Rare -->
+                <div class="booster-card rare">
+                    <div class="booster-image">
+                        <img src="/img/booster/booster-rare.png" alt="Booster Premium">
+                    </div>
+                    <div class="booster-info">
+                        <h3>Booster Premium</h3>
+                        <div class="booster-rarity">
+                            <span class="rarity-label">Contenu:</span>
+                            <span class="rarity-chance common">55% Commune</span>
+                            <span class="rarity-chance rare">25% Rare</span>
+                            <span class="rarity-chance epic">15% Épique</span>
+                            <span class="rarity-chance legendary">5% Légendaire</span>
+                        </div>
+                        <div class="booster-price">
+                            <span class="price-amount">250</span>
+                            <span class="price-currency">$EFC</span>
+                        </div>
+                        <div class="booster-actions">
+                            <button class="btn btn-buy-booster" data-booster-type="rare" data-booster-price="250">Acheter</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Booster Épique -->
+                <div class="booster-card epic">
+                    <div class="booster-image">
+                        <img src="/img/booster/booster-epic.png" alt="Booster Ultimate">
+                    </div>
+                    <div class="booster-info">
+                        <h3>Booster Ultimate</h3>
+                        <div class="booster-rarity">
+                            <span class="rarity-label">Contenu:</span>
+                            <span class="rarity-chance common">40% Commune</span>
+                            <span class="rarity-chance rare">25% Rare</span>
+                            <span class="rarity-chance epic">25% Épique</span>
+                            <span class="rarity-chance legendary">10% Légendaire</span>
+                        </div>
+                        <div class="booster-price">
+                            <span class="price-amount">500</span>
+                            <span class="price-currency">$EFC</span>
+                        </div>
+                        <div class="booster-actions">
+                            <button class="btn btn-buy-booster" data-booster-type="epic" data-booster-price="500">Acheter</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section des NFT Boosters (nouvelle section) -->
+        <div class="boosters-section nft-feature">
+            <div class="section-header">
+                <h2 class="section-title">Boosters NFT</h2>
+                <span class="nft-badge"><i class="fas fa-certificate"></i> NFT</span>
+            </div>
+            <p class="section-description">Achetez des boosters avec vos tokens sur la blockchain et recevez directement des cartes NFT</p>
+            
+            <div class="boosters-grid nft-boosters">
+                <!-- Booster NFT Standard -->
+                <div class="booster-card common nft">
+                    <div class="booster-image">
+                        <img src="/img/booster/booster-commun-nft.png" alt="Booster NFT Standard">
+                        <div class="nft-overlay">
+                            <span class="nft-icon"><i class="fas fa-cube"></i></span>
+                        </div>
+                    </div>
+                    <div class="booster-info">
+                        <h3>Booster NFT Standard</h3>
+                        <div class="booster-rarity">
+                            <span class="rarity-label">Contenu:</span>
+                            <span class="rarity-chance common">70% Commune</span>
+                            <span class="rarity-chance rare">20% Rare</span>
+                            <span class="rarity-chance epic">8% Épique</span>
+                            <span class="rarity-chance legendary">2% Légendaire</span>
+                        </div>
+                        <div class="booster-price blockchain">
+                            <span class="price-amount">120</span>
+                            <span class="price-currency">$EFC</span>
+                            <span class="price-info">sur blockchain</span>
+                        </div>
+                        <div class="booster-actions">
+                            <button class="btn btn-buy-booster-nft" data-booster-type="common" data-booster-price="120">
+                                <i class="fas fa-wallet"></i> Acheter avec Wallet
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Booster NFT Premium -->
+                <div class="booster-card rare nft">
+                    <div class="booster-image">
+                        <img src="/img/booster/booster-rare-nft.png" alt="Booster NFT Premium">
+                        <div class="nft-overlay">
+                            <span class="nft-icon"><i class="fas fa-cube"></i></span>
+                        </div>
+                    </div>
+                    <div class="booster-info">
+                        <h3>Booster NFT Premium</h3>
+                        <div class="booster-rarity">
+                            <span class="rarity-label">Contenu:</span>
+                            <span class="rarity-chance common">55% Commune</span>
+                            <span class="rarity-chance rare">25% Rare</span>
+                            <span class="rarity-chance epic">15% Épique</span>
+                            <span class="rarity-chance legendary">5% Légendaire</span>
+                        </div>
+                        <div class="booster-price blockchain">
+                            <span class="price-amount">300</span>
+                            <span class="price-currency">$EFC</span>
+                            <span class="price-info">sur blockchain</span>
+                        </div>
+                        <div class="booster-actions">
+                            <button class="btn btn-buy-booster-nft" data-booster-type="rare" data-booster-price="300">
+                                <i class="fas fa-wallet"></i> Acheter avec Wallet
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Booster NFT Ultimate -->
+                <div class="booster-card epic nft">
+                    <div class="booster-image">
+                        <img src="/img/booster/booster-epic-nft.png" alt="Booster NFT Ultimate">
+                        <div class="nft-overlay">
+                            <span class="nft-icon"><i class="fas fa-cube"></i></span>
+                        </div>
+                    </div>
+                    <div class="booster-info">
+                        <h3>Booster NFT Ultimate</h3>
+                        <div class="booster-rarity">
+                            <span class="rarity-label">Contenu:</span>
+                            <span class="rarity-chance common">40% Commune</span>
+                            <span class="rarity-chance rare">25% Rare</span>
+                            <span class="rarity-chance epic">25% Épique</span>
+                            <span class="rarity-chance legendary">10% Légendaire</span>
+                        </div>
+                        <div class="booster-price blockchain">
+                            <span class="price-amount">600</span>
+                            <span class="price-currency">$EFC</span>
+                            <span class="price-info">sur blockchain</span>
+                        </div>
+                        <div class="booster-actions">
+                            <button class="btn btn-buy-booster-nft" data-booster-type="epic" data-booster-price="600">
+                                <i class="fas fa-wallet"></i> Acheter avec Wallet
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="nft-advantages">
+                <h3>Avantages des cartes NFT</h3>
+                <ul>
+                    <li><i class="fas fa-check-circle"></i> Cartes vérifiées sur la blockchain</li>
+                    <li><i class="fas fa-check-circle"></i> Propriété réelle et permanente</li>
+                    <li><i class="fas fa-check-circle"></i> Transférables entre les comptes</li>
+                    <li><i class="fas fa-check-circle"></i> Utilisables dans d'autres jeux compatibles</li>
+                    <li><i class="fas fa-check-circle"></i> Vendables sur les marketplaces NFT</li>
+                </ul>
+            </div>
+        </div>
+            
         <div class="distributeur-container">
             <h2 class="distributeur-title">Distributeur Automatique</h2>
             <p class="distributeur-description">Appuyez sur le bouton pour obtenir un booster aléatoire !</p>
@@ -103,6 +295,12 @@
     </div>
 </div>
 
+<!-- Notification de chargement blockchain -->
+<div id="loading-notification" class="loading-notification">
+    <div class="loading-spinner"></div>
+    <div class="loading-message">Transaction en cours...</div>
+</div>
+
 <!-- Modal "Vous êtes pauvre" -->
 <div id="broke-modal" class="modal">
     <div class="modal-content broke-modal">
@@ -157,3 +355,294 @@
         </div>
     </div>
 </div>
+
+<!-- CSS pour la section NFT Boosters -->
+<style>
+.nft-feature {
+    border: 2px solid #8e44ad;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 30px;
+    background: linear-gradient(135deg, rgba(142, 68, 173, 0.1) 0%, rgba(41, 128, 185, 0.1) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.nft-feature::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(to right, #8e44ad, #3498db, #2ecc71);
+    z-index: 1;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.nft-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #8e44ad;
+    color: white;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.nft-badge i {
+    margin-right: 5px;
+}
+
+.nft-boosters {
+    margin-bottom: 20px;
+}
+
+.booster-card.nft {
+    border: 2px solid;
+    position: relative;
+    overflow: hidden;
+}
+
+.booster-card.nft.common {
+    border-color: #3498db;
+}
+
+.booster-card.nft.rare {
+    border-color: #27ae60;
+}
+
+.booster-card.nft.epic {
+    border-color: #8e44ad;
+}
+
+.booster-card.nft .booster-image {
+    position: relative;
+}
+
+.nft-overlay {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.booster-price.blockchain {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.price-info {
+    font-size: 0.8rem;
+    color: #8e44ad;
+    margin-top: 5px;
+}
+
+.btn-buy-booster-nft {
+    background-color: #8e44ad;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+}
+
+.btn-buy-booster-nft:hover {
+    background-color: #9b59b6;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(142, 68, 173, 0.4);
+}
+
+.nft-advantages {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.nft-advantages h3 {
+    color: #8e44ad;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.nft-advantages ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.nft-advantages li {
+    width: 48%;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nft-advantages li i {
+    color: #2ecc71;
+}
+
+.loading-notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px 30px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.loading-notification.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.loading-spinner {
+    border: 5px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 5px solid #3498db;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-message {
+    font-size: 1.1rem;
+}
+
+.nft-feature.disabled {
+    opacity: 0.7;
+    position: relative;
+}
+
+.nft-feature.disabled::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 10;
+}
+
+.disabled-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    max-width: 80%;
+    text-align: center;
+    z-index: 11;
+}
+
+.blockchain-tooltip {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    z-index: 2;
+}
+
+/* Style pour les cartes NFT dans la collection */
+.card-item.nft-card {
+    border: 2px solid #8e44ad;
+    box-shadow: 0 0 10px rgba(142, 68, 173, 0.4);
+    position: relative;
+}
+
+.card-item .nft-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 0.7rem;
+    padding: 3px 7px;
+    z-index: 2;
+}
+
+/* Animation pour les cartes légendaires NFT */
+.card-item.legendary.nft-card {
+    animation: legendaryGlow 2s infinite alternate;
+}
+
+@keyframes legendaryGlow {
+    0% {
+        box-shadow: 0 0 10px rgba(230, 126, 34, 0.5);
+    }
+    100% {
+        box-shadow: 0 0 20px rgba(230, 126, 34, 0.8), 0 0 30px rgba(142, 68, 173, 0.4);
+    }
+}
+
+/* Section NFT dans les détails de carte */
+.card-nft-info {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: rgba(142, 68, 173, 0.1);
+    border-radius: 10px;
+    border-left: 3px solid #8e44ad;
+}
+
+.card-nft-info h3 {
+    margin-top: 0;
+    color: #8e44ad;
+}
+
+.nft-details {
+    font-size: 0.9rem;
+}
+
+.view-on-etherscan {
+    display: inline-block;
+    margin-top: 10px;
+    color: #3498db;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.view-on-etherscan:hover {
+    text-decoration: underline;
+}
+</style>

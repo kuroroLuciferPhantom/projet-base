@@ -6,7 +6,9 @@ const {
   validateSellCard, 
   validateBuyCard, 
   validateOpenBooster, 
-  validateUpdateProfile 
+  validateUpdateProfile,
+  validateBuyBoosterAndMintNFTs,
+  validateSyncNFTs
 } = require('../middleware/validate');
 const cacheService = require('../utils/cache');
 
@@ -37,7 +39,8 @@ router.use('/v1', (() => {
         users: '/api/v1/users',
         boosters: '/api/v1/boosters',
         auth: '/api/v1/auth',
-        stats: '/api/v1/stats'
+        stats: '/api/v1/stats',
+        blockchain: '/api/v1/blockchain'
       }
     });
   });
@@ -67,6 +70,10 @@ router.use('/v1', (() => {
   v1Router.post('/boosters/open', isAuthenticatedApi, validateOpenBooster, boosterController.openBooster);
   v1Router.post('/boosters/buy', isAuthenticatedApi, boosterController.buyBooster);
   v1Router.post('/boosters/first', isAuthenticatedApi, boosterController.getFirstBooster);
+  
+  // Nouvelles routes pour l'intégration blockchain
+  v1Router.post('/boosters/buy-and-mint', isAuthenticatedApi, validateBuyBoosterAndMintNFTs, boosterController.buyBoosterAndMintNFTs);
+  v1Router.post('/blockchain/sync-nfts', isAuthenticatedApi, validateSyncNFTs, boosterController.syncNFTsWithBackend);
 
   // Statistiques globales avec cache
   v1Router.get('/stats', cacheService.middleware(300), apiController.getStats);
@@ -114,6 +121,8 @@ router.get('/boosters', isAuthenticatedApi, cacheService.middleware(120), booste
 router.post('/boosters/open', isAuthenticatedApi, validateOpenBooster, boosterController.openBooster);
 router.post('/boosters/buy', isAuthenticatedApi, boosterController.buyBooster);
 router.post('/boosters/first', isAuthenticatedApi, boosterController.getFirstBooster);
+router.post('/boosters/buy-and-mint', isAuthenticatedApi, validateBuyBoosterAndMintNFTs, boosterController.buyBoosterAndMintNFTs);
+router.post('/blockchain/sync-nfts', isAuthenticatedApi, validateSyncNFTs, boosterController.syncNFTsWithBackend);
 router.get('/token-balance', isAuthenticatedApi, cacheService.middleware(120), (req, res) => {
   // Simuler l'obtention du solde de tokens
   res.json({ balance: 1000, success: true });

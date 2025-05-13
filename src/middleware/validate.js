@@ -87,6 +87,26 @@ const validateRequest = (schema) => {
         }
       }
 
+      // Vérifier si c'est une adresse Ethereum valide
+      if (fieldRules.isEthAddress && typeof value === 'string') {
+        // Vérification simple des adresses Ethereum (commence par 0x suivi de 40 caractères hexadécimaux)
+        const ethAddressRegex = /^0x[a-fA-F0-9]{40}$/;
+        if (!ethAddressRegex.test(value)) {
+          errors[field] = `Le champ ${field} doit être une adresse Ethereum valide`;
+          return;
+        }
+      }
+
+      // Vérifier si c'est un hash de transaction valide
+      if (fieldRules.isTxHash && typeof value === 'string') {
+        // Vérification simple des hash de transaction (commence par 0x suivi de 64 caractères hexadécimaux)
+        const txHashRegex = /^0x[a-fA-F0-9]{64}$/;
+        if (!txHashRegex.test(value)) {
+          errors[field] = `Le champ ${field} doit être un hash de transaction valide`;
+          return;
+        }
+      }
+
       // Vérifier les valeurs énumérées
       if (fieldRules.enum && Array.isArray(fieldRules.enum)) {
         if (!fieldRules.enum.includes(value)) {
@@ -183,9 +203,10 @@ const schemas = {
 
   // Schéma pour l'ouverture d'un booster
   openBooster: {
-    boosterId: {
+    boosterType: {
       required: true,
-      type: 'string'
+      type: 'string',
+      enum: ['common', 'rare', 'epic', 'legendary']
     }
   },
 
@@ -231,6 +252,44 @@ const schemas = {
       type: 'string',
       enum: ['asc', 'desc']
     }
+  },
+
+  // Schéma pour acheter un booster et créer des NFTs
+  buyBoosterAndMintNFTs: {
+    boosterType: {
+      required: true,
+      type: 'string',
+      enum: ['common', 'rare', 'epic', 'legendary']
+    },
+    walletAddress: {
+      required: true,
+      type: 'string',
+      isEthAddress: true
+    },
+    transactionHash: {
+      required: true,
+      type: 'string',
+      isTxHash: true
+    }
+  },
+
+  // Schéma pour synchroniser les NFTs avec le backend
+  syncNFTs: {
+    walletAddress: {
+      required: true,
+      type: 'string',
+      isEthAddress: true
+    },
+    cardIds: {
+      required: true,
+      type: 'array',
+      minLength: 1
+    },
+    transactionHash: {
+      required: true,
+      type: 'string',
+      isTxHash: true
+    }
   }
 };
 
@@ -243,5 +302,7 @@ module.exports = {
   validateOpenBooster: validateRequest(schemas.openBooster),
   validateUpdateProfile: validateRequest(schemas.updateProfile),
   validateMarketSearch: validateRequest(schemas.marketSearch),
+  validateBuyBoosterAndMintNFTs: validateRequest(schemas.buyBoosterAndMintNFTs),
+  validateSyncNFTs: validateRequest(schemas.syncNFTs),
   validate: validateRequest // Pour créer de nouvelles validations sur mesure
 };
