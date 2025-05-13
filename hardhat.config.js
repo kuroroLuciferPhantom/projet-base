@@ -20,6 +20,25 @@ module.exports = {
     hardhat: {
       chainId: 31337,
     },
+    // Configuration pour Base Goerli (testnet)
+    baseGoerli: {
+      url: process.env.BASE_GOERLI_URL || "https://goerli.base.org",
+      accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      chainId: 84531,
+      gasPrice: "auto",
+      gas: "auto",
+      timeout: 60000
+    },
+    // Configuration pour Base Mainnet
+    baseMainnet: {
+      url: process.env.BASE_MAINNET_URL || "https://mainnet.base.org",
+      accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      chainId: 8453,
+      gasPrice: "auto", 
+      gas: "auto",
+      timeout: 60000
+    },
+    // Configurations d'origine pour Arbitrum
     arbitrumGoerli: {
       url: process.env.ARBITRUM_GOERLI_URL || "",
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
@@ -31,9 +50,31 @@ module.exports = {
   },
   etherscan: {
     apiKey: {
+      // Pour vérifier les contrats sur Basescan
+      baseGoerli: process.env.BASESCAN_API_KEY || "",
+      base: process.env.BASESCAN_API_KEY || "",
+      // Configurations d'origine pour Arbitrum
       arbitrumGoerli: process.env.ARBISCAN_API_KEY || "",
       arbitrumOne: process.env.ARBISCAN_API_KEY || "",
     },
+    customChains: [
+      {
+        network: "baseGoerli",
+        chainId: 84531,
+        urls: {
+          apiURL: "https://api-goerli.basescan.org/api",
+          browserURL: "https://goerli.basescan.org"
+        }
+      },
+      {
+        network: "base",
+        chainId: 8453,
+        urls: {
+          apiURL: "https://api.basescan.org/api",
+          browserURL: "https://basescan.org"
+        }
+      }
+    ]
   },
   paths: {
     sources: "./contracts",
