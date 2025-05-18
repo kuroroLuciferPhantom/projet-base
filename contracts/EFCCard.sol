@@ -177,7 +177,7 @@ contract EFCCard is ERC721URIStorage, ERC721Enumerable, Ownable {
     /**
      * @dev Vérifie si le contrat implémente une interface
      */
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721, ERC721Enumerable, ERC721URIStorage) returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721Enumerable, ERC721URIStorage) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 }
