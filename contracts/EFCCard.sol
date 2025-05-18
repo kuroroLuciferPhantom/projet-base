@@ -40,9 +40,12 @@ contract EFCCard is ERC721URIStorage, ERC721Enumerable, Ownable {
     /**
      * @dev Constructeur
      */
-    constructor() ERC721("EpicFactionCommunity Card", "EFCC") Ownable(msg.sender) {
+    constructor() ERC721("EpicFactionCommunity Card", "EFCC") {
         // Commencer les IDs à 1 au lieu de 0
         _tokenIdCounter.increment();
+        
+        // Définit le propriétaire du contrat
+        _transferOwnership(msg.sender);
     }
     
     /**
