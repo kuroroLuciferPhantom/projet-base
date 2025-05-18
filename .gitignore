@@ -33,3 +33,4 @@ Thumbs.db
 
 # Fichiers de couverture de tests
 coverage/
+.env
