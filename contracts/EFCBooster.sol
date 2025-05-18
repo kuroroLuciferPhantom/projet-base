@@ -118,7 +118,7 @@ contract EFCBooster is Ownable {
         
         // Booster légendaire
         boosters["legendary"] = BoosterInfo({
-            name: "Booster Légendaire",
+            name: "Booster Legendaire",
             price: 1000 * 10**18, // 1000 tokens
             cardCount: 5,
             isActive: true
