@@ -64,10 +64,13 @@ contract EFCBooster is Ownable {
      * @param _cardContract Adresse du contrat de cartes NFT
      * @param _baseURI URI de base pour les métadonnées des cartes
      */
-    constructor(address _tokenContract, address _cardContract, string memory _baseURI) Ownable(msg.sender) {
+    constructor(address _tokenContract, address _cardContract, string memory _baseURI) {
         tokenContract = EFCToken(_tokenContract);
         cardContract = EFCCard(_cardContract);
         baseURI = _baseURI;
+        
+        // Définit le propriétaire du contrat
+        _transferOwnership(msg.sender);
         
         // Initialisation des types de boosters
         _initializeBoosterTypes();
