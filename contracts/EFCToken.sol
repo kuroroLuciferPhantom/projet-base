@@ -19,8 +19,11 @@ contract EFCToken is ERC20, Ownable {
      * @dev Constructeur qui donne tous les tokens créés au créateur du contrat
      * @param initialSupply La quantité initiale de tokens à créer
      */
-    constructor(uint256 initialSupply) ERC20("Epic Faction Community Token", "EFC") Ownable(msg.sender) {
+    constructor(uint256 initialSupply) ERC20("Epic Faction Community Token", "EFC") {
         _mint(msg.sender, initialSupply * 10 ** decimals());
+        
+        // Définit le propriétaire du contrat
+        _transferOwnership(msg.sender);
     }
     
     /**
