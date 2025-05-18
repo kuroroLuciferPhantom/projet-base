@@ -143,19 +143,37 @@ contract EFCCard is ERC721URIStorage, ERC721Enumerable, Ownable {
         return tokenIds;
     }
     
-    // Override nécessaire pour résoudre les conflits entre ERC721URIStorage et ERC721Enumerable
-    function _update(address to, uint256 tokenId, address auth) internal virtual override(ERC721, ERC721Enumerable) returns (address) {
-        return super._update(to, tokenId, auth);
+    // Override nécessaires pour résoudre les conflits entre ERC721URIStorage et ERC721Enumerable
+    
+    /**
+     * @dev Hook qui est appelé avant tout transfert de tokens
+     */
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 firstTokenId,
+        uint256 batchSize
+    ) internal virtual override(ERC721, ERC721Enumerable) {
+        super._beforeTokenTransfer(from, to, firstTokenId, batchSize);
+    }
+
+    /**
+     * @dev Brûle un token spécifique
+     */
+    function _burn(uint256 tokenId) internal virtual override(ERC721, ERC721URIStorage) {
+        super._burn(tokenId);
     }
     
-    function _increaseBalance(address account, uint128 amount) internal virtual override(ERC721, ERC721Enumerable) {
-        super._increaseBalance(account, amount);
-    }
-    
+    /**
+     * @dev Retourne l'URI d'un token
+     */
     function tokenURI(uint256 tokenId) public view virtual override(ERC721, ERC721URIStorage) returns (string memory) {
         return super.tokenURI(tokenId);
     }
     
+    /**
+     * @dev Vérifie si le contrat implémente une interface
+     */
     function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721, ERC721Enumerable, ERC721URIStorage) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
