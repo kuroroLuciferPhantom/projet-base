@@ -20,7 +20,16 @@ module.exports = {
     hardhat: {
       chainId: 31337,
     },
-    // Configuration pour Base Goerli (testnet)
+    // Configuration pour Base Sepolia (testnet)
+    baseSepolia: {
+      url: process.env.BASE_SEPOLIA_URL || "https://sepolia.base.org",
+      accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      chainId: 84532,
+      gasPrice: "auto",
+      gas: "auto",
+      timeout: 60000
+    },
+    // Configuration pour Base Goerli (testnet) - gardée pour compatibilité
     baseGoerli: {
       url: process.env.BASE_GOERLI_URL || "https://goerli.base.org",
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
@@ -51,6 +60,7 @@ module.exports = {
   etherscan: {
     apiKey: {
       // Pour vérifier les contrats sur Basescan
+      baseSepolia: process.env.BASESCAN_API_KEY || "",
       baseGoerli: process.env.BASESCAN_API_KEY || "",
       base: process.env.BASESCAN_API_KEY || "",
       // Configurations d'origine pour Arbitrum
@@ -58,6 +68,14 @@ module.exports = {
       arbitrumOne: process.env.ARBISCAN_API_KEY || "",
     },
     customChains: [
+      {
+        network: "baseSepolia",
+        chainId: 84532,
+        urls: {
+          apiURL: "https://api-sepolia.basescan.org/api",
+          browserURL: "https://sepolia.basescan.org"
+        }
+      },
       {
         network: "baseGoerli",
         chainId: 84531,

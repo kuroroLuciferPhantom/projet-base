@@ -53,7 +53,7 @@ async function main() {
   console.log("Contrat de booster défini dans le contrat de cartes");
 
   // 5. Distribution de tokens aux utilisateurs de test (seulement en testnet)
-  if (network.name === "baseGoerli" || network.name === "localhost") {
+  if (network.name === "baseSepolia" || network.name === "baseGoerli" || network.name === "localhost") {
     console.log("Distribution de tokens aux utilisateurs de test...");
     if (testUser1) {
       tx = await tokenContract.transfer(testUser1.address, ethers.utils.parseEther(TEST_USER_TOKENS.toString()));

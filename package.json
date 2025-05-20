@@ -10,12 +10,15 @@
     "deploy:goerli": "hardhat run scripts/deploy.js --network arbitrumGoerli",
     "deploy:mainnet": "hardhat run scripts/deploy.js --network arbitrumOne",
     "deploy:base-goerli": "hardhat run scripts/deploy-to-base.js --network baseGoerli",
+    "deploy:base-sepolia": "hardhat run scripts/deploy-to-base.js --network baseSepolia",
     "deploy:base-mainnet": "hardhat run scripts/deploy-to-base.js --network baseMainnet",
     "test:booster": "hardhat run scripts/test-booster.js --network localhost",
-    "test:booster-base": "hardhat run scripts/test-booster-on-base.js --network baseGoerli",
+    "test:booster-base-goerli": "hardhat run scripts/test-booster-on-base.js --network baseGoerli",
+    "test:booster-base-sepolia": "hardhat run scripts/test-booster-on-base.js --network baseSepolia",
     "node": "hardhat node",
     "verify": "hardhat verify",
     "verify:base-goerli": "hardhat verify --network baseGoerli",
+    "verify:base-sepolia": "hardhat verify --network baseSepolia",
     "verify:base-mainnet": "hardhat verify --network baseMainnet"
   },
   "keywords": [

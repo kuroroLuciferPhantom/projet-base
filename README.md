@@ -1,52 +1,53 @@
-# EpicFactionCommunity - Application Web Node.js
+# EpicFactionCommunity - Smart Contracts
 
-Application web pour le jeu de cartes NFT EpicFactionCommunity, utilisant Node.js, Express et MongoDB.
+Ce projet contient les contrats intelligents pour le jeu de cartes NFT EpicFactionCommunity, déployables sur la blockchain Base.
 
-## Description
+## Mise à jour importante : Support de Base Sepolia
 
-EpicFactionCommunity est une plateforme de jeu de cartes à collectionner basée sur la blockchain. Cette application permet aux utilisateurs de collectionner, échanger et jouer avec des cartes NFT.
+Base Goerli est en cours de dépréciation et sera remplacé par Base Sepolia. Ce dépôt a été mis à jour pour prendre en charge le déploiement sur Base Sepolia.
+
+🔗 [Guide complet de migration de Base Goerli vers Base Sepolia](docs/MIGRATION_GUIDE.md)
 
 ## Technologies utilisées
 
-- **Backend** : Node.js, Express.js
-- **Base de données** : MongoDB avec Mongoose
-- **Templating** : EJS
-- **Authentification** : JWT, bcrypt
-- **Frontend** : HTML5, CSS3, JavaScript
-- **Blockchain** : Web3.js pour l'intégration des wallets
+- **Framework de développement** : Hardhat
+- **Langage de contrat** : Solidity 0.8.19
+- **Tests** : Mocha, Chai
+- **Déploiement** : Scripts Hardhat personnalisés
+- **Réseaux supportés** : 
+  - Base Sepolia (testnet principal)
+  - Base Goerli (déprécié)
+  - Base Mainnet
+  - Arbitrum Goerli
+  - Arbitrum One
 
 ## Structure du projet
 
 ```
 .
-├── node_modules/
-├── public/            # Fichiers statiques
-│   ├── css/
-│   ├── img/
-│   └── js/
-├── src/
-│   ├── controllers/   # Contrôleurs pour la logique métier
-│   ├── models/        # Modèles Mongoose
-│   ├── routes/        # Routes Express
-│   ├── views/         # Templates EJS
-│   │   ├── layouts/
-│   │   └── partials/
-│   ├── middleware/    # Middlewares Express
-│   ├── utils/         # Utilitaires
-│   ├── config/        # Configuration
-│   └── app.js         # Point d'entrée de l'application
-├── tests/             # Tests
-├── .env               # Variables d'environnement
-├── .gitignore
-├── package.json
-├── package-lock.json
+├── contracts/           # Contrats Solidity
+│   ├── EFCCard.sol      # Contrat de cartes NFT
+│   ├── EFCToken.sol     # Token ERC20 du jeu
+│   └── EFCBooster.sol   # Gestion des boosters de cartes
+├── scripts/             # Scripts de déploiement et tests
+│   ├── deploy.js        # Déploiement sur Arbitrum
+│   ├── deploy-to-base.js # Déploiement sur Base
+│   ├── test-booster.js  # Test local des boosters
+│   └── test-booster-on-base.js # Test des boosters sur Base
+├── test/                # Tests automatisés
+├── docs/                # Documentation
+│   └── MIGRATION_GUIDE.md # Guide de migration vers Base Sepolia
+├── examples/            # Exemples d'intégration
+│   ├── dapp-example.js  # Exemple de dApp
+│   └── dapp-example.html # Interface HTML pour l'exemple de dApp
+├── .env.example         # Exemple de variables d'environnement
+├── hardhat.config.js    # Configuration Hardhat
 └── README.md
 ```
 
 ## Prérequis
 
 - Node.js (v14 ou supérieur)
-- MongoDB
 - npm ou yarn
 
 ## Installation
@@ -61,74 +62,133 @@ npm install
 
 # Configurer les variables d'environnement
 cp .env.example .env
-# Éditer le fichier .env avec vos propres valeurs
-
-# Démarrer l'application en mode développement
-npm run dev
+# Éditer le fichier .env avec vos propres valeurs, notamment:
+# - Votre clé privée pour le déploiement
+# - URLs RPC pour les réseaux
+# - Clé API pour la vérification des contrats
 ```
 
-## Utilisation
+## Configurations des réseaux
 
-Une fois l'application démarrée, vous pouvez y accéder via :
+### Base Sepolia (Nouveau testnet)
+- **Chain ID**: 84532
+- **RPC URL**: https://sepolia.base.org
+- **Explorateur de blocs**: https://sepolia.basescan.org
 
-- http://localhost:3000 - Page d'accueil
-- http://localhost:3000/login - Page de connexion
-- http://localhost:3000/register - Page d'inscription
-- http://localhost:3000/app - Application principale (nécessite une authentification)
-- http://localhost:3000/marketplace - Marketplace de cartes
+### Base Goerli (Déprécié)
+- **Chain ID**: 84531
+- **RPC URL**: https://goerli.base.org
+- **Explorateur de blocs**: https://goerli.basescan.org
 
-### Initialiser la marketplace avec des données de test
+### Base Mainnet
+- **Chain ID**: 8453
+- **RPC URL**: https://mainnet.base.org
+- **Explorateur de blocs**: https://basescan.org
 
-Pour avoir des cartes à acheter/vendre sur la marketplace dès le départ, lancez le script d'initialisation :
+## Déploiement
+
+### Déployer sur Base Sepolia (Recommandé)
 
 ```bash
-npm run init-marketplace
+npm run deploy:base-sepolia
 ```
 
-Ce script va :
-1. Créer un utilisateur administrateur (si ce n'est pas déjà fait)
-2. Créer 10 cartes de test avec différentes raretés et statistiques
-3. Mettre ces cartes en vente sur la marketplace
-4. Générer quelques transactions fictives pour simuler un historique
+Cette commande va:
+1. Déployer les trois contrats (EFCToken, EFCCard, EFCBooster) sur Base Sepolia
+2. Configurer les permissions entre les contrats
+3. Distribuer des tokens de test (uniquement sur le testnet)
+4. Enregistrer les adresses des contrats dans un fichier `deployed-contracts-baseSepolia.json`
 
-Une fois le script exécuté, vous pourrez accéder à la marketplace et voir les cartes disponibles à l'achat.
+### Déployer sur Base Goerli (Déprécié)
 
-### Fonctionnalités de la marketplace
+```bash
+npm run deploy:base-goerli
+```
 
-La marketplace offre les fonctionnalités suivantes :
+### Déployer sur Base Mainnet
 
-- **Parcourir les cartes** : Affichage de toutes les cartes en vente
-- **Filtrer et rechercher** : Filtrer par nom, rareté et prix
-- **Voir les détails** : Affichage détaillé des caractéristiques d'une carte
-- **Acheter** : Possibilité d'acheter des cartes mises en vente
-- **Vendre** : Mettre ses propres cartes en vente avec un prix personnalisé
-- **Historique** : Consulter l'historique des transactions
-- **Statistiques** : Voir les statistiques du marché
+```bash
+npm run deploy:base-mainnet
+```
 
-Pour plus d'informations sur la marketplace, consultez la [documentation dédiée](docs/marketplace.md).
+## Tester les boosters
 
-## API REST
+### Tester sur Base Sepolia
 
-L'application expose également une API REST :
+```bash
+npm run test:booster-base-sepolia
+```
 
-- `POST /auth/register` - Inscription d'un nouvel utilisateur
-- `POST /auth/login` - Connexion d'un utilisateur existant
-- `POST /auth/logout` - Déconnexion
-- `POST /api/connect-wallet` - Connexion avec un wallet blockchain
-- `GET /api/cards` - Récupérer la collection de cartes de l'utilisateur
-- `GET /api/cards/:id` - Récupérer les détails d'une carte spécifique
-- `GET /marketplace` - Récupérer les cartes disponibles sur le marché
-- `GET /marketplace/card/:id` - Détails d'une carte sur le marché
-- `POST /marketplace/api/buy` - Acheter une carte
-- `POST /marketplace/api/sell` - Mettre une carte en vente
-- `DELETE /marketplace/api/card/:cardId/listing` - Retirer une carte du marché
+Cette commande va:
+1. Se connecter à Base Sepolia
+2. Utiliser les contrats déployés
+3. Acheter un booster avec des tokens EFC
+4. Vérifier la génération des cartes NFT
 
-## Commandes npm
+### Tester localement
 
-- `npm start` : Démarrer l'application en mode production
-- `npm run dev` : Démarrer l'application en mode développement avec nodemon
-- `npm run init-marketplace` : Initialiser la marketplace avec des données de test
-- `npm test` : Exécuter les tests
+```bash
+# Démarrer un nœud Hardhat local
+npm run node
+
+# Dans un nouveau terminal, déployer et tester sur le nœud local
+npm run deploy:local
+npm run test:booster
+```
+
+## Vérification des contrats
+
+Après le déploiement, vous pouvez vérifier les contrats sur Basescan:
+
+```bash
+# Vérifier sur Base Sepolia
+npm run verify:base-sepolia <ADRESSE_CONTRAT> [ARGUMENTS_CONSTRUCTEUR]
+
+# Exemple pour EFCToken:
+npm run verify:base-sepolia 0x123...abc 1000000
+
+# Exemple pour EFCCard:
+npm run verify:base-sepolia 0x456...def
+
+# Exemple pour EFCBooster:
+npm run verify:base-sepolia 0x789...ghi "0x123...abc" "0x456...def" "https://api.epicfactioncommunity.com/metadata/"
+```
+
+## Exemple de dApp
+
+Un exemple de dApp est fourni pour vous aider à intégrer vos contrats avec une interface utilisateur:
+
+1. Accédez au dossier examples:
+```bash
+cd examples
+```
+
+2. Ouvrez `dapp-example.html` dans votre navigateur
+3. Modifiez `dapp-example.js` pour spécifier les adresses réelles de vos contrats déployés
+4. Testez l'interaction avec vos contrats sur Base Sepolia
+
+## Migration de Base Goerli vers Base Sepolia
+
+Si vous avez déjà déployé vos contrats sur Base Goerli, suivez les instructions détaillées dans notre [Guide de Migration](docs/MIGRATION_GUIDE.md) pour migrer vers Base Sepolia.
+
+Le guide couvre:
+- Mise à jour de la configuration
+- Obtention d'ETH de test sur Base Sepolia
+- Déploiement des contrats
+- Migration des applications frontales
+- FAQ et ressources additionnelles
+
+## Scripts NPM disponibles
+
+- `npm run compile` - Compile les contrats
+- `npm run test` - Exécute les tests
+- `npm run deploy:local` - Déploie sur un nœud local
+- `npm run deploy:base-sepolia` - Déploie sur Base Sepolia
+- `npm run deploy:base-goerli` - Déploie sur Base Goerli (déprécié)
+- `npm run deploy:base-mainnet` - Déploie sur Base Mainnet
+- `npm run test:booster` - Teste les boosters localement
+- `npm run test:booster-base-sepolia` - Teste les boosters sur Base Sepolia
+- `npm run verify:base-sepolia` - Vérifie les contrats sur Basescan (Base Sepolia)
 
 ## Contribuer
 
