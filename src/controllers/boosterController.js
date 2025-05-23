@@ -5,6 +5,25 @@ const Transaction = require('../models/Transaction');
 const ethers = require('ethers');
 const web3Utils = require('../utils/web3');
 
+// Configuration des boosters - Prix et probabilités
+const BOOSTER_CONFIG = {
+  common: {
+    price: 100,
+    cardCount: 3,
+    probabilities: { common: 0.80, rare: 0.15, epic: 0.04, legendary: 0.01 }
+  },
+  rare: {
+    price: 300,
+    cardCount: 3,
+    probabilities: { common: 0.55, rare: 0.35, epic: 0.08, legendary: 0.02 }
+  },
+  epic: {
+    price: 600,
+    cardCount: 3,
+    probabilities: { common: 0.30, rare: 0.45, epic: 0.20, legendary: 0.05 }
+  }
+};
+
 // Obtenir les boosters d'un utilisateur
 exports.getUserBoosters = async (req, res) => {
   try {
@@ -22,7 +41,8 @@ exports.getUserBoosters = async (req, res) => {
     
     res.status(200).json({
       success: true,
-      boosters: user.boosters
+      boosters: user.boosters,
+      tokenBalance: user.tokenBalance
     });
   } catch (error) {
     console.error('Erreur lors de la récupération des boosters:', error);
@@ -39,11 +59,11 @@ exports.openBooster = async (req, res) => {
     const userId = req.user.id;
     const { boosterType } = req.body;
     
-    // Valider le type de booster
-    if (!['common', 'rare', 'epic', 'legendary'].includes(boosterType)) {
+    // Valider le type de booster (seulement common, rare, epic)
+    if (!['common', 'rare', 'epic'].includes(boosterType)) {
       return res.status(400).json({
         success: false,
-        message: 'Type de booster invalide'
+        message: 'Type de booster invalide. Types disponibles: common, rare, epic'
       });
     }
     
@@ -65,8 +85,11 @@ exports.openBooster = async (req, res) => {
       });
     }
     
-    // Générer les cartes aléatoires (5 cartes par booster)
-    const cards = await GameCard.generateRandomCards(boosterType, 5);
+    // Obtenir la configuration du booster
+    const config = BOOSTER_CONFIG[boosterType];
+    
+    // Générer les cartes aléatoires (3 cartes par booster)
+    const cards = await generateRandomCards(config.probabilities, config.cardCount);
     
     if (cards.length === 0) {
       return res.status(500).json({
@@ -101,11 +124,24 @@ exports.openBooster = async (req, res) => {
     // Sauvegarder les modifications
     await user.save();
     
+    // Créer une transaction pour l'historique
+    const transaction = new Transaction({
+      type: 'booster_open',
+      user: userId,
+      boosterType,
+      amount: 1,
+      cardIds: playerCards.map(card => card.id),
+      status: 'completed'
+    });
+    
+    await transaction.save();
+    
     res.status(200).json({
       success: true,
       message: `Booster ${boosterType} ouvert avec succès`,
       cards: playerCards,
-      remainingBoosters: user.boosters[boosterType]
+      remainingBoosters: user.boosters,
+      tokenBalance: user.tokenBalance
     });
   } catch (error) {
     console.error('Erreur lors de l\'ouverture du booster:', error);
@@ -122,31 +158,25 @@ exports.buyBooster = async (req, res) => {
     const userId = req.user.id;
     const { boosterType, quantity = 1 } = req.body;
     
-    // Valider le type de booster
-    if (!['common', 'rare', 'epic', 'legendary'].includes(boosterType)) {
+    // Valider le type de booster (seulement common, rare, epic)
+    if (!['common', 'rare', 'epic'].includes(boosterType)) {
       return res.status(400).json({
         success: false,
-        message: 'Type de booster invalide'
+        message: 'Type de booster invalide. Types disponibles: common, rare, epic'
       });
     }
     
     // Valider la quantité
-    if (quantity <= 0 || !Number.isInteger(quantity)) {
+    if (quantity <= 0 || !Number.isInteger(quantity) || quantity > 10) {
       return res.status(400).json({
         success: false,
-        message: 'Quantité invalide'
+        message: 'Quantité invalide (1-10 boosters maximum)'
       });
     }
     
-    // Prix des boosters
-    const prices = {
-      common: 100,
-      rare: 250,
-      epic: 500,
-      legendary: 1000
-    };
-    
-    const totalPrice = prices[boosterType] * quantity;
+    // Obtenir la configuration du booster
+    const config = BOOSTER_CONFIG[boosterType];
+    const totalPrice = config.price * quantity;
     
     // Récupérer l'utilisateur
     const user = await User.findById(userId);
@@ -162,7 +192,9 @@ exports.buyBooster = async (req, res) => {
     if (user.tokenBalance < totalPrice) {
       return res.status(400).json({
         success: false,
-        message: 'Solde insuffisant'
+        message: `Solde insuffisant. Vous avez ${user.tokenBalance} tokens mais il en faut ${totalPrice}`,
+        required: totalPrice,
+        current: user.tokenBalance
       });
     }
     
@@ -173,11 +205,29 @@ exports.buyBooster = async (req, res) => {
     // Sauvegarder les modifications
     await user.save();
     
+    // Créer une transaction pour l'historique
+    const transaction = new Transaction({
+      type: 'booster_purchase',
+      user: userId,
+      boosterType,
+      amount: quantity,
+      price: totalPrice,
+      status: 'completed'
+    });
+    
+    await transaction.save();
+    
     res.status(200).json({
       success: true,
-      message: `${quantity} booster(s) ${boosterType} acheté(s) avec succès`,
+      message: `${quantity} booster(s) ${boosterType} acheté(s) avec succès pour ${totalPrice} tokens`,
       boosters: user.boosters,
-      tokenBalance: user.tokenBalance
+      tokenBalance: user.tokenBalance,
+      transaction: {
+        id: transaction._id,
+        type: transaction.type,
+        amount: quantity,
+        price: totalPrice
+      }
     });
   } catch (error) {
     console.error('Erreur lors de l\'achat du booster:', error);
@@ -234,6 +284,178 @@ exports.getFirstBooster = async (req, res) => {
   }
 };
 
+// Achat et ouverture automatique d'un booster
+exports.buyAndOpenBooster = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { boosterType } = req.body;
+    
+    // Valider le type de booster
+    if (!['common', 'rare', 'epic'].includes(boosterType)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Type de booster invalide. Types disponibles: common, rare, epic'
+      });
+    }
+    
+    // Récupérer l'utilisateur
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Utilisateur non trouvé'
+      });
+    }
+    
+    // Obtenir la configuration du booster
+    const config = BOOSTER_CONFIG[boosterType];
+    
+    // Vérifier si l'utilisateur a assez de tokens
+    if (user.tokenBalance < config.price) {
+      return res.status(400).json({
+        success: false,
+        message: `Solde insuffisant. Vous avez ${user.tokenBalance} tokens mais il en faut ${config.price}`,
+        required: config.price,
+        current: user.tokenBalance
+      });
+    }
+    
+    // Déduire le prix du booster
+    user.tokenBalance -= config.price;
+    
+    // Générer les cartes aléatoires (3 cartes par booster)
+    const cards = await generateRandomCards(config.probabilities, config.cardCount);
+    
+    if (cards.length === 0) {
+      // Rembourser en cas d'erreur
+      user.tokenBalance += config.price;
+      await user.save();
+      
+      return res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la génération des cartes'
+      });
+    }
+    
+    // Créer les cartes du joueur
+    const playerCards = [];
+    for (const card of cards) {
+      const playerCard = new PlayerCard({
+        owner: userId,
+        gameCard: card._id
+      });
+      
+      await playerCard.save();
+      
+      // Ajouter la référence à la carte dans le tableau des cartes de l'utilisateur
+      user.cards.push(playerCard._id);
+      
+      // Préparer les données pour la réponse
+      playerCards.push({
+        id: playerCard._id,
+        gameCard: card
+      });
+    }
+    
+    // Sauvegarder les modifications de l'utilisateur
+    await user.save();
+    
+    // Créer une transaction pour l'historique
+    const transaction = new Transaction({
+      type: 'booster_buy_and_open',
+      user: userId,
+      boosterType,
+      amount: 1,
+      price: config.price,
+      cardIds: playerCards.map(card => card.id),
+      status: 'completed'
+    });
+    
+    await transaction.save();
+    
+    res.status(200).json({
+      success: true,
+      message: `Booster ${boosterType} acheté et ouvert avec succès !`,
+      cards: playerCards,
+      tokenBalance: user.tokenBalance,
+      boosters: user.boosters,
+      transaction: {
+        id: transaction._id,
+        type: transaction.type,
+        price: config.price
+      }
+    });
+  } catch (error) {
+    console.error('Erreur lors de l\'achat et ouverture du booster:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur serveur'
+    });
+  }
+};
+
+// Obtenir la configuration des boosters
+exports.getBoosterConfig = async (req, res) => {
+  try {
+    res.status(200).json({
+      success: true,
+      boosters: BOOSTER_CONFIG
+    });
+  } catch (error) {
+    console.error('Erreur lors de la récupération de la configuration:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur serveur'
+    });
+  }
+};
+
+// Fonction pour générer des cartes aléatoires selon les probabilités
+async function generateRandomCards(probabilities, count = 3) {
+  try {
+    let cards = [];
+    
+    // Générer les cartes
+    for (let i = 0; i < count; i++) {
+      const random = Math.random();
+      let targetRarity;
+      
+      // Déterminer la rareté basée sur la probabilité
+      if (random < probabilities.legendary) {
+        targetRarity = 'legendary';
+      } else if (random < probabilities.legendary + probabilities.epic) {
+        targetRarity = 'epic';
+      } else if (random < probabilities.legendary + probabilities.epic + probabilities.rare) {
+        targetRarity = 'rare';
+      } else {
+        targetRarity = 'common';
+      }
+      
+      // Obtenir toutes les cartes disponibles de cette rareté
+      const availableCards = await GameCard.find({ rarity: targetRarity, isAvailable: true });
+      
+      if (availableCards.length > 0) {
+        // Choisir une carte aléatoire parmi les disponibles
+        const randomIndex = Math.floor(Math.random() * availableCards.length);
+        cards.push(availableCards[randomIndex]);
+      } else {
+        // Fallback à la rareté commune si aucune carte n'est disponible dans la rareté cible
+        const commonCards = await GameCard.find({ rarity: 'common', isAvailable: true });
+        if (commonCards.length > 0) {
+          const randomIndex = Math.floor(Math.random() * commonCards.length);
+          cards.push(commonCards[randomIndex]);
+        }
+      }
+    }
+    
+    return cards;
+  } catch (error) {
+    console.error('Erreur lors de la génération des cartes aléatoires:', error);
+    return [];
+  }
+}
+
 // Nouvelle fonction pour acheter un booster et créer des NFTs
 exports.buyBoosterAndMintNFTs = async (req, res) => {
   try {
@@ -249,7 +471,7 @@ exports.buyBoosterAndMintNFTs = async (req, res) => {
     }
     
     // Valider le type de booster
-    if (!['common', 'rare', 'epic', 'legendary'].includes(boosterType)) {
+    if (!['common', 'rare', 'epic'].includes(boosterType)) {
       return res.status(400).json({
         success: false,
         message: 'Type de booster invalide'
@@ -302,8 +524,11 @@ exports.buyBoosterAndMintNFTs = async (req, res) => {
       });
     }
     
+    // Obtenir la configuration du booster
+    const config = BOOSTER_CONFIG[boosterType];
+    
     // Générer les cartes aléatoires
-    const cards = await GameCard.generateRandomCards(boosterType, 5);
+    const cards = await generateRandomCards(config.probabilities, config.cardCount);
     
     if (cards.length === 0) {
       return res.status(500).json({
@@ -342,7 +567,7 @@ exports.buyBoosterAndMintNFTs = async (req, res) => {
     
     // Enregistrer la transaction
     const transaction = new Transaction({
-      type: 'booster_purchase',
+      type: 'booster_purchase_nft',
       user: userId,
       amount: 1,
       boosterType,
@@ -449,12 +674,7 @@ exports.syncNFTsWithBackend = async (req, res) => {
     const playerCards = [];
     
     for (const tokenId of cardIds) {
-      // Ici, nous supposons que le tokenId est unique et correspond à un NFT valide
-      // Dans une implémentation réelle, il faudrait vérifier que le tokenId appartient bien à l'utilisateur
-      // et récupérer les métadonnées du NFT via l'URI associé
-      
       // Générer une carte de jeu aléatoire pour ce NFT
-      // Dans une implémentation réelle, cela serait basé sur les métadonnées du NFT
       const randomRarity = getRandomRarity();
       const gameCard = await GameCard.findOne({ 
         rarity: randomRarity,
@@ -524,62 +744,6 @@ exports.syncNFTsWithBackend = async (req, res) => {
 async function verifyBoosterPurchaseTransaction(walletAddress, boosterType, transactionHash) {
   try {
     // Dans une implémentation réelle, on vérifierait la transaction sur la blockchain
-    // en utilisant un fournisseur comme Infura, Alchemy, etc.
-    
-    // Exemple avec ethers.js:
-    /*
-    const provider = new ethers.providers.JsonRpcProvider(process.env.BLOCKCHAIN_RPC_URL);
-    
-    // Récupérer la transaction
-    const tx = await provider.getTransaction(transactionHash);
-    
-    // Vérifier que la transaction est confirmée
-    if (!tx || !tx.blockNumber) {
-      return false;
-    }
-    
-    // Vérifier que l'émetteur est bien le wallet fourni
-    if (tx.from.toLowerCase() !== walletAddress.toLowerCase()) {
-      return false;
-    }
-    
-    // Vérifier que la transaction concerne bien l'achat d'un booster
-    // Cela dépend de la structure du smart contract
-    const boosterContract = new ethers.Contract(
-      process.env.BOOSTER_CONTRACT_ADDRESS,
-      BOOSTER_ABI,
-      provider
-    );
-    
-    // Décoder les logs pour vérifier l'événement d'achat de booster
-    const receipt = await provider.getTransactionReceipt(transactionHash);
-    const eventSignature = ethers.utils.id("BoosterPurchased(address,string,uint256)");
-    
-    const log = receipt.logs.find(log => 
-      log.topics[0] === eventSignature && 
-      log.address.toLowerCase() === process.env.BOOSTER_CONTRACT_ADDRESS.toLowerCase()
-    );
-    
-    if (!log) {
-      return false;
-    }
-    
-    // Décoder les paramètres de l'événement
-    const decodedLog = boosterContract.interface.parseLog(log);
-    
-    // Vérifier que l'acheteur correspond au wallet fourni
-    const buyer = decodedLog.args.buyer.toLowerCase();
-    if (buyer !== walletAddress.toLowerCase()) {
-      return false;
-    }
-    
-    // Vérifier que le type de booster correspond
-    const purchasedBoosterType = decodedLog.args.boosterType;
-    if (purchasedBoosterType !== boosterType) {
-      return false;
-    }
-    */
-    
     // Pour cette démo, on retourne true
     return true;
   } catch (error) {
@@ -592,8 +756,6 @@ async function verifyBoosterPurchaseTransaction(walletAddress, boosterType, tran
 async function verifyNFTMintTransaction(walletAddress, tokenIds, transactionHash) {
   try {
     // Dans une implémentation réelle, on vérifierait la transaction sur la blockchain
-    // Comme pour verifyBoosterPurchaseTransaction, mais en vérifiant les événements de création de NFT
-    
     // Pour cette démo, on retourne true
     return true;
   } catch (error) {
@@ -605,7 +767,6 @@ async function verifyNFTMintTransaction(walletAddress, tokenIds, transactionHash
 // Fonction pour générer un tokenId unique pour une carte
 async function generateUniqueTokenId(cardId) {
   // Dans une implémentation réelle, ces tokenIds seraient générés par le smart contract
-  // Ici, on simule la génération d'un tokenId unique
   const prefix = "EFC"; // Préfixe pour le jeu Epic Faction Community
   const timestamp = Date.now().toString();
   const uniqueId = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
