@@ -40,7 +40,13 @@
                 <img src="/img/illustrations/logo-token.png" alt="Token Icon"/>
             </div>
             <div class="token-info">
-                <span class="token-amount">0 $EFC</span>
+                <span class="token-amount" id="user-token-balance">
+                    <% if (user && user.tokenBalance !== undefined) { %>
+                        <%= user.tokenBalance %> $EFC
+                    <% } else { %>
+                        0 $EFC
+                    <% } %>
+                </span>
                 <a href="#" class="token-action" id="get-tokens">Obtenir des tokens</a>
             </div>
         </div>
