@@ -45,17 +45,42 @@ const tokenService = {
     // Récupérer le solde de tokens depuis l'API
     async refreshTokenBalance() {
         try {
+            // Utiliser l'endpoint spécifique pour le solde de tokens
+            const response = await fetch('/api/v1/users/me/token-balance', {
+                method: 'GET',
+                headers: apiService.getAuthHeaders()
+            });
+            
+            const data = await response.json();
+            
+            if (data.success && data.tokenBalance !== undefined) {
+                const newBalance = data.tokenBalance;
+                this.currentBalance = newBalance;
+                this.updateBalanceDisplay(newBalance);
+            } else {
+                console.warn('Impossible de récupérer le solde de tokens:', data.message);
+                // Fallback vers getUserProfile si la route spécifique échoue
+                this.fallbackToUserProfile();
+            }
+        } catch (error) {
+            console.error('Erreur lors de la récupération du solde de tokens:', error);
+            // Fallback vers getUserProfile en cas d'erreur
+            this.fallbackToUserProfile();
+        }
+    },
+    
+    // Méthode de fallback utilisant getUserProfile
+    async fallbackToUserProfile() {
+        try {
             const response = await apiService.getUserProfile();
             
             if (response.success && response.user) {
                 const newBalance = response.user.tokenBalance || 0;
                 this.currentBalance = newBalance;
                 this.updateBalanceDisplay(newBalance);
-            } else {
-                console.warn('Impossible de récupérer le solde de tokens:', response.message);
             }
         } catch (error) {
-            console.error('Erreur lors de la récupération du solde de tokens:', error);
+            console.error('Erreur lors du fallback getUserProfile:', error);
         }
     },
     
@@ -123,6 +148,25 @@ const tokenService = {
             detail: { newBalance }
         });
         document.dispatchEvent(event);
+    },
+    
+    // Fonction utilitaire pour mettre à jour le solde après une transaction
+    async updateBalanceAfterTransaction() {
+        // Attendre un peu pour que la transaction soit confirmée côté serveur
+        setTimeout(() => {
+            this.refreshTokenBalance();
+        }, 500);
+    },
+    
+    // Fonction utilitaire pour formater l'affichage du solde
+    formatBalance(balance) {
+        if (balance >= 1000000) {
+            return `${(balance / 1000000).toFixed(1)}M $EFC`;
+        } else if (balance >= 1000) {
+            return `${(balance / 1000).toFixed(1)}K $EFC`;
+        } else {
+            return `${balance} $EFC`;
+        }
     }
 };
 
@@ -147,6 +191,11 @@ const tokenAnimationCSS = `
         transform: scale(1);
         text-shadow: none;
     }
+}
+
+.token-amount {
+    transition: all 0.3s ease;
+    font-weight: 600;
 }
 `;
 
