@@ -12,6 +12,9 @@ const {
 } = require('../middleware/validate');
 const cacheService = require('../utils/cache');
 
+// Modèles
+const User = require('../models/User');
+
 // Contrôleurs
 const cardsController = require('../controllers/cardsController');
 const marketController = require('../controllers/marketController');
@@ -61,6 +64,31 @@ router.use('/v1', (() => {
   v1Router.put('/users/me', isAuthenticatedApi, validateUpdateProfile, apiController.updateUserProfile);
   v1Router.put('/users/me/tutorial', isAuthenticatedApi, authController.updateTutorialStatus);
 
+  // Route spécifique pour récupérer le solde de tokens
+  v1Router.get('/users/me/token-balance', isAuthenticatedApi, async (req, res) => {
+    try {
+      const user = await User.findById(req.user.id).select('tokenBalance');
+      
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'Utilisateur non trouvé'
+        });
+      }
+
+      res.json({
+        success: true,
+        tokenBalance: user.tokenBalance || 0
+      });
+    } catch (error) {
+      console.error('Erreur lors de la récupération du solde de tokens:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la récupération du solde de tokens'
+      });
+    }
+  });
+
   // Routes pour l'authentification
   v1Router.get('/auth/wallet/nonce/:address', authController.getNonce);
   v1Router.post('/auth/wallet/connect', authController.connectWallet);
@@ -79,9 +107,28 @@ router.use('/v1', (() => {
   v1Router.get('/stats', cacheService.middleware(300), apiController.getStats);
 
   // Routes pour les fonctionnalités blockchain
-  v1Router.get('/blockchain/token-balance', isAuthenticatedApi, cacheService.middleware(120), (req, res) => {
-    // Simuler l'obtention du solde de tokens
-    res.json({ balance: 1000, success: true });
+  v1Router.get('/blockchain/token-balance', isAuthenticatedApi, cacheService.middleware(120), async (req, res) => {
+    try {
+      const user = await User.findById(req.user.id).select('tokenBalance');
+      
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'Utilisateur non trouvé'
+        });
+      }
+
+      res.json({
+        success: true,
+        balance: user.tokenBalance || 0
+      });
+    } catch (error) {
+      console.error('Erreur lors de la récupération du solde blockchain:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la récupération du solde blockchain'
+      });
+    }
   });
 
   // Route pour vider le cache (réservée aux administrateurs)
@@ -123,9 +170,28 @@ router.post('/boosters/buy', isAuthenticatedApi, boosterController.buyBooster);
 router.post('/boosters/first', isAuthenticatedApi, boosterController.getFirstBooster);
 router.post('/boosters/buy-and-mint', isAuthenticatedApi, validateBuyBoosterAndMintNFTs, boosterController.buyBoosterAndMintNFTs);
 router.post('/blockchain/sync-nfts', isAuthenticatedApi, validateSyncNFTs, boosterController.syncNFTsWithBackend);
-router.get('/token-balance', isAuthenticatedApi, cacheService.middleware(120), (req, res) => {
-  // Simuler l'obtention du solde de tokens
-  res.json({ balance: 1000, success: true });
+router.get('/token-balance', isAuthenticatedApi, cacheService.middleware(120), async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('tokenBalance');
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Utilisateur non trouvé'
+      });
+    }
+
+    res.json({
+      success: true,
+      balance: user.tokenBalance || 0
+    });
+  } catch (error) {
+    console.error('Erreur lors de la récupération du solde:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération du solde'
+    });
+  }
 });
 
 module.exports = router;
