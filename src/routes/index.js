@@ -4,6 +4,9 @@ const router = express.Router();
 // Middleware d'authentification
 const { isAuthenticated } = require('../middleware/auth');
 
+// Modèles
+const User = require('../models/User');
+
 // Page d'accueil
 router.get('/', (req, res) => {
   res.render('index', { 
@@ -16,13 +19,29 @@ router.get('/', (req, res) => {
 });
 
 // Page de l'application (nécessite authentification)
-router.get('/app', isAuthenticated, (req, res) => {
-  res.render('app', { 
-    title: 'EpicFactionCommunity - Votre Collection',
-    user: req.session.user,
-    pageCss: 'app', // Charge app.css
-    pageJs: 'app' // Charge app.js
-  });
+router.get('/app', isAuthenticated, async (req, res) => {
+  try {
+    // Récupérer les données complètes de l'utilisateur depuis la base de données
+    const fullUser = await User.findById(req.session.user.id).select('username email tokenBalance level experience completedTutorial boosters cards');
+    
+    if (!fullUser) {
+      // Si l'utilisateur n'existe plus en BDD, détruire la session et rediriger
+      req.session.destroy();
+      return res.redirect('/login');
+    }
+
+    res.render('app/index', { 
+      title: 'EpicFactionCommunity - Votre Collection',
+      user: fullUser, // Passer l'utilisateur complet avec tokenBalance
+      pageCss: 'app', // Charge app.css
+      pageJs: 'app' // Charge app.js
+    });
+  } catch (error) {
+    console.error('Erreur lors de la récupération des données utilisateur:', error);
+    res.status(500).render('error', { 
+      message: 'Une erreur est survenue lors du chargement de votre profil' 
+    });
+  }
 });
 
 // Page de connexion
