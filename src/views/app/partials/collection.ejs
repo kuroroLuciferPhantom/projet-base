@@ -4,23 +4,29 @@
         <h1>Ma Collection</h1>
         <div class="collection-stats">
             <div class="stat cards-count">
-                <span class="stat-value">0</span>
+                <span class="stat-value" id="total-cards-count">0</span>
                 <span class="stat-label">Cartes</span>
             </div>
             <div class="stat">
-                <span class="stat-value">12</span>
+                <span class="stat-value" id="wins-count">0</span>
                 <span class="stat-label">Victoires</span>
             </div>
             <div class="stat">
-                <span class="stat-value">4</span>
+                <span class="stat-value" id="losses-count">0</span>
                 <span class="stat-label">Défaites</span>
             </div>
             <div class="stat">
-                <span class="stat-value">Silver #42</span>
+                <span class="stat-value" id="current-rank">Non classé</span>
                 <span class="stat-label">Classement</span>
             </div>
             <div class="stat">
-                <span class="stat-value">5 240</span>
+                <span class="stat-value" id="tokens-count">
+                    <% if (user && user.tokenBalance !== undefined) { %>
+                        <%= user.tokenBalance %>
+                    <% } else { %>
+                        0
+                    <% } %>
+                </span>
                 <span class="stat-label">$EFC</span>
             </div>
         </div>
@@ -36,28 +42,21 @@
                         <select id="filter-rarity">
                             <option value="all">Toutes</option>
                             <option value="common">Commune</option>
-                            <option value="uncommon">Peu commune</option>
+                            <option value="rare">Rare</option>
                             <option value="epic">Épique</option>
                             <option value="legendary">Légendaire</option>
                         </select>
                     </div>
                     <div class="filter-option">
-                        <label>Énergie:</label>
-                        <select id="filter-energy">
-                            <option value="all">Toutes</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4+">4+</option>
-                        </select>
+                        <label>Recherche:</label>
+                        <input type="text" id="filter-search" placeholder="Nom de carte...">
                     </div>
                     <div class="filter-option">
-                        <label>Catégorie tournoi:</label>
-                        <select id="filter-tournament">
+                        <label>En vente:</label>
+                        <select id="filter-sale">
                             <option value="all">Toutes</option>
-                            <option value="bronze">Bronze</option>
-                            <option value="silver">Argent</option>
-                            <option value="gold">Or</option>
+                            <option value="for-sale">En vente</option>
+                            <option value="not-for-sale">Pas en vente</option>
                         </select>
                     </div>
                     <button class="btn btn-primary btn-sm" id="apply-filters">Appliquer</button>
@@ -76,8 +75,7 @@
                             <option value="rarity">Rareté</option>
                             <option value="attack">Attaque</option>
                             <option value="defense">Défense</option>
-                            <option value="energy">Énergie</option>
-                            <option value="rank">Rank</option>
+                            <option value="createdAt">Date d'obtention</option>
                         </select>
                     </div>
                     <div class="sort-option">
@@ -96,28 +94,34 @@
             </button>
             
             <div class="global-actions">
-                <button class="btn btn-danger" id="btn-burn">
-                    <i class="fas fa-fire"></i> Burn
+                <button class="btn btn-info" id="btn-refresh">
+                    <i class="fas fa-sync"></i> Actualiser
                 </button>
-                <button class="btn btn-success" id="btn-level-up">
-                    <i class="fas fa-arrow-up"></i> Level Up
+                <button class="btn btn-success" id="btn-sell-selected">
+                    <i class="fas fa-tag"></i> Vendre sélectionnées
                 </button>
             </div>
         </div>
     </div>
     
+    <!-- Indicateur de chargement -->
+    <div class="loading-indicator hidden" id="cards-loading">
+        <div class="spinner"></div>
+        <p>Chargement de votre collection...</p>
+    </div>
+    
     <!-- Si l'utilisateur n'a pas de cartes -->
-    <div class="no-cards-prompt">
+    <div class="no-cards-prompt hidden" id="no-cards-section">
         <div class="empty-state">
             <div class="empty-img">
                 <i class="fas fa-box-open fa-5x" style="color: #888;"></i>
             </div>
             <h3>Votre collection est vide</h3>
-            <p>Vous n'avez pas encore de cartes dans votre collection. Commencez par acheter des packs ou des cartes individuelles.</p>
+            <p>Vous n'avez pas encore de cartes dans votre collection. Commencez par acheter des boosters ou des cartes individuelles.</p>
             <div class="empty-actions">
                 <button class="btn btn-primary" id="buy-pack">
                     <i class="fas fa-shopping-cart"></i>
-                    Acheter un Pack
+                    Acheter un Booster
                 </button>
                 <button class="btn btn-secondary" id="visit-marketplace">
                     <i class="fas fa-store"></i>
@@ -128,12 +132,12 @@
     </div>
     
     <!-- Si l'utilisateur a des cartes -->
-    <div class="cards-grid hidden">
+    <div class="cards-grid hidden" id="cards-grid">
         <!-- Cette section sera remplie dynamiquement avec les cartes de l'utilisateur -->
     </div>
 
     <!-- Message "Aucun résultat" pour les filtres -->
-    <div class="no-results hidden">
+    <div class="no-results hidden" id="no-results-section">
         <div class="empty-state">
             <div class="empty-img">
                 <i class="fas fa-search fa-3x" style="color: #6b7280;"></i>
@@ -144,8 +148,31 @@
         </div>
     </div>
 
+    <!-- Statistiques par rareté -->
+    <div class="rarity-stats hidden" id="rarity-stats">
+        <h3>Répartition par rareté</h3>
+        <div class="rarity-breakdown">
+            <div class="rarity-item common">
+                <span class="rarity-name">Communes</span>
+                <span class="rarity-count" id="common-count">0</span>
+            </div>
+            <div class="rarity-item rare">
+                <span class="rarity-name">Rares</span>
+                <span class="rarity-count" id="rare-count">0</span>
+            </div>
+            <div class="rarity-item epic">
+                <span class="rarity-name">Épiques</span>
+                <span class="rarity-count" id="epic-count">0</span>
+            </div>
+            <div class="rarity-item legendary">
+                <span class="rarity-name">Légendaires</span>
+                <span class="rarity-count" id="legendary-count">0</span>
+            </div>
+        </div>
+    </div>
+
     <!-- Pagination -->
-    <div class="pagination-container hidden">
+    <div class="pagination-container hidden" id="pagination-container">
         <button class="btn btn-secondary" id="prev-page" disabled>
             <i class="fas fa-chevron-left"></i> Précédent
         </button>
@@ -155,3 +182,143 @@
         </button>
     </div>
 </section>
+
+<style>
+/* Styles pour les nouvelles fonctionnalités */
+.loading-indicator {
+    text-align: center;
+    padding: 40px;
+}
+
+.spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid var(--color-primary, #3498db);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 2s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.rarity-stats {
+    margin: 20px 0;
+    padding: 20px;
+    background: var(--card-bg, #f8f9fa);
+    border-radius: 8px;
+}
+
+.rarity-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.rarity-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.rarity-item.common {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.rarity-item.rare {
+    background-color: #f3e5f5;
+    color: #7b1fa2;
+}
+
+.rarity-item.epic {
+    background-color: #fff3e0;
+    color: #f57c00;
+}
+
+.rarity-item.legendary {
+    background-color: #fff8e1;
+    color: #f9a825;
+}
+
+.filter-option input {
+    width: 100%;
+    padding: 5px 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 5px;
+}
+
+.card-item {
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.card-item:hover {
+    transform: translateY(-5px);
+}
+
+.card-item.selected {
+    border: 2px solid var(--color-primary, #3498db);
+    box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+}
+
+.card-sale-indicator {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--color-success, #28a745);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.card-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 8px;
+    font-size: 0.8rem;
+}
+
+.card-stat {
+    text-align: center;
+}
+
+.card-stat-value {
+    font-weight: bold;
+    color: var(--color-primary, #3498db);
+}
+
+.card-stat-label {
+    font-size: 0.7rem;
+    color: #666;
+}
+
+.error-message {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+    padding: 10px;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+.success-message {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+    padding: 10px;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+</style>
