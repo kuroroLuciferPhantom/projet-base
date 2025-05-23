@@ -99,8 +99,10 @@ router.use('/v1', (() => {
 
   // Routes pour les boosters avec validation
   v1Router.get('/boosters', isAuthenticatedApi, cacheService.middleware(120), boosterController.getUserBoosters);
+  v1Router.get('/boosters/config', cacheService.middleware(300), boosterController.getBoosterConfig);
   v1Router.post('/boosters/open', isAuthenticatedApi, validateOpenBooster, boosterController.openBooster);
   v1Router.post('/boosters/buy', isAuthenticatedApi, boosterController.buyBooster);
+  v1Router.post('/boosters/buy-and-open', isAuthenticatedApi, boosterController.buyAndOpenBooster);
   v1Router.post('/boosters/first', isAuthenticatedApi, boosterController.getFirstBooster);
   
   // Nouvelles routes pour l'intégration blockchain
@@ -170,8 +172,10 @@ router.get('/wallet/nonce/:address', authController.getNonce);
 router.post('/wallet/connect', authController.connectWallet);
 router.put('/user/:userId/tutorial', isAuthenticatedApi, authController.updateTutorialStatus);
 router.get('/boosters', isAuthenticatedApi, cacheService.middleware(120), boosterController.getUserBoosters);
+router.get('/boosters/config', cacheService.middleware(300), boosterController.getBoosterConfig);
 router.post('/boosters/open', isAuthenticatedApi, validateOpenBooster, boosterController.openBooster);
 router.post('/boosters/buy', isAuthenticatedApi, boosterController.buyBooster);
+router.post('/boosters/buy-and-open', isAuthenticatedApi, boosterController.buyAndOpenBooster);
 router.post('/boosters/first', isAuthenticatedApi, boosterController.getFirstBooster);
 router.post('/boosters/buy-and-mint', isAuthenticatedApi, validateBuyBoosterAndMintNFTs, boosterController.buyBoosterAndMintNFTs);
 router.post('/blockchain/sync-nfts', isAuthenticatedApi, validateSyncNFTs, boosterController.syncNFTsWithBackend);
