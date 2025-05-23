@@ -1,20 +1,13 @@
 <!-- Contenu de la page d'accueil - Avec express-ejs-layouts, nous n'avons pas besoin d'inclure le header et footer manuellement -->
 
-<section class="hero">
+<section class="hero-section">
+    <div class="parallax-bg" id="parallax-bg"></div>
     <div class="hero-content">
         <h1>Collectionnez, Échangez, Jouez</h1>
         <p>Plongez dans l'univers d'EpicFactionCommunity, le premier jeu de cartes NFT où vous possédez véritablement vos actifs numériques sur la blockchain.</p>
         <div class="hero-buttons">
             <a href="/app" class="btn btn-primary">Commencer à jouer</a>
             <a href="#features" class="btn btn-secondary">En savoir plus</a>
-        </div>
-    </div>
-    <div class="hero-image">
-        <div class="hero-blob"></div>
-        <div class="hero-cards">
-            <div class="card card-1" style="background-image: url('/img/cards/1.jpg');"></div>
-            <div class="card card-2" style="background-image: url('/img/cards/2.jpg');"></div>
-            <div class="card card-3" style="background-image: url('/img/cards/3.jpg');"></div>
         </div>
     </div>
 </section>
@@ -62,27 +55,11 @@
             <div class="card-image" style="background-image: url('/img/cards/1.jpg');">
                 <div class="card-rarity legendary">Légendaire</div>
             </div>
-            <div class="card-info">
-                <h3>Dragon des Abysses</h3>
-                <div class="card-stats">
-                    <span class="stat"><i class="fas fa-fist-raised"></i> 95</span>
-                    <span class="stat"><i class="fas fa-shield-alt"></i> 80</span>
-                    <span class="stat"><i class="fas fa-hat-wizard"></i> 70</span>
-                </div>
-            </div>
         </div>
         
         <div class="card-preview">
             <div class="card-image" style="background-image: url('/img/cards/2.jpg');">
                 <div class="card-rarity epic">Épique</div>
-            </div>
-            <div class="card-info">
-                <h3>Mage des Arcanes</h3>
-                <div class="card-stats">
-                    <span class="stat"><i class="fas fa-fist-raised"></i> 40</span>
-                    <span class="stat"><i class="fas fa-shield-alt"></i> 35</span>
-                    <span class="stat"><i class="fas fa-hat-wizard"></i> 95</span>
-                </div>
             </div>
         </div>
         
@@ -90,27 +67,11 @@
             <div class="card-image" style="background-image: url('/img/cards/3.jpg');">
                 <div class="card-rarity rare">Rare</div>
             </div>
-            <div class="card-info">
-                <h3>Guerrier de la Lumière</h3>
-                <div class="card-stats">
-                    <span class="stat"><i class="fas fa-fist-raised"></i> 70</span>
-                    <span class="stat"><i class="fas fa-shield-alt"></i> 65</span>
-                    <span class="stat"><i class="fas fa-hat-wizard"></i> 30</span>
-                </div>
-            </div>
         </div>
         
         <div class="card-preview">
             <div class="card-image" style="background-image: url('/img/cards/4.jpg');">
                 <div class="card-rarity common">Commune</div>
-            </div>
-            <div class="card-info">
-                <h3>Archer Elfe</h3>
-                <div class="card-stats">
-                    <span class="stat"><i class="fas fa-fist-raised"></i> 60</span>
-                    <span class="stat"><i class="fas fa-shield-alt"></i> 40</span>
-                    <span class="stat"><i class="fas fa-hat-wizard"></i> 30</span>
-                </div>
             </div>
         </div>
     </div>
@@ -127,10 +88,10 @@
     <div class="boosters-container">
         <div class="booster-card">
             <div class="booster-image">
-                <img src="/img/booster-standard.svg" alt="Booster Standard">
+                <img src="/img/booster/booster-commun.png" alt="Booster commun">
             </div>
             <div class="booster-info">
-                <h3>Booster Standard</h3>
+                <h3>Booster commun</h3>
                 <p>5 cartes garanties</p>
                 <ul class="booster-rarities">
                     <li><span class="rarity-dot common"></span> 4 cartes communes garanties</li>
@@ -147,10 +108,10 @@
         
         <div class="booster-card premium">
             <div class="booster-image">
-                <img src="/img/booster-premium.svg" alt="Booster Premium">
+                <img src="/img/booster/booster-rare.png" alt="Booster rare">
             </div>
             <div class="booster-info">
-                <h3>Booster Premium</h3>
+                <h3>Booster rare</h3>
                 <p>5 cartes garanties</p>
                 <ul class="booster-rarities">
                     <li><span class="rarity-dot common"></span> 3 cartes communes garanties</li>
@@ -168,10 +129,10 @@
         
         <div class="booster-card ultimate">
             <div class="booster-image">
-                <img src="/img/booster-ultimate.svg" alt="Booster Ultimate">
+                <img src="/img/booster/booster-epic.png" alt="Booster epic">
             </div>
             <div class="booster-info">
-                <h3>Booster Ultimate</h3>
+                <h3>Booster epic</h3>
                 <p>5 cartes garanties</p>
                 <ul class="booster-rarities">
                     <li><span class="rarity-dot rare"></span> 3 cartes rares garanties</li>
@@ -393,6 +354,14 @@
         
         document.querySelectorAll('.feature-card, .card-preview, .booster-card, .roadmap-item, .gameplay-feature').forEach(item => {
             observer.observe(item);
+        });
+
+        const parallaxBg = document.getElementById('parallax-bg');
+            
+        window.addEventListener('scroll', function() {
+            // Calculer le décalage pour l'effet parallax
+            const scrollPosition = window.pageYOffset;
+            parallaxBg.style.transform = `translateY(${scrollPosition * 0.4}px)`;
         });
     });
 </script>

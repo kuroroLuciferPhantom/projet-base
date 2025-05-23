@@ -10,86 +10,30 @@
     </div>
 
     <div class="shop-content">
-        <!-- Section des boosters classiques -->
-        <div class="boosters-section">
-            <h2 class="section-title">Boosters Classiques</h2>
-            <p class="section-description">Achetez des boosters avec vos tokens $EFC</p>
+        
+        
             
-            <div class="boosters-grid">
-                <!-- Booster Standard -->
-                <div class="booster-card common">
-                    <div class="booster-image">
-                        <img src="/img/booster/booster-commun.png" alt="Booster Standard">
-                    </div>
-                    <div class="booster-info">
-                        <h3>Booster Standard</h3>
-                        <div class="booster-rarity">
-                            <span class="rarity-label">Contenu:</span>
-                            <span class="rarity-chance common">70% Commune</span>
-                            <span class="rarity-chance rare">20% Rare</span>
-                            <span class="rarity-chance epic">8% Épique</span>
-                            <span class="rarity-chance legendary">2% Légendaire</span>
-                        </div>
-                        <div class="booster-price">
-                            <span class="price-amount">100</span>
-                            <span class="price-currency">$EFC</span>
-                        </div>
-                        <div class="booster-actions">
-                            <button class="btn btn-buy-booster" data-booster-type="common" data-booster-price="100">Acheter</button>
-                        </div>
-                    </div>
+        <div class="distributeur-container">
+            <h2 class="distributeur-title">Distributeur Automatique</h2>
+            <p class="distributeur-description">Appuyez sur le bouton pour obtenir un booster aléatoire !</p>
+            <div class="distributeur">
+                <!-- Booster qui tourne en permanence -->
+                <div class="rotating-booster">
+                    <img src="/img/booster/booster-commun.png" alt="Booster common">
                 </div>
                 
-                <!-- Booster Rare -->
-                <div class="booster-card rare">
-                    <div class="booster-image">
-                        <img src="/img/booster/booster-rare.png" alt="Booster Premium">
-                    </div>
-                    <div class="booster-info">
-                        <h3>Booster Premium</h3>
-                        <div class="booster-rarity">
-                            <span class="rarity-label">Contenu:</span>
-                            <span class="rarity-chance common">55% Commune</span>
-                            <span class="rarity-chance rare">25% Rare</span>
-                            <span class="rarity-chance epic">15% Épique</span>
-                            <span class="rarity-chance legendary">5% Légendaire</span>
-                        </div>
-                        <div class="booster-price">
-                            <span class="price-amount">250</span>
-                            <span class="price-currency">$EFC</span>
-                        </div>
-                        <div class="booster-actions">
-                            <button class="btn btn-buy-booster" data-booster-type="rare" data-booster-price="250">Acheter</button>
-                        </div>
-                    </div>
+                <div class="bouton" id="distributeur-bouton">
+                    <span class="bouton-price">800 $EFC</span>
                 </div>
-                
-                <!-- Booster Épique -->
-                <div class="booster-card epic">
-                    <div class="booster-image">
-                        <img src="/img/booster/booster-epic.png" alt="Booster Ultimate">
-                    </div>
-                    <div class="booster-info">
-                        <h3>Booster Ultimate</h3>
-                        <div class="booster-rarity">
-                            <span class="rarity-label">Contenu:</span>
-                            <span class="rarity-chance common">40% Commune</span>
-                            <span class="rarity-chance rare">25% Rare</span>
-                            <span class="rarity-chance epic">25% Épique</span>
-                            <span class="rarity-chance legendary">10% Légendaire</span>
-                        </div>
-                        <div class="booster-price">
-                            <span class="price-amount">500</span>
-                            <span class="price-currency">$EFC</span>
-                        </div>
-                        <div class="booster-actions">
-                            <button class="btn btn-buy-booster" data-booster-type="epic" data-booster-price="500">Acheter</button>
-                        </div>
-                    </div>
+                <div class="fente" id="distributeur-fente">
+                    <div class="fente-light"></div>
+                </div>
+                <div class="booster-animating" id="booster-animation-container">
+                    <!-- Le booster animé apparaîtra ici -->
                 </div>
             </div>
         </div>
-        
+
         <!-- Section des NFT Boosters (nouvelle section) -->
         <div class="boosters-section nft-feature">
             <div class="section-header">
@@ -102,7 +46,7 @@
                 <!-- Booster NFT Standard -->
                 <div class="booster-card common nft">
                     <div class="booster-image">
-                        <img src="/img/booster/booster-commun-nft.png" alt="Booster NFT Standard">
+                        <img src="/img/booster/booster-commun.png" alt="Booster NFT Standard">
                         <div class="nft-overlay">
                             <span class="nft-icon"><i class="fas fa-cube"></i></span>
                         </div>
@@ -132,7 +76,7 @@
                 <!-- Booster NFT Premium -->
                 <div class="booster-card rare nft">
                     <div class="booster-image">
-                        <img src="/img/booster/booster-rare-nft.png" alt="Booster NFT Premium">
+                        <img src="/img/booster/booster-rare.png" alt="Booster NFT Premium">
                         <div class="nft-overlay">
                             <span class="nft-icon"><i class="fas fa-cube"></i></span>
                         </div>
@@ -162,7 +106,7 @@
                 <!-- Booster NFT Ultimate -->
                 <div class="booster-card epic nft">
                     <div class="booster-image">
-                        <img src="/img/booster/booster-epic-nft.png" alt="Booster NFT Ultimate">
+                        <img src="/img/booster/booster-epic.png" alt="Booster NFT Ultimate">
                         <div class="nft-overlay">
                             <span class="nft-icon"><i class="fas fa-cube"></i></span>
                         </div>
@@ -199,27 +143,6 @@
                     <li><i class="fas fa-check-circle"></i> Utilisables dans d'autres jeux compatibles</li>
                     <li><i class="fas fa-check-circle"></i> Vendables sur les marketplaces NFT</li>
                 </ul>
-            </div>
-        </div>
-            
-        <div class="distributeur-container">
-            <h2 class="distributeur-title">Distributeur Automatique</h2>
-            <p class="distributeur-description">Appuyez sur le bouton pour obtenir un booster aléatoire !</p>
-            <div class="distributeur">
-                <!-- Booster qui tourne en permanence -->
-                <div class="rotating-booster">
-                    <img src="/img/booster/booster-commun.png" alt="Booster common">
-                </div>
-                
-                <div class="bouton" id="distributeur-bouton">
-                    <span class="bouton-price">800 $EFC</span>
-                </div>
-                <div class="fente" id="distributeur-fente">
-                    <div class="fente-light"></div>
-                </div>
-                <div class="booster-animating" id="booster-animation-container">
-                    <!-- Le booster animé apparaîtra ici -->
-                </div>
             </div>
         </div>
 
