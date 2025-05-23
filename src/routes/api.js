@@ -51,7 +51,11 @@ router.use('/v1', (() => {
   // Routes pour les cartes - avec cache pour les requêtes GET
   v1Router.get('/cards', isAuthenticatedApi, cacheService.middleware(300), apiController.getAllCards);
   v1Router.get('/cards/:id', isAuthenticatedApi, cacheService.middleware(300), apiController.getCardById);
+  
+  // Routes pour les cartes de l'utilisateur
   v1Router.get('/users/me/cards', isAuthenticatedApi, cacheService.middleware(60), cardsController.getUserCards);
+  v1Router.get('/users/me/cards/stats', isAuthenticatedApi, cacheService.middleware(120), cardsController.getUserCollectionStats);
+  v1Router.put('/users/me/cards/:id/sale', isAuthenticatedApi, cardsController.updateCardSaleStatus);
 
   // Routes pour le marché avec validation et cache pour les requêtes GET
   v1Router.get('/market', validateMarketSearch, cacheService.middleware(60), apiController.getMarketListings);
@@ -158,6 +162,7 @@ router.use('/v1', (() => {
 // Ces routes seront dépréciées dans les futures versions
 router.get('/cards', isAuthenticatedApi, cacheService.middleware(300), cardsController.getUserCards);
 router.get('/cards/:id', isAuthenticatedApi, cacheService.middleware(300), cardsController.getCardDetails);
+router.get('/cards/stats', isAuthenticatedApi, cacheService.middleware(120), cardsController.getUserCollectionStats);
 router.get('/market/cards', validateMarketSearch, cacheService.middleware(60), marketController.getMarketCards);
 router.post('/market/buy', isAuthenticatedApi, validateBuyCard, marketController.buyCard);
 router.post('/market/sell', isAuthenticatedApi, validateSellCard, marketController.sellCard);
