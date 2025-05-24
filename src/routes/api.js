@@ -14,6 +14,7 @@ const cacheService = require('../utils/cache');
 
 // Modèles
 const User = require('../models/User');
+const GameCard = require('../models/GameCard');
 
 // Contrôleurs
 const cardsController = require('../controllers/cardsController');
@@ -21,6 +22,9 @@ const marketController = require('../controllers/marketController');
 const authController = require('../controllers/authController');
 const boosterController = require('../controllers/boosterController');
 const apiController = require('../controllers/apiController');
+
+// Import du script d'initialisation
+const { initializeDemoCards, demoCards } = require('../initDatabase');
 
 /**
  * Routes API organisées par ressources et versions
@@ -43,7 +47,8 @@ router.use('/v1', (() => {
         boosters: '/api/v1/boosters',
         auth: '/api/v1/auth',
         stats: '/api/v1/stats',
-        blockchain: '/api/v1/blockchain'
+        blockchain: '/api/v1/blockchain',
+        admin: '/api/v1/admin'
       }
     });
   });
@@ -133,6 +138,98 @@ router.use('/v1', (() => {
       res.status(500).json({
         success: false,
         message: 'Erreur lors de la récupération du solde blockchain'
+      });
+    }
+  });
+
+  // Routes d'administration
+  
+  // Route pour initialiser les cartes de démonstration
+  v1Router.post('/admin/init-cards', isAuthenticatedApi, async (req, res) => {
+    try {
+      console.log('🎮 Initialisation des cartes de démonstration via API...');
+      
+      // Vérifier si des cartes existent déjà
+      const existingCardsCount = await GameCard.countDocuments();
+      
+      if (existingCardsCount > 0) {
+        console.log(`📦 ${existingCardsCount} cartes déjà présentes. Suppression...`);
+        await GameCard.deleteMany({});
+      }
+      
+      // Insérer les cartes de démonstration
+      const insertedCards = await GameCard.insertMany(demoCards);
+      
+      // Mettre à jour l'utilisateur actuel avec des récompenses
+      const user = await User.findById(req.user.id);
+      if (user) {
+        if (user.tokenBalance < 500) {
+          user.tokenBalance = 500;
+        }
+        const totalBoosters = user.boosters.common + user.boosters.rare + user.boosters.epic + user.boosters.legendary;
+        if (totalBoosters === 0) {
+          user.boosters.common = 2;
+        }
+        await user.save();
+      }
+      
+      // Vider le cache
+      cacheService.clear();
+      
+      console.log(`✅ ${insertedCards.length} cartes créées avec succès !`);
+      
+      res.json({
+        success: true,
+        message: `${insertedCards.length} cartes de démonstration créées avec succès !`,
+        cards: insertedCards.length,
+        userUpdated: !!user,
+        summary: {
+          common: demoCards.filter(c => c.rarity === 'common').length,
+          rare: demoCards.filter(c => c.rarity === 'rare').length,
+          epic: demoCards.filter(c => c.rarity === 'epic').length,
+          legendary: demoCards.filter(c => c.rarity === 'legendary').length
+        }
+      });
+      
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'initialisation des cartes:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de l\'initialisation des cartes',
+        error: error.message
+      });
+    }
+  });
+
+  // Route pour vérifier l'état de la base de données
+  v1Router.get('/admin/db-status', isAuthenticatedApi, async (req, res) => {
+    try {
+      const cardCount = await GameCard.countDocuments();
+      const userCount = await User.countDocuments();
+      
+      const cardsByRarity = await GameCard.aggregate([
+        { $group: { _id: '$rarity', count: { $sum: 1 } } },
+        { $sort: { _id: 1 } }
+      ]);
+      
+      res.json({
+        success: true,
+        stats: {
+          cards: cardCount,
+          users: userCount,
+          cardsByRarity: cardsByRarity.reduce((acc, item) => {
+            acc[item._id] = item.count;
+            return acc;
+          }, {}),
+          needsInit: cardCount === 0
+        }
+      });
+      
+    } catch (error) {
+      console.error('Erreur lors de la vérification du statut DB:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la vérification du statut de la base de données'
       });
     }
   });
