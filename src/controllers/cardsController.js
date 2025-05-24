@@ -1,5 +1,8 @@
 const Card = require('../models/Card');
+const PlayerCard = require('../models/PlayerCard');
+const GameCard = require('../models/GameCard');
 const User = require('../models/User');
+const mongoose = require('mongoose');
 
 // Obtenir les cartes de l'utilisateur avec filtres, tri et pagination
 exports.getUserCards = async (req, res) => {
@@ -16,24 +19,64 @@ exports.getUserCards = async (req, res) => {
       search
     } = req.query;
     
-    // Construire les filtres
-    const filters = { owner: userId };
+    // Construire le pipeline d'agrégation pour PlayerCard
+    const pipeline = [
+      // Étape 1: Filtrer par propriétaire
+      { $match: { owner: new mongoose.Types.ObjectId(userId) } },
+      
+      // Étape 2: Joindre avec GameCard
+      {
+        $lookup: {
+          from: 'gamecards',
+          localField: 'gameCard',
+          foreignField: '_id',
+          as: 'gameCard'
+        }
+      },
+      
+      // Étape 3: Dérouler le tableau gameCard
+      { $unwind: '$gameCard' },
+      
+      // Étape 4: Appliquer les filtres
+      ...(rarity && rarity !== 'all' ? [{ $match: { 'gameCard.rarity': rarity } }] : []),
+      ...(search ? [{ $match: { 'gameCard.name': { $regex: search, $options: 'i' } } }] : []),
+      
+      // Étape 5: Projeter les champs nécessaires
+      {
+        $project: {
+          _id: 1,
+          owner: 1,
+          level: 1,
+          experience: 1,
+          isForSale: 1,
+          price: 1,
+          acquiredAt: 1,
+          enhancedStats: 1,
+          tokenId: 1,
+          // Champs de GameCard
+          name: '$gameCard.name',
+          description: '$gameCard.description',
+          rarity: '$gameCard.rarity',
+          imageUrl: '$gameCard.imageUrl',
+          stats: {
+            attack: { $add: ['$gameCard.stats.attack', { $ifNull: ['$enhancedStats.attack', 0] }] },
+            defense: { $add: ['$gameCard.stats.defense', { $ifNull: ['$enhancedStats.defense', 0] }] },
+            magic: { $add: ['$gameCard.stats.magic', { $ifNull: ['$enhancedStats.magic', 0] }] },
+            speed: { $add: ['$gameCard.stats.speed', { $ifNull: ['$enhancedStats.speed', 0] }] }
+          },
+          baseStats: '$gameCard.stats',
+          createdAt: '$acquiredAt',
+          isPublic: { $literal: true } // Compatibilité avec l'ancien modèle
+        }
+      }
+    ];
     
-    if (rarity && rarity !== 'all') {
-      filters.rarity = rarity;
-    }
-    
-    if (search) {
-      filters.name = { $regex: search, $options: 'i' };
-    }
-    
-    // Options de tri
+    // Ajouter le tri
     const sortOptions = {};
     if (sort === 'name') {
       sortOptions.name = order === 'desc' ? -1 : 1;
     } else if (sort === 'rarity') {
-      // Tri par rareté avec ordre personnalisé
-      const rarityOrder = { 'common': 1, 'rare': 2, 'epic': 3, 'legendary': 4 };
+      // Ordre de rareté personnalisé
       sortOptions.rarity = order === 'desc' ? -1 : 1;
     } else if (sort === 'attack') {
       sortOptions['stats.attack'] = order === 'desc' ? -1 : 1;
@@ -45,18 +88,42 @@ exports.getUserCards = async (req, res) => {
       sortOptions.name = 1; // Tri par défaut
     }
     
+    pipeline.push({ $sort: sortOptions });
+    
     // Calculer la pagination
     const skip = (parseInt(page) - 1) * parseInt(limit);
     
-    // Récupérer les cartes avec filtres, tri et pagination
-    const cards = await Card.find(filters)
-      .sort(sortOptions)
-      .skip(skip)
-      .limit(parseInt(limit));
+    // Pipeline pour compter le total
+    const countPipeline = [
+      { $match: { owner: new mongoose.Types.ObjectId(userId) } },
+      {
+        $lookup: {
+          from: 'gamecards',
+          localField: 'gameCard',
+          foreignField: '_id',
+          as: 'gameCard'
+        }
+      },
+      { $unwind: '$gameCard' },
+      ...(rarity && rarity !== 'all' ? [{ $match: { 'gameCard.rarity': rarity } }] : []),
+      ...(search ? [{ $match: { 'gameCard.name': { $regex: search, $options: 'i' } } }] : []),
+      { $count: 'total' }
+    ];
     
-    // Compter le total pour la pagination
-    const total = await Card.countDocuments(filters);
+    // Exécuter les deux pipelines en parallèle
+    const [totalResult, cards] = await Promise.all([
+      PlayerCard.aggregate(countPipeline),
+      PlayerCard.aggregate([
+        ...pipeline,
+        { $skip: skip },
+        { $limit: parseInt(limit) }
+      ])
+    ]);
+    
+    const total = totalResult.length > 0 ? totalResult[0].total : 0;
     const totalPages = Math.ceil(total / parseInt(limit));
+    
+    console.log(`🎴 Cartes trouvées pour l'utilisateur ${userId}: ${cards.length}/${total}`);
     
     res.status(200).json({
       success: true,
@@ -80,10 +147,10 @@ exports.getCardDetails = async (req, res) => {
   try {
     const cardId = req.params.id;
     
-    // Récupérer les détails de la carte depuis la base de données
-    const card = await Card.findById(cardId);
+    // Récupérer les détails de la carte depuis PlayerCard avec GameCard
+    const playerCard = await PlayerCard.findById(cardId).populate('gameCard');
     
-    if (!card) {
+    if (!playerCard || !playerCard.gameCard) {
       return res.status(404).json({ 
         success: false, 
         message: 'Carte non trouvée' 
@@ -91,12 +158,37 @@ exports.getCardDetails = async (req, res) => {
     }
     
     // Vérifier si l'utilisateur est le propriétaire de la carte
-    if (card.owner.toString() !== req.user.id && !card.isPublic) {
+    if (playerCard.owner.toString() !== req.user.id) {
       return res.status(403).json({ 
         success: false, 
         message: 'Vous n\'êtes pas autorisé à voir cette carte' 
       });
     }
+    
+    // Construire la réponse avec les statistiques totales
+    const card = {
+      _id: playerCard._id,
+      name: playerCard.gameCard.name,
+      description: playerCard.gameCard.description,
+      rarity: playerCard.gameCard.rarity,
+      imageUrl: playerCard.gameCard.imageUrl,
+      tokenId: playerCard.tokenId,
+      owner: playerCard.owner,
+      level: playerCard.level,
+      experience: playerCard.experience,
+      isForSale: playerCard.isForSale,
+      price: playerCard.price,
+      stats: {
+        attack: playerCard.gameCard.stats.attack + (playerCard.enhancedStats?.attack || 0),
+        defense: playerCard.gameCard.stats.defense + (playerCard.enhancedStats?.defense || 0),
+        magic: playerCard.gameCard.stats.magic + (playerCard.enhancedStats?.magic || 0),
+        speed: playerCard.gameCard.stats.speed + (playerCard.enhancedStats?.speed || 0)
+      },
+      baseStats: playerCard.gameCard.stats,
+      enhancedStats: playerCard.enhancedStats,
+      createdAt: playerCard.acquiredAt,
+      isPublic: true
+    };
     
     res.status(200).json({
       success: true,
@@ -117,7 +209,7 @@ exports.getUserCollectionStats = async (req, res) => {
     const userId = req.user.id;
     
     // Récupérer l'utilisateur avec ses statistiques
-    const user = await User.findById(userId).select('level experience cards');
+    const user = await User.findById(userId).select('level experience');
     
     if (!user) {
       return res.status(404).json({
@@ -126,19 +218,28 @@ exports.getUserCollectionStats = async (req, res) => {
       });
     }
     
-    // Compter les cartes par rareté
-    const cardStats = await Card.aggregate([
-      { $match: { owner: userId } },
+    // Compter les cartes par rareté en utilisant PlayerCard
+    const cardStats = await PlayerCard.aggregate([
+      { $match: { owner: new mongoose.Types.ObjectId(userId) } },
+      {
+        $lookup: {
+          from: 'gamecards',
+          localField: 'gameCard',
+          foreignField: '_id',
+          as: 'gameCard'
+        }
+      },
+      { $unwind: '$gameCard' },
       { 
         $group: { 
-          _id: '$rarity', 
+          _id: '$gameCard.rarity', 
           count: { $sum: 1 }
         }
       }
     ]);
     
     // Compter le total de cartes
-    const totalCards = await Card.countDocuments({ owner: userId });
+    const totalCards = await PlayerCard.countDocuments({ owner: userId });
     
     // Statistiques par rareté (avec valeurs par défaut)
     const rarityStats = {
@@ -162,6 +263,8 @@ exports.getUserCollectionStats = async (req, res) => {
       winRate: 0,
       currentRank: 'Bronze #0'
     };
+    
+    console.log(`📊 Statistiques pour l'utilisateur ${userId}: ${totalCards} cartes total`);
     
     res.status(200).json({
       success: true,
@@ -190,9 +293,9 @@ exports.updateCardSaleStatus = async (req, res) => {
     const userId = req.user.id;
     
     // Vérifier que la carte appartient à l'utilisateur
-    const card = await Card.findOne({ _id: cardId, owner: userId });
+    const playerCard = await PlayerCard.findOne({ _id: cardId, owner: userId });
     
-    if (!card) {
+    if (!playerCard) {
       return res.status(404).json({
         success: false,
         message: 'Carte non trouvée ou vous n\'êtes pas le propriétaire'
@@ -208,14 +311,33 @@ exports.updateCardSaleStatus = async (req, res) => {
     }
     
     // Mettre à jour la carte
-    card.isForSale = isForSale;
-    card.price = isForSale ? price : 0;
-    await card.save();
+    playerCard.isForSale = isForSale;
+    playerCard.price = isForSale ? price : 0;
+    await playerCard.save();
+    
+    // Populate les données GameCard pour la réponse
+    await playerCard.populate('gameCard');
+    
+    const responseCard = {
+      _id: playerCard._id,
+      name: playerCard.gameCard.name,
+      description: playerCard.gameCard.description,
+      rarity: playerCard.gameCard.rarity,
+      imageUrl: playerCard.gameCard.imageUrl,
+      isForSale: playerCard.isForSale,
+      price: playerCard.price,
+      stats: {
+        attack: playerCard.gameCard.stats.attack + (playerCard.enhancedStats?.attack || 0),
+        defense: playerCard.gameCard.stats.defense + (playerCard.enhancedStats?.defense || 0),
+        magic: playerCard.gameCard.stats.magic + (playerCard.enhancedStats?.magic || 0),
+        speed: playerCard.gameCard.stats.speed + (playerCard.enhancedStats?.speed || 0)
+      }
+    };
     
     res.status(200).json({
       success: true,
       message: isForSale ? 'Carte mise en vente' : 'Carte retirée de la vente',
-      card
+      card: responseCard
     });
   } catch (error) {
     console.error('Erreur lors de la mise à jour de la carte:', error);
