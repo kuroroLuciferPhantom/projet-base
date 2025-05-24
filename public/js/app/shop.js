@@ -3,15 +3,50 @@ let userBalance = 0;
 let boosterConfig = {};
 let distributeurAnimating = false;
 let userWalletAddress = null;
+let shopEventsInitialized = false;
 
 // Au chargement du document
 document.addEventListener('DOMContentLoaded', function() {
-    initShopEvents();
     fetchUserBalance();
     fetchBoosterConfig();
     initBrokeModalEvents();
     initWalletEvents();
+    
+    // Initialiser les événements du shop immédiatement
+    initShopEvents();
+    
+    // Observer les changements de visibilité de la section shop
+    observeShopSection();
 });
+
+/**
+ * Observe les changements de visibilité de la section shop
+ */
+function observeShopSection() {
+    const shopSection = document.getElementById('section-shop');
+    if (!shopSection) return;
+    
+    // Utiliser MutationObserver pour surveiller les changements de classe
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                const isVisible = !shopSection.classList.contains('hidden');
+                if (isVisible && !shopEventsInitialized) {
+                    // Réinitialiser les événements quand la section devient visible
+                    setTimeout(() => {
+                        initShopEvents();
+                        shopEventsInitialized = true;
+                    }, 100);
+                }
+            }
+        });
+    });
+    
+    observer.observe(shopSection, {
+        attributes: true,
+        attributeFilter: ['class']
+    });
+}
 
 /**
  * Récupère la configuration des boosters depuis le serveur
@@ -55,7 +90,10 @@ function updateBoosterPrices() {
     const distributeurBtn = document.getElementById('distributeur-bouton');
     if (distributeurBtn && boosterConfig.price) {
         const distributeurPrice = boosterConfig.price; // Prix fixe pour tous les boosters
-        distributeurBtn.querySelector('.bouton-price').textContent = `${distributeurPrice} $EFC`;
+        const priceSpan = distributeurBtn.querySelector('.bouton-price');
+        if (priceSpan) {
+            priceSpan.textContent = `${distributeurPrice} $EFC`;
+        }
     }
 }
 
@@ -64,9 +102,15 @@ function updateBoosterPrices() {
  */
 async function fetchUserBalance() {
     try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            console.log('Aucun token trouvé');
+            return;
+        }
+        
         const response = await fetch('/api/v1/users/me/token-balance', {
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                'Authorization': `Bearer ${token}`
             }
         });
         const data = await response.json();
@@ -88,22 +132,33 @@ async function fetchUserBalance() {
  * Initialise les événements de la boutique
  */
 function initShopEvents() {
+    console.log('Initialisation des événements du shop...');
+    
+    // Supprimer les anciens écouteurs pour éviter les doublons
+    removeOldEventListeners();
+    
     // Boutons d'achat de boosters principaux
     const buyButtonsMain = document.querySelectorAll('.btn-buy-booster-main');
     buyButtonsMain.forEach(button => {
         button.addEventListener('click', handleMainBoosterPurchase);
+        button.setAttribute('data-event-attached', 'true');
     });
     
     // Boutons d'achat de boosters spécifiques (si il y en a)
     const buyButtons = document.querySelectorAll('.btn-buy-booster, .btn-promo, .btn-buy-booster-nft');
     buyButtons.forEach(button => {
         button.addEventListener('click', handleBoosterPurchase);
+        button.setAttribute('data-event-attached', 'true');
     });
     
     // Bouton du distributeur automatique
     const distributeurBtn = document.getElementById('distributeur-bouton');
     if (distributeurBtn) {
+        console.log('Distributeur trouvé, ajout de l\'événement...');
         distributeurBtn.addEventListener('click', handleDistributeurClick);
+        distributeurBtn.setAttribute('data-event-attached', 'true');
+    } else {
+        console.log('Distributeur non trouvé');
     }
     
     // Masquer les notifications lorsqu'on clique dessus
@@ -113,12 +168,28 @@ function initShopEvents() {
             notification.classList.remove('show');
         });
     });
+    
+    console.log('Événements du shop initialisés');
+}
+
+/**
+ * Supprime les anciens écouteurs d'événements pour éviter les doublons
+ */
+function removeOldEventListeners() {
+    const elementsWithEvents = document.querySelectorAll('[data-event-attached="true"]');
+    elementsWithEvents.forEach(element => {
+        element.removeAttribute('data-event-attached');
+        // Cloner l'élément pour supprimer tous les événements
+        const newElement = element.cloneNode(true);
+        element.parentNode.replaceChild(newElement, element);
+    });
 }
 
 /**
  * Gestionnaire pour l'achat de booster principal (bouton principal du shop)
  */
 async function handleMainBoosterPurchase() {
+    console.log('Achat de booster principal...');
     const boosterPrice = parseInt(this.getAttribute('data-booster-price')) || (boosterConfig.price || 100);
     
     // Vérifier si l'utilisateur a assez de tokens
@@ -196,6 +267,7 @@ async function handleMainBoosterPurchase() {
  * Gestionnaire pour l'achat de booster spécifique
  */
 async function handleBoosterPurchase() {
+    console.log('Achat de booster spécifique...');
     const boosterType = this.getAttribute('data-booster-type');
     const boosterPrice = parseInt(this.getAttribute('data-booster-price')) || (boosterConfig.price || 100);
     
@@ -250,14 +322,22 @@ async function handleBoosterPurchase() {
 /**
  * Gestionnaire pour le distributeur automatique
  */
-async function handleDistributeurClick() {
-    if (distributeurAnimating) return;
+async function handleDistributeurClick(event) {
+    console.log('Clic sur le distributeur !', event);
+    
+    if (distributeurAnimating) {
+        console.log('Distributeur en cours d\'animation, ignoré');
+        return;
+    }
     
     // Prix fixe du distributeur (100 $EFC)
     const distributeurPrice = boosterConfig.price || 100;
     
+    console.log(`Prix du distributeur: ${distributeurPrice}, Solde utilisateur: ${userBalance}`);
+    
     // Vérifier si l'utilisateur a assez de tokens
     if (userBalance < distributeurPrice) {
+        console.log('Solde insuffisant');
         const brokeModal = document.getElementById('broke-modal');
         if (brokeModal) {
             // Mettre à jour le montant requis
@@ -272,6 +352,7 @@ async function handleDistributeurClick() {
         return;
     }
     
+    console.log('Démarrage de l\'animation du distributeur...');
     distributeurAnimating = true;
     
     // Animation du distributeur
@@ -280,13 +361,16 @@ async function handleDistributeurClick() {
     const fente = document.querySelector('.fente-light');
     
     // Désactiver le bouton visuellement
-    bouton.classList.add('disabled');
-    bouton.style.pointerEvents = 'none';
+    if (bouton) {
+        bouton.classList.add('disabled');
+        bouton.style.pointerEvents = 'none';
+    }
     
-    distributeur.classList.add('active');
-    bouton.classList.add('pressed');
+    if (distributeur) distributeur.classList.add('active');
+    if (bouton) bouton.classList.add('pressed');
     
     try {
+        console.log('Appel API pour achat et ouverture de booster...');
         // Appeler l'API pour acheter un booster mystère (le serveur détermine la rareté)
         const response = await fetch('/api/v1/boosters/buy-and-open', {
             method: 'POST',
@@ -298,6 +382,7 @@ async function handleDistributeurClick() {
         });
         
         const data = await response.json();
+        console.log('Réponse de l\'API:', data);
         
         if (data.success) {
             userBalance = data.tokenBalance;
@@ -306,26 +391,32 @@ async function handleDistributeurClick() {
             const boosterType = data.boosterType;
             const boosterName = `Booster ${boosterType}`;
             
+            console.log('Succès, démarrage de l\'animation...');
+            
             // Animation du distributeur
             setTimeout(() => {
-                fente.classList.add('active');
+                if (fente) fente.classList.add('active');
                 
                 setTimeout(() => {
                     const boosterContainer = document.getElementById('booster-animation-container');
-                    boosterContainer.innerHTML = `<img src="/img/booster/booster-${boosterType}.png" alt="${boosterName}" onerror="this.src='/img/booster/booster-commun.png';">`;
-                    boosterContainer.className = `booster-animating active ${boosterType}`;
+                    if (boosterContainer) {
+                        boosterContainer.innerHTML = `<img src="/img/booster/booster-${boosterType}.png" alt="${boosterName}" onerror="this.src='/img/booster/booster-commun.png';">`;
+                        boosterContainer.className = `booster-animating active ${boosterType}`;
+                    }
                     
                     showSuccessNotification(`Vous avez obtenu un ${boosterName} !`);
                     
                     setTimeout(() => {
-                        fente.classList.remove('active');
-                        distributeur.classList.remove('active');
-                        bouton.classList.remove('pressed');
+                        if (fente) fente.classList.remove('active');
+                        if (distributeur) distributeur.classList.remove('active');
+                        if (bouton) bouton.classList.remove('pressed');
                         
                         setTimeout(() => {
-                            boosterContainer.className = 'booster-animating';
-                            bouton.classList.remove('disabled');
-                            bouton.style.pointerEvents = 'auto';
+                            if (boosterContainer) boosterContainer.className = 'booster-animating';
+                            if (bouton) {
+                                bouton.classList.remove('disabled');
+                                bouton.style.pointerEvents = 'auto';
+                            }
                             distributeurAnimating = false;
                             displayCardsResult(data.cards, boosterName);
                         }, 500);
@@ -333,10 +424,13 @@ async function handleDistributeurClick() {
                 }, 1000);
             }, 1000);
         } else {
-            distributeur.classList.remove('active');
-            bouton.classList.remove('pressed');
-            bouton.classList.remove('disabled');
-            bouton.style.pointerEvents = 'auto';
+            console.log('Erreur de l\'API:', data.message);
+            if (distributeur) distributeur.classList.remove('active');
+            if (bouton) {
+                bouton.classList.remove('pressed');
+                bouton.classList.remove('disabled');
+                bouton.style.pointerEvents = 'auto';
+            }
             distributeurAnimating = false;
             
             if (data.message.includes('Solde insuffisant')) {
@@ -355,12 +449,14 @@ async function handleDistributeurClick() {
             }
         }
     } catch (error) {
-        distributeur.classList.remove('active');
-        bouton.classList.remove('pressed');
-        bouton.classList.remove('disabled');
-        bouton.style.pointerEvents = 'auto';
-        distributeurAnimating = false;
         console.error('Erreur lors de l\\'achat:', error);
+        if (distributeur) distributeur.classList.remove('active');
+        if (bouton) {
+            bouton.classList.remove('pressed');
+            bouton.classList.remove('disabled');
+            bouton.style.pointerEvents = 'auto';
+        }
+        distributeurAnimating = false;
         showErrorNotification('Erreur de connexion au serveur.');
     }
 }
@@ -530,12 +626,17 @@ function closeCardsResultModal() {
 function showSuccessNotification(message) {
     const notification = document.getElementById('purchase-notification');
     if (notification) {
-        document.getElementById('purchased-booster-type').textContent = message;
+        const messageElement = document.getElementById('purchased-booster-type');
+        if (messageElement) {
+            messageElement.textContent = message;
+        }
         notification.classList.add('show');
         
         setTimeout(() => {
             notification.classList.remove('show');
         }, 5000);
+    } else {
+        console.log('Notification de succès:', message);
     }
 }
 
@@ -545,12 +646,17 @@ function showSuccessNotification(message) {
 function showErrorNotification(message) {
     const notification = document.getElementById('error-notification');
     if (notification) {
-        document.getElementById('error-message').textContent = message;
+        const messageElement = document.getElementById('error-message');
+        if (messageElement) {
+            messageElement.textContent = message;
+        }
         notification.classList.add('show');
         
         setTimeout(() => {
             notification.classList.remove('show');
         }, 5000);
+    } else {
+        console.log('Notification d\'erreur:', message);
     }
 }
 
@@ -568,6 +674,12 @@ function updateUserBalance() {
     const sidebarTokenAmount = document.querySelector('.token-amount');
     if (sidebarTokenAmount) {
         sidebarTokenAmount.textContent = `${userBalance} $EFC`;
+    }
+    
+    // Mettre à jour l'affichage dans l'élément avec ID
+    const userTokenBalance = document.getElementById('user-token-balance');
+    if (userTokenBalance) {
+        userTokenBalance.textContent = `${userBalance} $EFC`;
     }
     
     // Désactiver les boutons si le solde est insuffisant
