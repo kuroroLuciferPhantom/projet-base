@@ -75,22 +75,16 @@ window.debugShop = {
         console.log('\n2️⃣ Vérification de la section...');
         this.checkShopVisibility();
         
-        // 3. Aller au shop si pas visible
-        if (!this.checkShopVisibility()) {
-            console.log('\n3️⃣ Navigation vers le shop...');
-            this.goToShop();
-            
-            // Test après navigation
-            setTimeout(() => {
-                console.log('\n4️⃣ Test après navigation...');
-                this.checkShopVisibility();
-                this.checkDistributeur();
-                this.testDistributeurClick();
-            }, 500);
-        } else {
-            console.log('\n3️⃣ Test du distributeur...');
-            this.checkDistributeur();
-            this.testDistributeurClick();
+        // 3. Test du distributeur
+        console.log('\n3️⃣ Test du distributeur...');
+        this.checkDistributeur();
+        this.testDistributeurClick();
+        
+        // 4. Fix automatique si nécessaire
+        const distributeur = document.getElementById('distributeur-bouton');
+        if (distributeur && !distributeur.getAttribute('data-event-attached')) {
+            console.log('\n🔧 Aucun événement détecté, correction automatique...');
+            this.attachDistributeurEvent();
         }
     },
     
@@ -104,9 +98,17 @@ window.debugShop = {
             return;
         }
         
-        // Vérifier les événements
-        const events = getEventListeners ? getEventListeners(distributeur) : 'Non disponible (utilisez Chrome DevTools)';
-        console.log('📍 Événements du distributeur:', events);
+        // Vérifier les événements (Chrome uniquement)
+        try {
+            if (typeof getEventListeners !== 'undefined') {
+                const events = getEventListeners(distributeur);
+                console.log('📍 Événements du distributeur:', events);
+            } else {
+                console.log('📍 getEventListeners non disponible (normal sur Firefox/Safari)');
+            }
+        } catch (e) {
+            console.log('📍 Impossible de vérifier les événements');
+        }
         
         // Test de clic manuel
         console.log('🖱️ Simulation d\'un clic...');
@@ -151,16 +153,63 @@ window.debugShop = {
             
             // Appeler la fonction si elle existe
             if (typeof handleDistributeurClick === 'function') {
+                console.log('📞 Appel de handleDistributeurClick...');
                 handleDistributeurClick.call(this, event);
             } else {
                 console.log('❌ Fonction handleDistributeurClick non trouvée');
                 
-                // Test simple
-                alert('Distributeur cliqué ! (test simple)');
+                // Test simple avec appel API direct
+                console.log('🔄 Test avec appel API direct...');
+                this.directApiTest();
             }
         });
         
+        // Marquer comme ayant un événement
+        newDistributeur.setAttribute('data-event-attached', 'manual');
+        
         console.log('✅ Événement ajouté manuellement');
+        
+        // Test immédiat
+        setTimeout(() => {
+            console.log('🧪 Test automatique du nouvel événement...');
+            newDistributeur.click();
+        }, 500);
+    },
+    
+    // Test API direct
+    directApiTest: async function() {
+        console.log('🔬 Test API direct...');
+        
+        const token = localStorage.getItem('token');
+        if (!token) {
+            console.log('❌ Aucun token trouvé');
+            return;
+        }
+        
+        try {
+            console.log('📡 Appel de l\'API buy-and-open...');
+            const response = await fetch('/api/v1/boosters/buy-and-open', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            const data = await response.json();
+            console.log('📥 Réponse API:', data);
+            
+            if (data.success) {
+                console.log('🎉 API fonctionne ! Booster obtenu:', data.boosterType);
+                alert(`Succès ! Vous avez obtenu un booster ${data.boosterType} avec ${data.cards.length} cartes !`);
+            } else {
+                console.log('⚠️ Erreur API:', data.message);
+                alert(`Erreur: ${data.message}`);
+            }
+        } catch (error) {
+            console.log('💥 Erreur lors de l\'appel API:', error);
+            alert(`Erreur de connexion: ${error.message}`);
+        }
     },
     
     // Instructions pour l'utilisateur
@@ -176,6 +225,7 @@ Commandes disponibles:
 • debugShop.attachDistributeurEvent() - Forcer l'événement
 • debugShop.checkGlobalState() - Vérifier les variables
 • debugShop.forceInitEvents() - Réinitialiser les événements
+• debugShop.directApiTest() - Test API direct
 
 📋 ÉTAPES DE DIAGNOSTIC:
 1. Exécutez debugShop.fullTest()
@@ -189,13 +239,34 @@ Commandes disponibles:
 • Pas de token → Connectez-vous d'abord
 • Erreurs JS → Vérifiez la console pour plus de détails
         `);
+    },
+    
+    // Correction automatique
+    autoFix: function() {
+        console.log('🔧 === CORRECTION AUTOMATIQUE ===');
+        
+        // 1. Aller au shop si nécessaire
+        if (!this.checkShopVisibility()) {
+            this.goToShop();
+        }
+        
+        // 2. Attacher l'événement au distributeur
+        setTimeout(() => {
+            this.attachDistributeurEvent();
+            
+            // 3. Test final
+            setTimeout(() => {
+                console.log('✅ Correction terminée ! Le distributeur devrait maintenant fonctionner.');
+                console.log('🎯 Essayez de cliquer sur le distributeur !');
+            }, 1000);
+        }, 500);
     }
 };
 
 // Message d'aide automatique
 console.log('🔧 Outils de débogage du shop chargés !');
 console.log('📖 Tapez debugShop.help() pour voir les commandes disponibles');
-console.log('🚀 Ou tapez debugShop.fullTest() pour un test complet');
+console.log('🚀 Ou tapez debugShop.autoFix() pour une correction automatique');
 
 // Auto-diagnostic au chargement si on est sur le shop
 document.addEventListener('DOMContentLoaded', function() {
