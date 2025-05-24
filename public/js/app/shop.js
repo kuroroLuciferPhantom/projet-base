@@ -1,96 +1,80 @@
-// Configuration des types de boosters et leurs caractéristiques
-const BOOSTER_TYPES = {
-    'standard': {
-        name: 'Booster Standard',
-        price: 500,
-        cardCount: 5,
-        image: '/img/booster/booster-commun.png',
-        apiType: 'common',
-        rarities: {
-            common: 0.70,
-            rare: 0.20,
-            epic: 0.08,
-            legendary: 0.02
-        }
-    },
-    'premium': {
-        name: 'Booster Premium',
-        price: 1200,
-        cardCount: 5,
-        image: '/img/booster/booster-rare.png',
-        apiType: 'rare',
-        rarities: {
-            common: 0.55,
-            rare: 0.25,
-            epic: 0.15,
-            legendary: 0.05
-        }
-    },
-    'ultimate': {
-        name: 'Booster Ultimate',
-        price: 2500,
-        cardCount: 7,
-        image: '/img/booster/booster-epic.png',
-        apiType: 'epic',
-        rarities: {
-            common: 0.40,
-            rare: 0.25,
-            epic: 0.25,
-            legendary: 0.10
-        }
-    },
-    'ultimate-pack': {
-        name: 'Pack Ultimate (3 boosters)',
-        price: 6375,
-        isBundle: true,
-        apiType: 'epic',
-        contains: ['ultimate', 'ultimate', 'ultimate']
-    },
-    'random': {
-        name: 'Booster Aléatoire',
-        price: 800,
-        isRandom: true,
-        apiType: 'random',
-        possibleTypes: ['standard', 'premium', 'ultimate'],
-        apiPossibleTypes: ['common', 'rare', 'epic'],
-        weights: [0.7, 0.25, 0.05]
-    }
-};
-
-// Initialisation des variables globales
-let userBalance = 0; // Solde récupéré depuis le serveur
-let distributeurAnimating = false; // Pour éviter les clics multiples
-let userWalletAddress = null; // Adresse du wallet de l'utilisateur
+let userBalance = 0;
+let boosterConfig = {};
+let distributeurAnimating = false;
+let userWalletAddress = null;
 
 // Au chargement du document
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialiser les gestionnaires d'événements pour les boutons d'achat
     initShopEvents();
-    
-    // Récupérer le solde de l'utilisateur depuis le serveur
     fetchUserBalance();
-
-    // Initialiser les événements pour la modal "Vous êtes pauvre"
+    fetchBoosterConfig();
     initBrokeModalEvents();
-    
-    // Initialiser les événements pour la connection du wallet
     initWalletEvents();
 });
+
+/**
+ * Récupère la configuration des boosters depuis le serveur
+ */
+async function fetchBoosterConfig() {
+    try {
+        const response = await fetch('/api/v1/boosters/config');
+        const data = await response.json();
+        
+        if (data.success) {
+            boosterConfig = data.boosters;
+            updateBoosterPrices();
+        } else {
+            console.error('Erreur lors de la récupération de la configuration:', data.message);
+        }
+    } catch (error) {
+        console.error('Erreur lors de la récupération de la configuration:', error);
+    }
+}
+
+/**
+ * Met à jour les prix affichés selon la configuration serveur
+ */
+function updateBoosterPrices() {
+    // Mettre à jour les prix dans l'interface
+    const priceElements = document.querySelectorAll('[data-booster-type]');
+    priceElements.forEach(element => {
+        const boosterType = element.getAttribute('data-booster-type');
+        if (boosterConfig[boosterType]) {
+            element.setAttribute('data-booster-price', boosterConfig[boosterType].price);
+            
+            // Mettre à jour l'affichage du prix
+            const priceDisplay = element.querySelector('.price-amount, .booster-price .price-amount');
+            if (priceDisplay) {
+                priceDisplay.textContent = boosterConfig[boosterType].price;
+            }
+        }
+    });
+    
+    // Mettre à jour le prix du distributeur
+    const distributeurBtn = document.getElementById('distributeur-bouton');
+    if (distributeurBtn && boosterConfig.common) {
+        const distributeurPrice = Math.max(boosterConfig.common.price, boosterConfig.rare?.price || 0, boosterConfig.epic?.price || 0);
+        distributeurBtn.querySelector('.bouton-price').textContent = `${distributeurPrice} $EFC`;
+    }
+}
 
 /**
  * Récupère le solde de l'utilisateur depuis le serveur
  */
 async function fetchUserBalance() {
     try {
-        const response = await apiService.getUserProfile();
+        const response = await fetch('/api/v1/users/me/token-balance', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        const data = await response.json();
         
-        if (response.success) {
-            userBalance = response.user.tokenBalance;
-            userWalletAddress = response.user.walletAddress || null;
+        if (data.success) {
+            userBalance = data.tokenBalance;
             updateUserBalance();
-            updateWalletInfo();
         } else {
-            console.error('Erreur lors de la récupération du solde:', response.message);
+            console.error('Erreur lors de la récupération du solde:', data.message);
             showErrorNotification('Impossible de récupérer votre solde. Veuillez réessayer.');
         }
     } catch (error) {
@@ -104,7 +88,7 @@ async function fetchUserBalance() {
  */
 function initShopEvents() {
     // Boutons d'achat de boosters
-    const buyButtons = document.querySelectorAll('.btn-buy-booster, .btn-promo');
+    const buyButtons = document.querySelectorAll('.btn-buy-booster, .btn-promo, .btn-buy-booster-nft');
     buyButtons.forEach(button => {
         button.addEventListener('click', handleBoosterPurchase);
     });
@@ -125,222 +109,91 @@ function initShopEvents() {
 }
 
 /**
- * Initialise les événements pour la modal "Vous êtes pauvre"
- */
-function initBrokeModalEvents() {
-    // Éléments de la modal
-    const brokeModal = document.getElementById('broke-modal');
-    const closeModal = document.querySelector('.close-modal');
-    const brokeCloseBtn = document.getElementById('broke-close-btn');
-    const buyTokensBtn = document.getElementById('buy-tokens-btn');
-    
-    // Mettre à jour le montant requis dans la modal
-    const requiredAmount = document.querySelector('.required-amount');
-    if (requiredAmount) {
-        requiredAmount.textContent = BOOSTER_TYPES['random'].price;
-    }
-
-    // Fermer la modal quand on clique sur X
-    if (closeModal) {
-        closeModal.addEventListener('click', () => {
-            brokeModal.classList.remove('show');
-        });
-    }
-
-    // Fermer la modal avec le bouton "Je reviendrai plus riche"
-    if (brokeCloseBtn) {
-        brokeCloseBtn.addEventListener('click', () => {
-            brokeModal.classList.remove('show');
-        });
-    }
-
-    // Bouton "Acheter des tokens" (connecté à l'API et préparé pour blockchain)
-    if (buyTokensBtn) {
-        buyTokensBtn.addEventListener('click', async () => {
-            try {
-                // Si la blockchain est activée et le wallet est connecté, on utilise la blockchain
-                if (checkWeb3Availability() && userWalletAddress) {
-                    const tokensToAdd = 1000;
-                    const success = await buyTokensViaBlockchain(tokensToAdd);
-                    
-                    if (success) {
-                        brokeModal.classList.remove('show');
-                    }
-                } else {
-                    // Simuler l'achat de tokens via l'API
-                    const tokensToAdd = 1000;
-                    const response = await apiService.updateUserProfile({
-                        tokenBalanceAdd: tokensToAdd
-                    });
-                    
-                    if (response.success) {
-                        userBalance = response.user.tokenBalance;
-                        updateUserBalance();
-                        showSuccessNotification(`Vous avez acheté ${tokensToAdd} $EFC !`);
-                        brokeModal.classList.remove('show');
-                    } else {
-                        showErrorNotification('Erreur lors de l\'achat de tokens: ' + response.message);
-                    }
-                }
-            } catch (error) {
-                console.error('Erreur lors de l\'achat de tokens:', error);
-                showErrorNotification('Erreur de connexion au serveur.');
-            }
-        });
-    }
-
-    // Fermer la modal quand on clique en dehors
-    window.addEventListener('click', (event) => {
-        if (event.target === brokeModal) {
-            brokeModal.classList.remove('show');
-        }
-    });
-}
-
-/**
- * Initialise les événements pour la connexion du wallet
- */
-function initWalletEvents() {
-    // Bouton de connexion du wallet
-    const connectWalletBtn = document.getElementById('connect-wallet-btn');
-    if (connectWalletBtn) {
-        connectWalletBtn.addEventListener('click', async () => {
-            try {
-                // Vérifier si Web3 est disponible
-                if (!checkWeb3Availability()) {
-                    showErrorNotification('Veuillez installer MetaMask ou un autre wallet compatible Web3.');
-                    return;
-                }
-                
-                // Connecter le wallet
-                const walletAddress = await connectWallet();
-                
-                if (walletAddress) {
-                    // Mettre à jour l'affichage
-                    userWalletAddress = walletAddress;
-                    updateWalletInfo();
-                    
-                    // Synchroniser avec le serveur si nécessaire
-                    if (hasBackendWalletIntegration()) {
-                        await syncWalletWithBackend(walletAddress);
-                    }
-                    
-                    showSuccessNotification('Wallet connecté avec succès !');
-                }
-            } catch (error) {
-                console.error('Erreur lors de la connexion du wallet:', error);
-                showErrorNotification('Erreur lors de la connexion du wallet.');
-            }
-        });
-    }
-}
-
-/**
  * Gestionnaire pour l'achat de booster
  */
 async function handleBoosterPurchase() {
     const boosterType = this.getAttribute('data-booster-type');
     const boosterPrice = parseInt(this.getAttribute('data-booster-price'));
-    const booster = BOOSTER_TYPES[boosterType];
     
     // Vérifier si l'utilisateur a assez de tokens
     if (userBalance < boosterPrice) {
-        showErrorNotification("Vous n'avez pas assez de tokens pour cet achat.");
+        showErrorNotification(`Vous n'avez pas assez de tokens pour cet achat. Il vous faut ${boosterPrice} tokens mais vous n'avez que ${userBalance} tokens.`);
         return;
     }
     
     try {
-        // Vérifier si on doit utiliser la blockchain pour l'achat
-        if (hasBlockchainBoosterIntegration() && userWalletAddress) {
-            // Méthode pour acheter via blockchain qui sera implémentée plus tard
-            const blockchainSuccess = await purchaseBoosterViaBlockchain(boosterType, boosterPrice);
-            if (!blockchainSuccess) return;
-        }
+        // Désactiver le bouton pendant l'achat
+        this.disabled = true;
+        this.textContent = 'Achat en cours...';
         
-        // Différencier les bundles des boosters simples
-        if (booster.isBundle) {
-            // Pour les bundles, on effectue plusieurs achats de boosters
-            const bundleResponse = [];
-            
-            // Montrer l'animation de chargement
-            // Ici, on pourrait ajouter un indicateur de chargement visuel
-            
-            // Acheter chaque booster dans le bundle séquentiellement
-            for (const bundleBoosterType of booster.contains) {
-                const bundleBooster = BOOSTER_TYPES[bundleBoosterType];
-                const response = await apiService.buyBooster(bundleBooster.apiType);
-                bundleResponse.push(response);
-                
-                // Si une des requêtes échoue, on arrête
-                if (!response.success) {
-                    showErrorNotification(`Erreur lors de l'achat du bundle: ${response.message}`);
-                    return;
-                }
-            }
-            
+        // Appeler l'API pour acheter et ouvrir automatiquement
+        const response = await fetch('/api/v1/boosters/buy-and-open', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({ boosterType })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
             // Mettre à jour le solde
-            const lastResponse = bundleResponse[bundleResponse.length - 1];
-            userBalance = lastResponse.tokenBalance;
+            userBalance = data.tokenBalance;
             updateUserBalance();
             
             // Afficher la notification d'achat réussi
-            showSuccessNotification(booster.name);
+            const boosterName = boosterConfig[boosterType]?.name || `Booster ${boosterType}`;
+            showSuccessNotification(`${boosterName} acheté et ouvert !`);
             
-            // Ouvrir le premier booster du pack après un délai
+            // Afficher directement les cartes obtenues
             setTimeout(() => {
-                openBoosterModal(booster.contains[0]);
-            }, 1500);
-            
+                displayCardsResult(data.cards, boosterName);
+            }, 1000);
         } else {
-            // Pour un booster simple, appeler l'API d'achat
-            const response = await apiService.buyBooster(booster.apiType);
-            
-            if (response.success) {
-                // Mettre à jour le solde
-                userBalance = response.tokenBalance;
-                updateUserBalance();
-                
-                // Afficher la notification d'achat réussi
-                showSuccessNotification(booster.name);
-                
-                // Ouvrir la modale après un délai
-                setTimeout(() => {
-                    openBoosterModal(boosterType);
-                }, 1500);
-            } else {
-                showErrorNotification(`Erreur lors de l'achat: ${response.message}`);
-            }
+            showErrorNotification(`Erreur lors de l'achat: ${data.message}`);
         }
     } catch (error) {
-        console.error('Erreur lors de l\'achat:', error);
+        console.error("Erreur lors de l'achat:", error);
         showErrorNotification('Erreur de connexion au serveur.');
+    } finally {
+        // Réactiver le bouton
+        this.disabled = false;
+        this.innerHTML = this.getAttribute('data-original-text') || '<i class=\"fas fa-wallet\"></i> Acheter';
     }
 }
 
 /**
- * Gestionnaire pour le clic sur le distributeur automatique
+ * Gestionnaire pour le distributeur automatique
  */
 async function handleDistributeurClick() {
-    // Éviter les clics multiples pendant l'animation
     if (distributeurAnimating) return;
     
-    // Prix du distributeur aléatoire
-    const boosterPrice = BOOSTER_TYPES['random'].price;
+    // Calculer le prix du distributeur (prix du booster le plus cher + 100)
+    const maxPrice = Math.max(
+        boosterConfig.common?.price || 0,
+        boosterConfig.rare?.price || 0, 
+        boosterConfig.epic?.price || 0
+    );
+    const distributeurPrice = maxPrice + 100;
     
     // Vérifier si l'utilisateur a assez de tokens
-    if (userBalance < boosterPrice) {
-        // Afficher la modal "Vous êtes pauvre"
+    if (userBalance < distributeurPrice) {
         const brokeModal = document.getElementById('broke-modal');
         if (brokeModal) {
+            // Mettre à jour le montant requis
+            const requiredAmount = document.querySelector('.required-amount');
+            if (requiredAmount) {
+                requiredAmount.textContent = distributeurPrice;
+            }
             brokeModal.classList.add('show');
         } else {
-            // Fallback si la modal n'existe pas
             showErrorNotification("Vous n'avez pas assez de tokens pour utiliser le distributeur.");
         }
         return;
     }
     
-    // Marquer le début de l'animation
     distributeurAnimating = true;
     
     // Animation du distributeur
@@ -348,171 +201,206 @@ async function handleDistributeurClick() {
     const bouton = document.querySelector('.bouton');
     const fente = document.querySelector('.fente-light');
     
-    // Ajouter des classes d'animation
     distributeur.classList.add('active');
     bouton.classList.add('pressed');
     
     try {
-        // Vérifier si on doit utiliser la blockchain pour l'achat
-        if (hasBlockchainBoosterIntegration() && userWalletAddress) {
-            // Méthode pour acheter via blockchain qui sera implémentée plus tard
-            const blockchainSuccess = await purchaseBoosterViaBlockchain('random', boosterPrice);
-            if (!blockchainSuccess) {
-                // Réinitialiser l'animation en cas d'échec
-                distributeur.classList.remove('active');
-                bouton.classList.remove('pressed');
-                distributeurAnimating = false;
-                return;
+        // Choisir un type de booster aléatoire
+        const boosterTypes = ['common', 'rare', 'epic'];
+        const weights = [0.7, 0.25, 0.05];
+        const randomValue = Math.random();
+        let chosenBoosterType = 'common';
+        let cumulativeWeight = 0;
+        
+        for (let i = 0; i < boosterTypes.length; i++) {
+            cumulativeWeight += weights[i];
+            if (randomValue < cumulativeWeight) {
+                chosenBoosterType = boosterTypes[i];
+                break;
             }
         }
         
-        // Déterminer quel type de booster l'utilisateur obtient
-        const randomIndex = Math.floor(Math.random() * BOOSTER_TYPES['random'].possibleTypes.length);
-        const randomBoosterUIType = BOOSTER_TYPES['random'].possibleTypes[randomIndex];
-        const randomBoosterAPIType = BOOSTER_TYPES['random'].apiPossibleTypes[randomIndex];
-        const randomBooster = BOOSTER_TYPES[randomBoosterUIType];
+        // Appeler l'API pour acheter un booster aléatoire
+        const response = await fetch('/api/v1/boosters/buy-and-open', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({ boosterType: chosenBoosterType })
+        });
         
-        // Appeler l'API d'achat
-        const response = await apiService.buyBooster(randomBoosterAPIType);
+        const data = await response.json();
         
-        if (response.success) {
-            // Mettre à jour le solde
-            userBalance = response.tokenBalance;
+        if (data.success) {
+            userBalance = data.tokenBalance;
             updateUserBalance();
             
-            // Simuler le processus aléatoire avec animation
+            const boosterName = boosterConfig[chosenBoosterType]?.name || `Booster ${chosenBoosterType}`;
+            
+            // Animation du distributeur
             setTimeout(() => {
-                // Activer la lumière de la fente
                 fente.classList.add('active');
                 
-                // Après un délai, faire apparaître le booster
                 setTimeout(() => {
-                    // Préparer l'animation du booster
                     const boosterContainer = document.getElementById('booster-animation-container');
-                    boosterContainer.innerHTML = `<img src="${randomBooster.image || '/img/booster-' + randomBoosterUIType + '.svg'}" alt="${randomBooster.name}">`;
-                    boosterContainer.className = 'booster-animating active ' + randomBoosterUIType;
+                    boosterContainer.innerHTML = `<img src=\"/img/booster/booster-${chosenBoosterType}.png\" alt=\"${boosterName}\">`;
+                    boosterContainer.className = `booster-animating active ${chosenBoosterType}`;
                     
-                    // Afficher à l'utilisateur ce qu'il a obtenu
-                    showSuccessNotification(`Vous avez obtenu un ${randomBooster.name} !`);
+                    showSuccessNotification(`Vous avez obtenu un ${boosterName} !`);
                     
-                    // Une fois l'animation terminée
                     setTimeout(() => {
-                        // Réinitialiser l'animation
                         fente.classList.remove('active');
                         distributeur.classList.remove('active');
                         bouton.classList.remove('pressed');
                         
-                        // Ouvrir la modale du booster
                         setTimeout(() => {
                             boosterContainer.className = 'booster-animating';
                             distributeurAnimating = false;
-                            openBoosterModal(randomBoosterUIType);
+                            displayCardsResult(data.cards, boosterName);
                         }, 500);
                     }, 2000);
                 }, 1000);
             }, 1000);
         } else {
-            // En cas d'erreur, réinitialiser l'animation
             distributeur.classList.remove('active');
             bouton.classList.remove('pressed');
             distributeurAnimating = false;
-            
-            showErrorNotification(`Erreur lors de l'achat: ${response.message}`);
+            showErrorNotification(`Erreur lors de l'achat: ${data.message}`);
         }
     } catch (error) {
-        // En cas d'erreur, réinitialiser l'animation
         distributeur.classList.remove('active');
         bouton.classList.remove('pressed');
         distributeurAnimating = false;
-        
-        console.error('Erreur lors de l\'achat:', error);
+        console.error("Erreur lors de l'achat:", error);
         showErrorNotification('Erreur de connexion au serveur.');
     }
 }
 
 /**
- * Ouvre la modale d'ouverture de booster
+ * Affiche le résultat des cartes obtenues dans une modal
  */
-function openBoosterModal(boosterType) {
-    // Récupérer les détails du booster
-    const booster = BOOSTER_TYPES[boosterType];
+function displayCardsResult(cards, boosterName) {
+    let resultModal = document.getElementById('cards-result-modal');
     
-    // Mettre à jour l'image du booster dans la modale
-    const boosterImg = document.getElementById('booster-pack-img');
-    boosterImg.src = booster.image || `/img/booster-${boosterType}.svg`;
-    boosterImg.alt = booster.name;
-    boosterImg.classList.remove('hidden', 'opening');
-    
-    // Réinitialiser l'état de la modale
-    document.querySelector('.cards-reveal').classList.add('hidden');
-    document.getElementById('continue-btn').classList.add('hidden');
-    document.getElementById('open-booster-btn').classList.remove('hidden');
-    
-    // Afficher la modale
-    const modal = document.getElementById('booster-opening-modal');
-    modal.style.display = 'flex';
-    
-    // Ajouter des données spécifiques au booster à la modale
-    document.getElementById('open-booster-btn').setAttribute('data-booster-type', boosterType);
-    document.getElementById('open-booster-btn').setAttribute('data-api-type', booster.apiType);
-    
-    // Ajout de l'event listener pour le bouton d'ouverture
-    const openBoosterBtn = document.getElementById('open-booster-btn');
-    
-    // Supprimer tous les listeners précédents
-    const newOpenBtn = openBoosterBtn.cloneNode(true);
-    openBoosterBtn.parentNode.replaceChild(newOpenBtn, openBoosterBtn);
-    
-    // Ajouter le nouveau listener
-    newOpenBtn.addEventListener('click', async function() {
-        const apiBoosterType = this.getAttribute('data-api-type');
-        try {
-            // Animation d'ouverture du booster
-            boosterImg.classList.add('opening');
-            
-            // Appeler l'API pour ouvrir le booster
-            const response = await apiService.openBooster(apiBoosterType);
-            
-            if (response.success) {
-                // Cacher l'image du booster après l'animation
-                setTimeout(() => {
-                    boosterImg.classList.add('hidden');
-                    newOpenBtn.classList.add('hidden');
-                    
-                    // Afficher les cartes obtenues
-                    displayOpenedCards(response.cards);
-                    
-                    // Afficher le bouton continuer
-                    document.getElementById('continue-btn').classList.remove('hidden');
-                }, 800);
-            } else {
-                showErrorNotification(`Erreur lors de l'ouverture: ${response.message}`);
+    if (!resultModal) {
+        // Créer la modal si elle n'existe pas
+        resultModal = document.createElement('div');
+        resultModal.id = 'cards-result-modal';
+        resultModal.className = 'modal';
+        resultModal.innerHTML = `
+            <div class=\"modal-content cards-result-modal\">
+                <div class=\"modal-header\">
+                    <h3 id=\"result-title\">Félicitations !</h3>
+                    <span class=\"close-modal\" onclick=\"closeCardsResultModal()\">&times;</span>
+                </div>
+                <div class=\"modal-body\">
+                    <p id=\"result-subtitle\">Vous avez obtenu ces cartes :</p>
+                    <div class=\"cards-reveal\" id=\"cards-reveal-container\"></div>
+                </div>
+                <div class=\"modal-footer\">
+                    <button class=\"btn btn-primary\" onclick=\"closeCardsResultModal()\">Continuer</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(resultModal);
+        
+        // Ajouter le CSS pour la modal
+        const style = document.createElement('style');
+        style.textContent = `
+            .cards-result-modal .modal-content {
+                max-width: 800px;
+                width: 90%;
             }
-        } catch (error) {
-            console.error('Erreur lors de l\'ouverture du booster:', error);
-            showErrorNotification('Erreur de connexion au serveur.');
-        }
-    });
-}
-
-/**
- * Affiche les cartes obtenues dans la modale
- */
-function displayOpenedCards(cards) {
-    const cardsContainer = document.querySelector('.cards-reveal');
+            
+            .cards-reveal {
+                display: flex;
+                gap: 20px;
+                justify-content: center;
+                flex-wrap: wrap;
+                margin: 20px 0;
+            }
+            
+            .card-reveal {
+                background: #fff;
+                border-radius: 10px;
+                padding: 15px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                text-align: center;
+                min-width: 200px;
+                transform: translateY(20px);
+                opacity: 0;
+                transition: all 0.5s ease;
+            }
+            
+            .card-reveal.revealed {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            
+            .card-reveal img {
+                width: 100%;
+                max-width: 150px;
+                height: auto;
+                border-radius: 5px;
+                margin-bottom: 10px;
+            }
+            
+            .card-reveal h4 {
+                margin: 10px 0 5px 0;
+                color: #333;
+            }
+            
+            .card-rarity {
+                display: inline-block;
+                padding: 3px 8px;
+                border-radius: 15px;
+                font-size: 0.8em;
+                font-weight: bold;
+                margin-bottom: 10px;
+                text-transform: uppercase;
+            }
+            
+            .card-rarity.common { background-color: #95a5a6; color: white; }
+            .card-rarity.rare { background-color: #3498db; color: white; }
+            .card-rarity.epic { background-color: #9b59b6; color: white; }
+            .card-rarity.legendary { background-color: #f39c12; color: white; }
+            
+            .card-stats {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 5px;
+                font-size: 0.9em;
+                color: #666;
+            }
+            
+            .card-stats span {
+                background: #f8f9fa;
+                padding: 2px 6px;
+                border-radius: 3px;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    // Mettre à jour le contenu
+    document.getElementById('result-title').textContent = `${boosterName} ouvert !`;
+    document.getElementById('result-subtitle').textContent = `Vous avez obtenu ces ${cards.length} cartes :`;
+    
+    const cardsContainer = document.getElementById('cards-reveal-container');
     cardsContainer.innerHTML = '';
-    cardsContainer.classList.remove('hidden');
     
     // Créer les éléments pour chaque carte
-    cards.forEach(card => {
+    cards.forEach((card, index) => {
         const cardEl = document.createElement('div');
         cardEl.className = `card-reveal ${card.gameCard.rarity}`;
         
         cardEl.innerHTML = `
-            <img src="${card.gameCard.imageUrl}" alt="${card.gameCard.name}">
-            <div class="card-info">
-                <h3>${card.gameCard.name}</h3>
-                <div class="card-stats">
+            <img src=\"${card.gameCard.imageUrl}\" alt=\"${card.gameCard.name}\" onerror=\"this.src='/img/cards/placeholder.png';\">
+            <div class=\"card-info\">
+                <h4>${card.gameCard.name}</h4>
+                <div class=\"card-rarity ${card.gameCard.rarity}\">${card.gameCard.rarity.toUpperCase()}</div>
+                <div class=\"card-stats\">
                     <span>ATT: ${card.gameCard.stats.attack}</span>
                     <span>DEF: ${card.gameCard.stats.defense}</span>
                     <span>MAG: ${card.gameCard.stats.magic}</span>
@@ -522,29 +410,45 @@ function displayOpenedCards(cards) {
         `;
         
         cardsContainer.appendChild(cardEl);
-    });
-    
-    // Animation d'apparition des cartes
-    const cardElements = cardsContainer.querySelectorAll('.card-reveal');
-    cardElements.forEach((card, index) => {
+        
+        // Animation d'apparition des cartes
         setTimeout(() => {
-            card.classList.add('revealed');
+            cardEl.classList.add('revealed');
         }, 200 * index);
     });
+    
+    // Afficher la modal
+    resultModal.style.display = 'flex';
+}
+
+/**
+ * Ferme la modal de résultats des cartes
+ */
+function closeCardsResultModal() {
+    const resultModal = document.getElementById('cards-result-modal');
+    if (resultModal) {
+        resultModal.style.display = 'none';
+    }
+    
+    // Recharger la collection pour afficher les nouvelles cartes
+    if (typeof collectionService !== 'undefined' && collectionService.refreshCollection) {
+        collectionService.refreshCollection();
+    }
 }
 
 /**
  * Affiche une notification de succès
  */
-function showSuccessNotification(boosterName) {
+function showSuccessNotification(message) {
     const notification = document.getElementById('purchase-notification');
-    document.getElementById('purchased-booster-type').textContent = boosterName;
-    notification.classList.add('show');
-    
-    // Masquer la notification après 5 secondes
-    setTimeout(() => {
-        notification.classList.remove('show');
-    }, 5000);
+    if (notification) {
+        document.getElementById('purchased-booster-type').textContent = message;
+        notification.classList.add('show');
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 5000);
+    }
 }
 
 /**
@@ -552,13 +456,14 @@ function showSuccessNotification(boosterName) {
  */
 function showErrorNotification(message) {
     const notification = document.getElementById('error-notification');
-    document.getElementById('error-message').textContent = message;
-    notification.classList.add('show');
-    
-    // Masquer la notification après 5 secondes
-    setTimeout(() => {
-        notification.classList.remove('show');
-    }, 5000);
+    if (notification) {
+        document.getElementById('error-message').textContent = message;
+        notification.classList.add('show');
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 5000);
+    }
 }
 
 /**
@@ -578,7 +483,7 @@ function updateUserBalance() {
     }
     
     // Désactiver les boutons si le solde est insuffisant
-    const buyButtons = document.querySelectorAll('.btn-buy-booster, .btn-promo');
+    const buyButtons = document.querySelectorAll('.btn-buy-booster, .btn-promo, .btn-buy-booster-nft');
     buyButtons.forEach(button => {
         const price = parseInt(button.getAttribute('data-booster-price'));
         if (userBalance < price) {
@@ -589,584 +494,68 @@ function updateUserBalance() {
             button.classList.remove('disabled');
         }
     });
-    
-    // Vérifier si le solde est suffisant pour le distributeur
-    const distributeurBtn = document.getElementById('distributeur-bouton');
-    if (distributeurBtn) {
-        // Note: On ne désactive pas réellement le bouton pour permettre d'afficher la modal "Vous êtes pauvre"
-        if (userBalance < BOOSTER_TYPES['random'].price) {
-            distributeurBtn.classList.add('disabled');
-            // Mais on garde le pointeur en mode "pointer" pour pouvoir cliquer et montrer la modal
-            distributeurBtn.style.pointerEvents = 'auto';
-            distributeurBtn.style.cursor = 'pointer';
-        } else {
-            distributeurBtn.classList.remove('disabled');
-            distributeurBtn.style.pointerEvents = 'auto';
-        }
-    }
 }
 
 /**
- * Met à jour l'affichage des informations du wallet
+ * Initialise les événements pour la modal \"Vous êtes pauvre\"
  */
-function updateWalletInfo() {
-    const walletAddressEl = document.getElementById('wallet-address');
-    const connectWalletBtn = document.getElementById('connect-wallet-btn');
-    
-    if (walletAddressEl) {
-        if (userWalletAddress) {
-            // Formater l'adresse pour l'affichage (ex: 0x1234...5678)
-            const formattedAddress = `${userWalletAddress.substring(0, 6)}...${userWalletAddress.substring(userWalletAddress.length - 4)}`;
-            walletAddressEl.textContent = formattedAddress;
-            walletAddressEl.classList.remove('hidden');
-            
-            // Cacher le bouton de connexion si on est connecté
-            if (connectWalletBtn) {
-                connectWalletBtn.classList.add('hidden');
-            }
-        } else {
-            walletAddressEl.classList.add('hidden');
-            
-            // Afficher le bouton de connexion si on n'est pas connecté
-            if (connectWalletBtn) {
-                connectWalletBtn.classList.remove('hidden');
-            }
-        }
+function initBrokeModalEvents() {
+    const brokeModal = document.getElementById('broke-modal');
+    const closeModal = document.querySelector('.close-modal');
+    const brokeCloseBtn = document.getElementById('broke-close-btn');
+    const buyTokensBtn = document.getElementById('buy-tokens-btn');
+
+    if (closeModal) {
+        closeModal.addEventListener('click', () => {
+            brokeModal.classList.remove('show');
+        });
     }
+
+    if (brokeCloseBtn) {
+        brokeCloseBtn.addEventListener('click', () => {
+            brokeModal.classList.remove('show');
+        });
+    }
+
+    if (buyTokensBtn) {
+        buyTokensBtn.addEventListener('click', async () => {
+            // Simuler l'achat de tokens
+            try {
+                const tokensToAdd = 1000;
+                // Ici on pourrait appeler une vraie API d'achat de tokens
+                userBalance += tokensToAdd;
+                updateUserBalance();
+                showSuccessNotification(`Vous avez acheté ${tokensToAdd} $EFC !`);
+                brokeModal.classList.remove('show');
+            } catch (error) {
+                showErrorNotification("Erreur lors de l'achat de tokens.");
+            }
+        });
+    }
+
+    // Fermer la modal quand on clique en dehors
+    window.addEventListener('click', (event) => {
+        if (event.target === brokeModal) {
+            brokeModal.classList.remove('show');
+        }
+    });
 }
 
 /**
- * Fonctions pour l'intégration avec la blockchain
+ * Placeholder pour les fonctions wallet (à implémenter plus tard)
  */
+function initWalletEvents() {
+    // Fonctions wallet à implémenter
+}
 
-// Fonction pour vérifier si Web3 est disponible
 function checkWeb3Availability() {
     return typeof window.ethereum !== 'undefined';
 }
 
-// Fonction pour se connecter au wallet
-async function connectWallet() {
-    if (!checkWeb3Availability()) {
-        showErrorNotification('Veuillez installer MetaMask ou un autre wallet compatible Web3.');
-        return null;
-    }
-
-    try {
-        // Demander à l'utilisateur de se connecter
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        
-        if (accounts.length === 0) {
-            showErrorNotification('Aucun compte trouvé. Veuillez vous connecter à votre wallet.');
-            return null;
-        }
-        
-        // Retourner l'adresse du compte connecté
-        return accounts[0];
-    } catch (error) {
-        console.error('Erreur lors de la connexion au wallet:', error);
-        showErrorNotification('Erreur de connexion au wallet: ' + error.message);
-        return null;
-    }
-}
-
-// Fonction pour synchroniser le wallet avec le backend
-async function syncWalletWithBackend(walletAddress) {
-    try {
-        // Récupérer un nonce pour la signature
-        const nonceResponse = await apiService.getWalletNonce(walletAddress);
-        
-        if (!nonceResponse.success) {
-            showErrorNotification('Erreur lors de la récupération du nonce: ' + nonceResponse.message);
-            return false;
-        }
-        
-        // Demander à l'utilisateur de signer le message avec son wallet
-        const signMessage = nonceResponse.message;
-        const signature = await window.ethereum.request({
-            method: 'personal_sign',
-            params: [signMessage, walletAddress]
-        });
-        
-        // Envoyer la signature au serveur pour vérification
-        const connectResponse = await apiService.connectWallet(walletAddress, signature);
-        
-        if (connectResponse.success) {
-            // Mettre à jour les informations de l'utilisateur
-            if (connectResponse.token) {
-                apiService.setToken(connectResponse.token);
-            }
-            
-            if (connectResponse.user) {
-                userBalance = connectResponse.user.tokenBalance;
-                userWalletAddress = connectResponse.user.walletAddress;
-                updateUserBalance();
-                updateWalletInfo();
-            }
-            
-            return true;
-        } else {
-            showErrorNotification('Erreur lors de la connexion du wallet: ' + connectResponse.message);
-            return false;
-        }
-    } catch (error) {
-        console.error('Erreur lors de la synchronisation du wallet:', error);
-        showErrorNotification('Erreur lors de la signature du message: ' + error.message);
-        return false;
-    }
-}
-
-// Fonction pour acheter des tokens via blockchain
-async function buyTokensViaBlockchain(amount) {
-    const walletAddress = await connectWallet();
-    
-    if (!walletAddress) {
-        return false;
-    }
-    
-    try {
-        // Ici, on implémentera l'appel au smart contract pour acheter des tokens
-        // Pour l'instant, c'est un placeholder pour la future intégration
-        
-        // Exemple de structure future:
-        /*
-        const web3 = new Web3(window.ethereum);
-        const contractAddress = '0x...'; // Adresse du smart contract
-        const contract = new web3.eth.Contract(ABI, contractAddress);
-        
-        // Calculer le prix en ETH pour l'achat
-        const priceInEth = ... // prix dynamique via Oracle ou fixe
-        
-        // Appeler la fonction buyTokens du smart contract
-        await contract.methods.buyTokens(amount).send({
-            from: walletAddress,
-            value: web3.utils.toWei(priceInEth.toString(), 'ether')
-        });
-        */
-        
-        // Après l'achat, on mettra à jour le solde via l'API backend
-        // Qui synchronisera avec le smart contract
-        const response = await apiService.updateUserProfile({
-            tokenBalanceAdd: amount
-        });
-        
-        if (response.success) {
-            userBalance = response.user.tokenBalance;
-            updateUserBalance();
-            showSuccessNotification(`Vous avez acheté ${amount} $EFC via blockchain !`);
-            return true;
-        } else {
-            showErrorNotification('Erreur lors de la mise à jour du solde: ' + response.message);
-            return false;
-        }
-    } catch (error) {
-        console.error('Erreur lors de l\'achat de tokens via blockchain:', error);
-        showErrorNotification('Erreur lors de la transaction blockchain: ' + error.message);
-        return false;
-    }
-}
-
-// Fonction pour acheter un booster via blockchain
-async function purchaseBoosterViaBlockchain(boosterType, price) {
-    try {
-        // Ici, on implémentera l'appel au smart contract pour acheter un booster
-        // Pour l'instant, c'est un placeholder pour la future intégration
-        
-        // Exemple de structure future:
-        /*
-        const web3 = new Web3(window.ethereum);
-        const contractAddress = '0x...'; // Adresse du smart contract
-        const contract = new web3.eth.Contract(ABI, contractAddress);
-        
-        // Appeler la fonction buyBooster du smart contract
-        await contract.methods.buyBooster(boosterType, price).send({
-            from: userWalletAddress
-        });
-        */
-        
-        // Pour l'instant, on considère que l'achat via blockchain a réussi
-        // Dans une implémentation réelle, on vérifierait la transaction
-        
-        return true;
-    } catch (error) {
-        console.error('Erreur lors de l\'achat via blockchain:', error);
-        showErrorNotification('Erreur lors de la transaction blockchain: ' + error.message);
-        return false;
-    }
-}
-
-// Vérifie si le backend prend en charge l'intégration wallet
 function hasBackendWalletIntegration() {
-    // Cette fonction pourrait vérifier une configuration ou une variable d'environnement
-    // Pour l'instant, on retourne true pour activer l'intégration
-    return true;
+    return false; // Désactivé pour l'instant
 }
 
-// Vérifie si l'intégration blockchain est activée pour les boosters
 function hasBlockchainBoosterIntegration() {
-    // Cette fonction pourrait vérifier une configuration ou une variable d'environnement
-    // Pour l'instant, on retourne false pour désactiver l'intégration
-    return false;
-}
-
-// Fonction pour vérifier le solde de tokens sur la blockchain
-async function checkBlockchainTokenBalance(address) {
-    try {
-        // Ici, on implémentera l'appel au smart contract pour vérifier le solde
-        // Pour l'instant, c'est un placeholder pour la future intégration
-        
-        // Exemple de structure future:
-        /*
-        const web3 = new Web3(window.ethereum);
-        const contractAddress = '0x...'; // Adresse du smart contract
-        const contract = new web3.eth.Contract(ABI, contractAddress);
-        
-        // Appeler la fonction balanceOf du smart contract
-        const balance = await contract.methods.balanceOf(address).call();
-        return parseInt(balance);
-        */
-        
-        // Pour l'instant, on retourne le solde de l'API
-        return userBalance;
-    } catch (error) {
-        console.error('Erreur lors de la vérification du solde blockchain:', error);
-        return null;
-    }
-}
-
-// Fonction pour vérifier si l'utilisateur possède des NFT (cartes)
-async function checkBlockchainNFTs(address) {
-    try {
-        // Ici, on implémentera l'appel au smart contract pour vérifier les NFT
-        // Pour l'instant, c'est un placeholder pour la future intégration
-        
-        // Exemple de structure future:
-        /*
-        const web3 = new Web3(window.ethereum);
-        const contractAddress = '0x...'; // Adresse du smart contract NFT
-        const contract = new web3.eth.Contract(NFT_ABI, contractAddress);
-        
-        // Récupérer tous les tokenIds appartenant à l'adresse
-        const tokenIds = await contract.methods.tokensOfOwner(address).call();
-        
-        // Récupérer les métadonnées pour chaque token
-        const nfts = [];
-        for (const tokenId of tokenIds) {
-            const tokenURI = await contract.methods.tokenURI(tokenId).call();
-            // Récupérer les métadonnées via l'URI (IPFS ou HTTP)
-            // ...
-            nfts.push({
-                tokenId,
-                metadata: { ... }
-            });
-        }
-        
-        return nfts;
-        */
-        
-        // Pour l'instant, on retourne un tableau vide
-        return [];
-    } catch (error) {
-        console.error('Erreur lors de la vérification des NFT:', error);
-        return [];
-    }
-}
-
-// Fonction pour vérifier si une carte spécifique est un NFT
-async function isCardNFT(cardId) {
-    try {
-        // Récupérer les détails de la carte depuis l'API
-        const response = await apiService.getCardById(cardId);
-        
-        if (response.success && response.card) {
-            // Vérifier si la carte a un tokenId, ce qui indique qu'elle est un NFT
-            return !!response.card.tokenId;
-        }
-        
-        return false;
-    } catch (error) {
-        console.error('Erreur lors de la vérification de la carte NFT:', error);
-        return false;
-    }
-}
-
-// Fonction pour "minter" une carte en NFT
-async function mintCardAsNFT(cardId) {
-    try {
-        // Vérifier si Web3 est disponible et si le wallet est connecté
-        if (!checkWeb3Availability() || !userWalletAddress) {
-            showErrorNotification('Veuillez connecter votre wallet blockchain pour créer un NFT.');
-            return false;
-        }
-        
-        // Vérifier si la carte appartient à l'utilisateur
-        const cardResponse = await apiService.getCardById(cardId);
-        
-        if (!cardResponse.success || !cardResponse.card) {
-            showErrorNotification('Impossible de récupérer les détails de la carte.');
-            return false;
-        }
-        
-        if (cardResponse.card.owner !== apiService.getUserId()) {
-            showErrorNotification('Vous ne pouvez créer un NFT que pour vos propres cartes.');
-            return false;
-        }
-        
-        // Vérifier si la carte est déjà un NFT
-        if (cardResponse.card.tokenId) {
-            showErrorNotification('Cette carte est déjà un NFT.');
-            return false;
-        }
-        
-        // Ici, on implémentera l'appel au smart contract pour minter le NFT
-        // Pour l'instant, c'est un placeholder pour la future intégration
-        
-        // Exemple de structure future:
-        /*
-        const web3 = new Web3(window.ethereum);
-        const contractAddress = '0x...'; // Adresse du smart contract NFT
-        const contract = new web3.eth.Contract(NFT_ABI, contractAddress);
-        
-        // Préparer les métadonnées de la carte pour le NFT
-        const metadata = {
-            name: cardResponse.card.name,
-            description: cardResponse.card.description,
-            image: cardResponse.card.imageUrl,
-            attributes: [
-                { trait_type: 'Rarity', value: cardResponse.card.rarity },
-                { trait_type: 'Attack', value: cardResponse.card.stats.attack },
-                { trait_type: 'Defense', value: cardResponse.card.stats.defense },
-                { trait_type: 'Magic', value: cardResponse.card.stats.magic },
-                { trait_type: 'Speed', value: cardResponse.card.stats.speed }
-            ]
-        };
-        
-        // Uploader les métadonnées sur IPFS ou un autre stockage décentralisé
-        // ...
-        
-        // Minter le NFT avec l'URI des métadonnées
-        const metadataURI = '...'; // URI des métadonnées uploadées
-        const mintTx = await contract.methods.mintNFT(userWalletAddress, metadataURI).send({
-            from: userWalletAddress
-        });
-        
-        // Récupérer le tokenId du NFT créé
-        const tokenId = mintTx.events.Transfer.returnValues.tokenId;
-        
-        // Mettre à jour la carte dans la base de données avec le tokenId
-        const updateResponse = await apiService.updateCard(cardId, { tokenId });
-        
-        return updateResponse.success;
-        */
-        
-        // Pour l'instant, simuler une requête API pour mettre à jour la carte
-        const updateResponse = await apiService.updateCard(cardId, { 
-            tokenId: 'nft_' + Date.now() // Simuler un tokenId 
-        });
-        
-        if (updateResponse.success) {
-            showSuccessNotification('Carte transformée en NFT avec succès !');
-            return true;
-        } else {
-            showErrorNotification('Erreur lors de la mise à jour de la carte.');
-            return false;
-        }
-    } catch (error) {
-        console.error('Erreur lors de la création du NFT:', error);
-        showErrorNotification('Erreur lors de la création du NFT: ' + error.message);
-        return false;
-    }
-}
-
-// Fonction pour transférer un NFT vers un autre wallet
-async function transferNFT(cardId, toAddress) {
-    try {
-        // Vérifier si Web3 est disponible et si le wallet est connecté
-        if (!checkWeb3Availability() || !userWalletAddress) {
-            showErrorNotification('Veuillez connecter votre wallet blockchain pour transférer un NFT.');
-            return false;
-        }
-        
-        // Vérifier si la carte appartient à l'utilisateur et est un NFT
-        const cardResponse = await apiService.getCardById(cardId);
-        
-        if (!cardResponse.success || !cardResponse.card) {
-            showErrorNotification('Impossible de récupérer les détails de la carte.');
-            return false;
-        }
-        
-        if (cardResponse.card.owner !== apiService.getUserId()) {
-            showErrorNotification('Vous ne pouvez transférer que vos propres cartes.');
-            return false;
-        }
-        
-        if (!cardResponse.card.tokenId) {
-            showErrorNotification('Cette carte n\'est pas un NFT.');
-            return false;
-        }
-        
-        // Vérifier si l'adresse de destination est valide
-        if (!toAddress || !toAddress.startsWith('0x')) {
-            showErrorNotification('Adresse de destination invalide.');
-            return false;
-        }
-        
-        // Ici, on implémentera l'appel au smart contract pour transférer le NFT
-        // Pour l'instant, c'est un placeholder pour la future intégration
-        
-        // Exemple de structure future:
-        /*
-        const web3 = new Web3(window.ethereum);
-        const contractAddress = '0x...'; // Adresse du smart contract NFT
-        const contract = new web3.eth.Contract(NFT_ABI, contractAddress);
-        
-        // Transférer le NFT
-        const tokenId = cardResponse.card.tokenId;
-        await contract.methods.transferFrom(userWalletAddress, toAddress, tokenId).send({
-            from: userWalletAddress
-        });
-        
-        // Mettre à jour la propriété de la carte dans la base de données
-        const updateResponse = await apiService.transferCard(cardId, { toAddress });
-        
-        return updateResponse.success;
-        */
-        
-        // Pour l'instant, simuler une requête API pour transférer la carte
-        const updateResponse = await apiService.transferCard(cardId, { toAddress });
-        
-        if (updateResponse.success) {
-            showSuccessNotification('NFT transféré avec succès !');
-            return true;
-        } else {
-            showErrorNotification('Erreur lors du transfert du NFT.');
-            return false;
-        }
-    } catch (error) {
-        console.error('Erreur lors du transfert du NFT:', error);
-        showErrorNotification('Erreur lors du transfert du NFT: ' + error.message);
-        return false;
-    }
-}
-
-// Fonction pour vérifier si l'environnement supporte l'intégration blockchain
-function isBlockchainEnabled() {
-    // On pourrait avoir une configuration globale ou une variable d'environnement
-    // Pour l'instant, on vérifie simplement si Web3 est disponible
-    return checkWeb3Availability();
-}
-
-// Fonction pour changer de réseau blockchain (mainnet, testnet, etc.)
-async function switchBlockchainNetwork(networkId) {
-    try {
-        if (!checkWeb3Availability()) {
-            showErrorNotification('Web3 n\'est pas disponible. Veuillez installer MetaMask.');
-            return false;
-        }
-        
-        // Les IDs des réseaux Ethereum
-        const networks = {
-            mainnet: '0x1',
-            ropsten: '0x3',
-            rinkeby: '0x4',
-            goerli: '0x5',
-            kovan: '0x2a',
-            polygon: '0x89',
-            mumbai: '0x13881'
-        };
-        
-        const chainId = networks[networkId] || networkId;
-        
-        // Essayer de changer de réseau
-        await window.ethereum.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{ chainId }]
-        });
-        
-        // Mettre à jour l'interface utilisateur si nécessaire
-        // ...
-        
-        return true;
-    } catch (error) {
-        // Si le réseau n'est pas configuré dans MetaMask, proposer de l'ajouter
-        if (error.code === 4902) {
-            try {
-                // Configurations pour les réseaux courants
-                const networkParams = {
-                    polygon: {
-                        chainId: '0x89',
-                        chainName: 'Polygon Mainnet',
-                        nativeCurrency: {
-                            name: 'MATIC',
-                            symbol: 'MATIC',
-                            decimals: 18
-                        },
-                        rpcUrls: ['https://polygon-rpc.com/'],
-                        blockExplorerUrls: ['https://polygonscan.com/']
-                    },
-                    mumbai: {
-                        chainId: '0x13881',
-                        chainName: 'Polygon Mumbai Testnet',
-                        nativeCurrency: {
-                            name: 'MATIC',
-                            symbol: 'MATIC',
-                            decimals: 18
-                        },
-                        rpcUrls: ['https://rpc-mumbai.maticvigil.com/'],
-                        blockExplorerUrls: ['https://mumbai.polygonscan.com/']
-                    }
-                    // Ajouter d'autres réseaux au besoin
-                };
-                
-                // Ajouter le réseau à MetaMask
-                if (networkParams[networkId]) {
-                    await window.ethereum.request({
-                        method: 'wallet_addEthereumChain',
-                        params: [networkParams[networkId]]
-                    });
-                    return true;
-                } else {
-                    showErrorNotification('Réseau non supporté.');
-                    return false;
-                }
-            } catch (addError) {
-                console.error('Erreur lors de l\'ajout du réseau:', addError);
-                showErrorNotification('Erreur lors du changement de réseau: ' + addError.message);
-                return false;
-            }
-        } else {
-            console.error('Erreur lors du changement de réseau:', error);
-            showErrorNotification('Erreur lors du changement de réseau: ' + error.message);
-            return false;
-        }
-    }
-}
-
-// Équivalent de l'écouteur d'événements window.ethereum.on('accountsChanged')
-// pour détecter les changements de compte
-if (checkWeb3Availability()) {
-    window.ethereum.on('accountsChanged', (accounts) => {
-        if (accounts.length === 0) {
-            // L'utilisateur s'est déconnecté
-            userWalletAddress = null;
-            updateWalletInfo();
-            showErrorNotification('Wallet déconnecté.');
-        } else {
-            // L'utilisateur a changé de compte
-            userWalletAddress = accounts[0];
-            updateWalletInfo();
-            
-            // Synchroniser avec le backend si nécessaire
-            if (hasBackendWalletIntegration()) {
-                syncWalletWithBackend(userWalletAddress).then(() => {
-                    showSuccessNotification('Wallet connecté avec succès !');
-                });
-            }
-        }
-    });
-    
-    // Écouter les changements de réseau
-    window.ethereum.on('chainChanged', (chainId) => {
-        // Recharger la page pour s'assurer que tous les états sont mis à jour
-        window.location.reload();
-    });
+    return false; // Désactivé pour l'instant
 }
