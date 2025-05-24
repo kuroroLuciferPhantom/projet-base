@@ -137,7 +137,7 @@ exports.openBooster = async (req, res) => {
       tokenBalance: user.tokenBalance
     });
   } catch (error) {
-    console.error('Erreur lors de l\'ouverture du booster:', error);
+    console.error('Erreur lors de l\\'ouverture du booster:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur serveur'
@@ -221,7 +221,7 @@ exports.buyBooster = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Erreur lors de l\'achat du booster:', error);
+    console.error('Erreur lors de l\\'achat du booster:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur serveur'
@@ -234,10 +234,13 @@ exports.buyAndOpenBooster = async (req, res) => {
   try {
     const userId = req.user.id;
     
+    console.log('🎮 Début achat et ouverture booster pour utilisateur:', userId);
+    
     // Récupérer l'utilisateur
     const user = await User.findById(userId);
     
     if (!user) {
+      console.log('❌ Utilisateur non trouvé:', userId);
       return res.status(404).json({
         success: false,
         message: 'Utilisateur non trouvé'
@@ -245,9 +248,11 @@ exports.buyAndOpenBooster = async (req, res) => {
     }
     
     const price = BOOSTER_CONFIG.purchase.price;
+    console.log(`💰 Prix du booster: ${price}, Solde utilisateur: ${user.tokenBalance}`);
     
     // Vérifier si l'utilisateur a assez de tokens
     if (user.tokenBalance < price) {
+      console.log('❌ Solde insuffisant');
       return res.status(400).json({
         success: false,
         message: `Solde insuffisant. Vous avez ${user.tokenBalance} tokens mais il en faut ${price}`,
@@ -261,11 +266,14 @@ exports.buyAndOpenBooster = async (req, res) => {
     
     // Déterminer la rareté du booster aléatoirement
     const boosterType = getRandomBoosterType();
+    console.log(`🎲 Type de booster déterminé: ${boosterType}`);
     
     // Générer les cartes aléatoires selon la rareté du booster
+    console.log('🃏 Génération des cartes...');
     const cards = await generateRandomCards(BOOSTER_CONFIG.rarityProbabilities[boosterType], BOOSTER_CONFIG.purchase.cardCount);
     
     if (cards.length === 0) {
+      console.log('❌ Aucune carte générée');
       // Rembourser en cas d'erreur
       user.tokenBalance += price;
       await user.save();
@@ -275,6 +283,8 @@ exports.buyAndOpenBooster = async (req, res) => {
         message: 'Erreur lors de la génération des cartes'
       });
     }
+    
+    console.log(`✅ ${cards.length} cartes générées:`, cards.map(c => `${c.name} (${c.rarity})`));
     
     // Créer les cartes du joueur
     const playerCards = [];
@@ -312,6 +322,8 @@ exports.buyAndOpenBooster = async (req, res) => {
     
     await transaction.save();
     
+    console.log('✅ Achat et ouverture réussis !');
+    
     res.status(200).json({
       success: true,
       message: `Booster ${boosterType} acheté et ouvert avec succès !`,
@@ -326,7 +338,8 @@ exports.buyAndOpenBooster = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Erreur lors de l\'achat et ouverture du booster:', error);
+    console.error('💥 Erreur lors de l\\'achat et ouverture du booster:', error);
+    console.error('Stack trace:', error.stack);
     res.status(500).json({
       success: false,
       message: 'Erreur serveur'
@@ -394,7 +407,7 @@ exports.getFirstBooster = async (req, res) => {
       boosters: user.boosters
     });
   } catch (error) {
-    console.error('Erreur lors de l\'attribution du booster de bienvenue:', error);
+    console.error('Erreur lors de l\\'attribution du booster de bienvenue:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur serveur'
@@ -417,13 +430,34 @@ function getRandomBoosterType() {
   return 'common'; // Par défaut
 }
 
-// Fonction pour générer des cartes aléatoires selon les probabilités
+// Fonction pour générer des cartes aléatoires selon les probabilités - VERSION CORRIGÉE
 async function generateRandomCards(probabilities, count = 3) {
   try {
+    console.log('🎯 Génération de cartes avec probabilités:', probabilities);
+    console.log('🔢 Nombre de cartes à générer:', count);
+    
     let cards = [];
+    
+    // Vérifier d'abord qu'il y a des cartes disponibles
+    const totalCards = await GameCard.countDocuments({ isAvailable: true });
+    console.log(`📊 Total de cartes disponibles dans la DB: ${totalCards}`);
+    
+    if (totalCards === 0) {
+      console.log('❌ Aucune carte disponible dans la base de données');
+      return [];
+    }
+    
+    // Vérifier par rareté
+    const rarityCheck = {};
+    for (const rarity of ['common', 'rare', 'epic', 'legendary']) {
+      const count = await GameCard.countDocuments({ rarity, isAvailable: true });
+      rarityCheck[rarity] = count;
+      console.log(`📈 Cartes ${rarity}: ${count}`);
+    }
     
     // Générer les cartes
     for (let i = 0; i < count; i++) {
+      console.log(`🎲 Génération carte ${i + 1}/${count}`);
       const random = Math.random();
       let targetRarity;
       
@@ -438,26 +472,51 @@ async function generateRandomCards(probabilities, count = 3) {
         targetRarity = 'common';
       }
       
+      console.log(`🎯 Rareté ciblée: ${targetRarity} (random: ${random})`);
+      
       // Obtenir toutes les cartes disponibles de cette rareté
       const availableCards = await GameCard.find({ rarity: targetRarity, isAvailable: true });
+      console.log(`📦 Cartes disponibles pour ${targetRarity}: ${availableCards.length}`);
       
       if (availableCards.length > 0) {
         // Choisir une carte aléatoire parmi les disponibles
         const randomIndex = Math.floor(Math.random() * availableCards.length);
-        cards.push(availableCards[randomIndex]);
+        const selectedCard = availableCards[randomIndex];
+        cards.push(selectedCard);
+        console.log(`✅ Carte sélectionnée: ${selectedCard.name} (${selectedCard.rarity})`);
       } else {
-        // Fallback à la rareté commune si aucune carte n'est disponible dans la rareté cible
-        const commonCards = await GameCard.find({ rarity: 'common', isAvailable: true });
-        if (commonCards.length > 0) {
-          const randomIndex = Math.floor(Math.random() * commonCards.length);
-          cards.push(commonCards[randomIndex]);
+        // Fallback vers une rareté qui a des cartes disponibles
+        console.log(`⚠️ Aucune carte ${targetRarity} disponible, fallback...`);
+        
+        // Essayer dans l'ordre: common, rare, epic, legendary
+        const fallbackOrder = ['common', 'rare', 'epic', 'legendary'];
+        let fallbackCard = null;
+        
+        for (const fallbackRarity of fallbackOrder) {
+          if (rarityCheck[fallbackRarity] > 0) {
+            const fallbackCards = await GameCard.find({ rarity: fallbackRarity, isAvailable: true });
+            if (fallbackCards.length > 0) {
+              const randomIndex = Math.floor(Math.random() * fallbackCards.length);
+              fallbackCard = fallbackCards[randomIndex];
+              console.log(`🔄 Fallback réussi: ${fallbackCard.name} (${fallbackCard.rarity})`);
+              break;
+            }
+          }
+        }
+        
+        if (fallbackCard) {
+          cards.push(fallbackCard);
+        } else {
+          console.log('❌ Aucune carte de fallback trouvée');
         }
       }
     }
     
+    console.log(`✅ Génération terminée: ${cards.length} cartes générées`);
     return cards;
   } catch (error) {
-    console.error('Erreur lors de la génération des cartes aléatoires:', error);
+    console.error('💥 Erreur lors de la génération des cartes aléatoires:', error);
+    console.error('Stack trace:', error.stack);
     return [];
   }
 }
