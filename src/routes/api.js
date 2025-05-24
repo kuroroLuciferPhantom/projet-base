@@ -15,6 +15,7 @@ const cacheService = require('../utils/cache');
 // Modèles
 const User = require('../models/User');
 const GameCard = require('../models/GameCard');
+const PlayerCard = require('../models/PlayerCard');
 
 // Contrôleurs
 const cardsController = require('../controllers/cardsController');
@@ -22,6 +23,9 @@ const marketController = require('../controllers/marketController');
 const authController = require('../controllers/authController');
 const boosterController = require('../controllers/boosterController');
 const apiController = require('../controllers/apiController');
+
+// Utilitaires
+const TestCardGenerator = require('../utils/testCardGenerator');
 
 // Import du script d'initialisation
 const { initializeDemoCards, demoCards } = require('../initDatabase');
@@ -192,10 +196,69 @@ router.use('/v1', (() => {
       });
       
     } catch (error) {
-      console.error('❌ Erreur lors de l\'initialisation des cartes:', error);
+      console.error("❌ Erreur lors de l'initialisation des cartes:", error);
       res.status(500).json({
         success: false,
-        message: 'Erreur lors de l\'initialisation des cartes',
+        message: "Erreur lors de l'initialisation des cartes",
+        error: error.message
+      });
+    }
+  });
+
+  // Route pour donner un starter pack à l'utilisateur actuel
+  v1Router.post('/admin/give-starter-pack', isAuthenticatedApi, async (req, res) => {
+    try {
+      console.log(`🎁 Attribution du starter pack à l'utilisateur ${req.user.id}...`);
+      
+      const newCards = await TestCardGenerator.giveStarterPack(req.user.id);
+      const stats = await TestCardGenerator.getUserCardStats(req.user.id);
+      
+      // Vider le cache pour forcer le rafraîchissement
+      cacheService.clear();
+      
+      res.json({
+        success: true,
+        message: `Starter pack attribué avec succès !`,
+        newCards: newCards.length,
+        totalCards: stats.totalCards,
+        rarityStats: stats.rarityStats
+      });
+      
+    } catch (error) {
+      console.error("❌ Erreur lors de l'attribution du starter pack:", error);
+      res.status(500).json({
+        success: false,
+        message: "Erreur lors de l'attribution du starter pack",
+        error: error.message
+      });
+    }
+  });
+
+  // Route pour donner des cartes aléatoires à l'utilisateur actuel
+  v1Router.post('/admin/give-random-cards', isAuthenticatedApi, async (req, res) => {
+    try {
+      const { count = 5 } = req.body;
+      console.log(`🎲 Attribution de ${count} cartes aléatoires à l'utilisateur ${req.user.id}...`);
+      
+      const newCards = await TestCardGenerator.giveRandomCards(req.user.id, count);
+      const stats = await TestCardGenerator.getUserCardStats(req.user.id);
+      
+      // Vider le cache pour forcer le rafraîchissement
+      cacheService.clear();
+      
+      res.json({
+        success: true,
+        message: `${newCards.length} cartes attribuées avec succès !`,
+        newCards: newCards.length,
+        totalCards: stats.totalCards,
+        rarityStats: stats.rarityStats
+      });
+      
+    } catch (error) {
+      console.error("❌ Erreur lors de l'attribution des cartes:", error);
+      res.status(500).json({
+        success: false,
+        message: "Erreur lors de l'attribution des cartes",
         error: error.message
       });
     }
@@ -204,24 +267,51 @@ router.use('/v1', (() => {
   // Route pour vérifier l'état de la base de données
   v1Router.get('/admin/db-status', isAuthenticatedApi, async (req, res) => {
     try {
-      const cardCount = await GameCard.countDocuments();
+      const gameCardCount = await GameCard.countDocuments();
       const userCount = await User.countDocuments();
+      const playerCardCount = await PlayerCard.countDocuments();
       
-      const cardsByRarity = await GameCard.aggregate([
+      // Statistiques des GameCards
+      const gameCardsByRarity = await GameCard.aggregate([
         { $group: { _id: '$rarity', count: { $sum: 1 } } },
+        { $sort: { _id: 1 } }
+      ]);
+      
+      // Statistiques des PlayerCards pour l'utilisateur actuel
+      // Statistiques des PlayerCards pour l'utilisateur actuel
+      const userPlayerCards = await PlayerCard.countDocuments({ owner: req.user.id });
+      const userCardsByRarity = await PlayerCard.aggregate([
+        { $match: { owner: req.user.id } },
+        {
+          $lookup: {
+            from: 'gamecards',
+            localField: 'gameCard',
+            foreignField: '_id',
+            as: 'gameCard'
+          }
+        },
+        { $unwind: '$gameCard' },
+        { $group: { _id: '$gameCard.rarity', count: { $sum: 1 } } },
         { $sort: { _id: 1 } }
       ]);
       
       res.json({
         success: true,
         stats: {
-          cards: cardCount,
+          gameCards: gameCardCount,
+          playerCards: playerCardCount,
           users: userCount,
-          cardsByRarity: cardsByRarity.reduce((acc, item) => {
+          gameCardsByRarity: gameCardsByRarity.reduce((acc, item) => {
             acc[item._id] = item.count;
             return acc;
           }, {}),
-          needsInit: cardCount === 0
+          userCards: userPlayerCards,
+          userCardsByRarity: userCardsByRarity.reduce((acc, item) => {
+            acc[item._id] = item.count;
+            return acc;
+          }, {}),
+          needsGameCardsInit: gameCardCount === 0,
+          userNeedsCards: userPlayerCards === 0
         }
       });
       
