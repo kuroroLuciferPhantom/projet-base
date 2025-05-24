@@ -449,7 +449,7 @@ async function handleDistributeurClick(event) {
             }
         }
     } catch (error) {
-        console.error('Erreur lors de l\\'achat:', error);
+        console.error("Erreur lors de l'achat:", error);
         if (distributeur) distributeur.classList.remove('active');
         if (bouton) {
             bouton.classList.remove('pressed');
