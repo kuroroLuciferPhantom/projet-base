@@ -204,6 +204,24 @@ const apiService = {
         }
     },
     
+    // Acheter et ouvrir un booster automatiquement
+    async buyAndOpenBooster(boosterType) {
+        try {
+            const response = await fetch(`${this.baseUrl}/boosters/buy-and-open`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...this.getAuthHeaders()
+                },
+                body: JSON.stringify({ boosterType })
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('Erreur lors de l\'achat et ouverture du booster:', error);
+            throw error;
+        }
+    },
+    
     // Acheter un booster et créer les NFTs
     async buyBoosterAndMintNFTs(boosterType, walletAddress, transactionHash) {
         try {
