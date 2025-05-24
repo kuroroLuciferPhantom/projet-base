@@ -137,7 +137,7 @@ exports.openBooster = async (req, res) => {
       tokenBalance: user.tokenBalance
     });
   } catch (error) {
-    console.error('Erreur lors de l\\'ouverture du booster:', error);
+    console.error("Erreur lors de l'ouverture du booster:", error);
     res.status(500).json({
       success: false,
       message: 'Erreur serveur'
@@ -221,7 +221,7 @@ exports.buyBooster = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Erreur lors de l\\'achat du booster:', error);
+    console.error("Erreur lors de l'achat du booster:", error);
     res.status(500).json({
       success: false,
       message: 'Erreur serveur'
@@ -338,7 +338,7 @@ exports.buyAndOpenBooster = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('💥 Erreur lors de l\\'achat et ouverture du booster:', error);
+    console.error("💥 Erreur lors de l'achat et ouverture du booster:", error);
     console.error('Stack trace:', error.stack);
     res.status(500).json({
       success: false,
@@ -407,7 +407,7 @@ exports.getFirstBooster = async (req, res) => {
       boosters: user.boosters
     });
   } catch (error) {
-    console.error('Erreur lors de l\\'attribution du booster de bienvenue:', error);
+    console.error("Erreur lors de l'attribution du booster de bienvenue:", error);
     res.status(500).json({
       success: false,
       message: 'Erreur serveur'
