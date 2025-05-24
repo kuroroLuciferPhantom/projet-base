@@ -95,11 +95,11 @@
         <!-- Distributeur Automatique (optionnel) -->
         <div class="distributeur-container">
             <h2 class="distributeur-title">Distributeur Automatique</h2>
-            <p class="distributeur-description">Appuyez sur le bouton pour obtenir un booster mystère !</p>
+            <p class="distributeur-description">Appuyez sur le bouton pour obtenir un booster aléatoire !</p>
             <div class="distributeur">
                 <!-- Booster qui tourne en permanence -->
                 <div class="rotating-booster">
-                    <img src="/img/booster/booster-commun.png" alt="Booster">
+                    <img src="/img/booster/booster-commun.png" alt="Booster commun">
                 </div>
                 
                 <div class="bouton" id="distributeur-bouton">
@@ -114,56 +114,36 @@
             </div>
         </div>
 
-        <!-- Section d'information sur les cartes -->
-        <div class="cards-info-section">
-            <h2>Types de Cartes par Booster</h2>
-            <div class="booster-types-grid">
-                <div class="booster-type-card common">
-                    <div class="type-header">
-                        <img src="/img/booster/booster-commun.png" alt="Booster Commun">
-                        <h3>Booster Commun</h3>
-                    </div>
-                    <div class="type-chances">
-                        <div class="chance-bar">
-                            <span class="rarity-chance common">80% Commune</span>
-                            <span class="rarity-chance rare">15% Rare</span>
-                            <span class="rarity-chance epic">4% Épique</span>
-                            <span class="rarity-chance legendary">1% Légendaire</span>
+        <!-- Machine à sous style casino -->
+        <div class="slot-machine-container">
+            <h2 class="slot-machine-title">Machine à Chance</h2>
+            <p class="slot-machine-description">Tentez votre chance une fois par jour gratuitement ou pour 100 $EFC !</p>
+            
+            <div class="daily-free-play">
+                <span class="daily-free-text">Essai gratuit disponible</span>
+                <div class="countdown-timer" id="free-play-timer">23:59:59</div>
+            </div>
+            
+            <div class="slot-machine">
+                <!-- Image de la machine avec l'écran au centre -->
+                <div class="slot-machine-image">
+                    <div class="slot-window">
+                        <div class="slot-items" id="slot-reel">
+                            <!-- Les éléments seront générés dynamiquement en JS -->
                         </div>
                     </div>
                 </div>
                 
-                <div class="booster-type-card rare">
-                    <div class="type-header">
-                        <img src="/img/booster/booster-rare.png" alt="Booster Rare">
-                        <h3>Booster Rare</h3>
-                    </div>
-                    <div class="type-chances">
-                        <div class="chance-bar">
-                            <span class="rarity-chance common">55% Commune</span>
-                            <span class="rarity-chance rare">35% Rare</span>
-                            <span class="rarity-chance epic">8% Épique</span>
-                            <span class="rarity-chance legendary">2% Légendaire</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="booster-type-card epic">
-                    <div class="type-header">
-                        <img src="/img/booster/booster-epic.png" alt="Booster Épique">
-                        <h3>Booster Épique</h3>
-                    </div>
-                    <div class="type-chances">
-                        <div class="chance-bar">
-                            <span class="rarity-chance common">30% Commune</span>
-                            <span class="rarity-chance rare">45% Rare</span>
-                            <span class="rarity-chance epic">20% Épique</span>
-                            <span class="rarity-chance legendary">5% Légendaire</span>
-                        </div>
-                    </div>
+                <div class="slot-button-container">
+                    <button class="slot-button" id="play-slot-button">
+                        <i class="fas fa-play"></i>
+                        <span class="slot-button-text">JOUER</span>
+                        <span class="slot-price">GRATUIT</span>
+                    </button>
                 </div>
             </div>
         </div>
+
 
         <div class="shop-info-cards">
             <div class="info-card">
@@ -184,6 +164,8 @@
         </div>
     </div>
 </div>
+
+
 
 <!-- Notification pour l'achat de booster -->
 <div id="purchase-notification" class="purchase-notification">
@@ -219,8 +201,8 @@
                 <img src="/img/illustrations/broke.png" alt="Portefeuille vide" onerror="this.src='/img/gift.svg';">
             </div>
             <div class="broke-message">
-                <p>Oups ! Votre portefeuille est vide !</p>
-                <p>Vous avez besoin de <span class="required-amount">100</span> <span class="balance-currency">$EFC</span> pour acheter un booster.</p>
+                <p>Oups ! Votre portefeuille est aussi vide que votre chance aujourd'hui !</p>
+                <p>Vous avez besoin d'au moins <span class="required-amount">100</span> <span class="balance-currency">$EFC</span> pour obtenir un booster aléatoire.</p>
             </div>
             <div class="how-to-earn">
                 <h4>Comment gagner plus de tokens ?</h4>
@@ -235,6 +217,29 @@
         <div class="modal-footer">
             <button class="btn btn-secondary" id="broke-close-btn">Je reviendrai plus riche</button>
             <button class="btn btn-primary" id="buy-tokens-btn">Acheter des tokens</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal pour les résultats de la machine à sous -->
+<div id="slot-result-modal" class="modal">
+    <div class="modal-content slot-result-modal">
+        <div class="modal-header" id="slot-result-header">
+            <h3 id="slot-result-title">Résultat</h3>
+            <span class="close-modal">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="result-image-container">
+                <img id="slot-result-image" src="" alt="Résultat">
+            </div>
+            <div class="result-message">
+                <p id="slot-result-message">Félicitations !</p>
+                <p id="slot-result-details">Vous avez gagné un booster commun.</p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" id="slot-result-close-btn">Fermer</button>
+            <button class="btn btn-primary" id="slot-play-again-btn">Rejouer (100 $EFC)</button>
         </div>
     </div>
 </div>
@@ -454,102 +459,6 @@
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
-}
-
-/* Distributeur */
-.distributeur-container {
-    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-    border-radius: 20px;
-    padding: 40px;
-    text-align: center;
-    color: white;
-    margin-bottom: 50px;
-}
-
-.distributeur-title {
-    font-size: 2em;
-    margin-bottom: 10px;
-}
-
-.distributeur-description {
-    margin-bottom: 30px;
-    opacity: 0.9;
-}
-
-.distributeur {
-    position: relative;
-    display: inline-block;
-    background: #34495e;
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
-
-.rotating-booster {
-    margin-bottom: 20px;
-}
-
-.rotating-booster img {
-    width: 80px;
-    height: 80px;
-    animation: rotate 3s linear infinite;
-}
-
-@keyframes rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-.bouton {
-    background: linear-gradient(135deg, #e74c3c, #c0392b);
-    color: white;
-    padding: 15px 30px;
-    border-radius: 50px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: all 0.3s ease;
-    margin-bottom: 20px;
-}
-
-.bouton:hover {
-    background: linear-gradient(135deg, #c0392b, #a93226);
-    transform: scale(1.05);
-}
-
-.bouton.disabled {
-    background: #7f8c8d;
-    cursor: not-allowed;
-    transform: none;
-}
-
-.fente {
-    width: 100px;
-    height: 10px;
-    background: #2c3e50;
-    border-radius: 5px;
-    margin: 0 auto;
-    position: relative;
-    overflow: hidden;
-}
-
-.fente-light {
-    width: 0;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, #f39c12, transparent);
-    transition: width 0.5s ease;
-}
-
-.fente-light.active {
-    width: 100%;
-}
-
-.booster-animating {
-    position: absolute;
-    bottom: -50px;
-    left: 50%;
-    transform: translateX(-50%);
-    opacity: 0;
-    transition: all 0.5s ease;
 }
 
 .booster-animating.active {
@@ -907,5 +816,293 @@
     .booster-types-grid {
         grid-template-columns: 1fr;
     }
+}
+
+.nft-feature {
+    border: 2px solid #8e44ad;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 30px;
+    background: linear-gradient(135deg, rgba(142, 68, 173, 0.1) 0%, rgba(41, 128, 185, 0.1) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.nft-feature::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(to right, #8e44ad, #3498db, #2ecc71);
+    z-index: 1;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.nft-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #8e44ad;
+    color: white;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.nft-badge i {
+    margin-right: 5px;
+}
+
+.nft-boosters {
+    margin-bottom: 20px;
+}
+
+.booster-card.nft {
+    border: 2px solid;
+    position: relative;
+    overflow: hidden;
+}
+
+.booster-card.nft.common {
+    border-color: #3498db;
+}
+
+.booster-card.nft.rare {
+    border-color: #27ae60;
+}
+
+.booster-card.nft.epic {
+    border-color: #8e44ad;
+}
+
+.booster-card.nft .booster-image {
+    position: relative;
+}
+
+.nft-overlay {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.booster-price.blockchain {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.price-info {
+    font-size: 0.8rem;
+    color: #8e44ad;
+    margin-top: 5px;
+}
+
+.btn-buy-booster-nft {
+    background-color: #8e44ad;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+}
+
+.btn-buy-booster-nft:hover {
+    background-color: #9b59b6;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(142, 68, 173, 0.4);
+}
+
+.nft-advantages {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.nft-advantages h3 {
+    color: #8e44ad;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.nft-advantages ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.nft-advantages li {
+    width: 48%;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nft-advantages li i {
+    color: #2ecc71;
+}
+
+.loading-notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px 30px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.loading-notification.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.loading-spinner {
+    border: 5px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 5px solid #3498db;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-message {
+    font-size: 1.1rem;
+}
+
+.nft-feature.disabled {
+    opacity: 0.7;
+    position: relative;
+}
+
+.nft-feature.disabled::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 10;
+}
+
+.disabled-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    max-width: 80%;
+    text-align: center;
+    z-index: 11;
+}
+
+.blockchain-tooltip {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    z-index: 2;
+}
+
+/* Style pour les cartes NFT dans la collection */
+.card-item.nft-card {
+    border: 2px solid #8e44ad;
+    box-shadow: 0 0 10px rgba(142, 68, 173, 0.4);
+    position: relative;
+}
+
+.card-item .nft-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 0.7rem;
+    padding: 3px 7px;
+    z-index: 2;
+}
+
+/* Animation pour les cartes légendaires NFT */
+.card-item.legendary.nft-card {
+    animation: legendaryGlow 2s infinite alternate;
+}
+
+@keyframes legendaryGlow {
+    0% {
+        box-shadow: 0 0 10px rgba(230, 126, 34, 0.5);
+    }
+    100% {
+        box-shadow: 0 0 20px rgba(230, 126, 34, 0.8), 0 0 30px rgba(142, 68, 173, 0.4);
+    }
+}
+
+/* Section NFT dans les détails de carte */
+.card-nft-info {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: rgba(142, 68, 173, 0.1);
+    border-radius: 10px;
+    border-left: 3px solid #8e44ad;
+}
+
+.card-nft-info h3 {
+    margin-top: 0;
+    color: #8e44ad;
+}
+
+.nft-details {
+    font-size: 0.9rem;
+}
+
+.view-on-etherscan {
+    display: inline-block;
+    margin-top: 10px;
+    color: #3498db;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.view-on-etherscan:hover {
+    text-decoration: underline;
 }
 </style>
