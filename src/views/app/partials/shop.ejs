@@ -1,7 +1,7 @@
 <div class="shop-container">
     <div class="shop-header">
         <h1>Boutique de Boosters</h1>
-        <p class="shop-subtitle">Acquérez de nouveaux boosters pour enrichir votre collection de cartes !</p>
+        <p class="shop-subtitle">Achetez des boosters pour 100 $EFC et obtenez 3 cartes d'une rareté aléatoire !</p>
         <div class="user-balance">
             <i class="fas fa-coins balance-icon"></i>
             <span class="balance-amount">1000</span>
@@ -11,87 +11,80 @@
 
     <div class="shop-content">
         
-        <!-- Section des boosters standards -->
-        <div class="boosters-section">
-            <div class="section-header">
-                <h2 class="section-title">Boosters Standards</h2>
-            </div>
-            <p class="section-description">Achetez des boosters avec vos tokens $EFC. Chaque booster contient 3 cartes !</p>
-            
-            <div class="boosters-grid">
-                <!-- Booster Commun -->
-                <div class="booster-card common">
-                    <div class="booster-image">
-                        <img src="/img/booster/booster-commun.png" alt="Booster Commun">
-                    </div>
-                    <div class="booster-info">
-                        <h3>Booster Commun</h3>
-                        <div class="booster-rarity">
-                            <span class="rarity-label">Contenu (3 cartes):</span>
-                            <span class="rarity-chance common">80% Commune</span>
-                            <span class="rarity-chance rare">15% Rare</span>
-                            <span class="rarity-chance epic">4% Épique</span>
-                            <span class="rarity-chance legendary">1% Légendaire</span>
-                        </div>
-                        <div class="booster-price">
-                            <span class="price-amount">100</span>
-                            <span class="price-currency">$EFC</span>
-                        </div>
-                        <div class="booster-actions">
-                            <button class="btn btn-buy-booster" data-booster-type="common" data-booster-price="100" data-original-text="<i class='fas fa-shopping-cart'></i> Acheter">
-                                <i class="fas fa-shopping-cart"></i> Acheter
-                            </button>
-                        </div>
+        <!-- Section d'achat de booster unique -->
+        <div class="main-purchase-section">
+            <div class="booster-purchase-card">
+                <div class="purchase-header">
+                    <h2>Achat de Booster</h2>
+                    <div class="price-display">
+                        <span class="price-amount">100</span>
+                        <span class="price-currency">$EFC</span>
                     </div>
                 </div>
                 
-                <!-- Booster Rare -->
-                <div class="booster-card rare">
-                    <div class="booster-image">
-                        <img src="/img/booster/booster-rare.png" alt="Booster Rare">
-                    </div>
-                    <div class="booster-info">
-                        <h3>Booster Rare</h3>
-                        <div class="booster-rarity">
-                            <span class="rarity-label">Contenu (3 cartes):</span>
-                            <span class="rarity-chance common">55% Commune</span>
-                            <span class="rarity-chance rare">35% Rare</span>
-                            <span class="rarity-chance epic">8% Épique</span>
-                            <span class="rarity-chance legendary">2% Légendaire</span>
-                        </div>
-                        <div class="booster-price">
-                            <span class="price-amount">300</span>
-                            <span class="price-currency">$EFC</span>
-                        </div>
-                        <div class="booster-actions">
-                            <button class="btn btn-buy-booster" data-booster-type="rare" data-booster-price="300" data-original-text="<i class='fas fa-shopping-cart'></i> Acheter">
-                                <i class="fas fa-shopping-cart"></i> Acheter
-                            </button>
+                <div class="purchase-content">
+                    <div class="booster-preview">
+                        <div class="mystery-booster">
+                            <img src="/img/booster/mystery-booster.png" alt="Booster Mystère" onerror="this.src='/img/booster/booster-commun.png';">
+                            <div class="mystery-overlay">
+                                <i class="fas fa-question-circle"></i>
+                                <span>Booster Mystère</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <!-- Booster Épique -->
-                <div class="booster-card epic">
-                    <div class="booster-image">
-                        <img src="/img/booster/booster-epic.png" alt="Booster Épique">
-                    </div>
-                    <div class="booster-info">
-                        <h3>Booster Épique</h3>
-                        <div class="booster-rarity">
-                            <span class="rarity-label">Contenu (3 cartes):</span>
-                            <span class="rarity-chance common">30% Commune</span>
-                            <span class="rarity-chance rare">45% Rare</span>
-                            <span class="rarity-chance epic">20% Épique</span>
-                            <span class="rarity-chance legendary">5% Légendaire</span>
+                    
+                    <div class="purchase-info">
+                        <h3>Contenu Garanti</h3>
+                        <div class="guaranteed-content">
+                            <div class="content-item">
+                                <i class="fas fa-layer-group"></i>
+                                <span><strong>3 cartes</strong> par booster</span>
+                            </div>
+                            <div class="content-item">
+                                <i class="fas fa-dice"></i>
+                                <span>Rareté du booster <strong>aléatoire</strong></span>
+                            </div>
                         </div>
-                        <div class="booster-price">
-                            <span class="price-amount">600</span>
-                            <span class="price-currency">$EFC</span>
+                        
+                        <div class="rarity-chances">
+                            <h4>Chances d'obtenir :</h4>
+                            <div class="chance-grid">
+                                <div class="chance-item common">
+                                    <div class="chance-icon">
+                                        <img src="/img/booster/booster-commun.png" alt="Commun">
+                                    </div>
+                                    <div class="chance-info">
+                                        <span class="chance-type">Booster Commun</span>
+                                        <span class="chance-percent">82%</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="chance-item rare">
+                                    <div class="chance-icon">
+                                        <img src="/img/booster/booster-rare.png" alt="Rare">
+                                    </div>
+                                    <div class="chance-info">
+                                        <span class="chance-type">Booster Rare</span>
+                                        <span class="chance-percent">14%</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="chance-item epic">
+                                    <div class="chance-icon">
+                                        <img src="/img/booster/booster-epic.png" alt="Épique">
+                                    </div>
+                                    <div class="chance-info">
+                                        <span class="chance-type">Booster Épique</span>
+                                        <span class="chance-percent">4%</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="booster-actions">
-                            <button class="btn btn-buy-booster" data-booster-type="epic" data-booster-price="600" data-original-text="<i class='fas fa-shopping-cart'></i> Acheter">
-                                <i class="fas fa-shopping-cart"></i> Acheter
+                        
+                        <div class="purchase-actions">
+                            <button class="btn btn-buy-booster-main" data-booster-price="100">
+                                <i class="fas fa-shopping-cart"></i> 
+                                Acheter un Booster (100 $EFC)
                             </button>
                         </div>
                     </div>
@@ -99,10 +92,10 @@
             </div>
         </div>
             
-        <!-- Distributeur Automatique -->
+        <!-- Distributeur Automatique (optionnel) -->
         <div class="distributeur-container">
             <h2 class="distributeur-title">Distributeur Automatique</h2>
-            <p class="distributeur-description">Appuyez sur le bouton pour obtenir un booster aléatoire !</p>
+            <p class="distributeur-description">Appuyez sur le bouton pour obtenir un booster mystère !</p>
             <div class="distributeur">
                 <!-- Booster qui tourne en permanence -->
                 <div class="rotating-booster">
@@ -110,7 +103,7 @@
                 </div>
                 
                 <div class="bouton" id="distributeur-bouton">
-                    <span class="bouton-price">700 $EFC</span>
+                    <span class="bouton-price">100 $EFC</span>
                 </div>
                 <div class="fente" id="distributeur-fente">
                     <div class="fente-light"></div>
@@ -121,16 +114,54 @@
             </div>
         </div>
 
-        <!-- Section des NFT Boosters (pour plus tard) -->
-        <div class="boosters-section nft-feature" style="display: none;">
-            <div class="section-header">
-                <h2 class="section-title">Boosters NFT</h2>
-                <span class="nft-badge"><i class="fas fa-certificate"></i> NFT</span>
-            </div>
-            <p class="section-description">Achetez des boosters avec vos tokens sur la blockchain et recevez directement des cartes NFT</p>
-            
-            <div class="boosters-grid nft-boosters">
-                <!-- Les boosters NFT seront ajoutés ici plus tard -->
+        <!-- Section d'information sur les cartes -->
+        <div class="cards-info-section">
+            <h2>Types de Cartes par Booster</h2>
+            <div class="booster-types-grid">
+                <div class="booster-type-card common">
+                    <div class="type-header">
+                        <img src="/img/booster/booster-commun.png" alt="Booster Commun">
+                        <h3>Booster Commun</h3>
+                    </div>
+                    <div class="type-chances">
+                        <div class="chance-bar">
+                            <span class="rarity-chance common">80% Commune</span>
+                            <span class="rarity-chance rare">15% Rare</span>
+                            <span class="rarity-chance epic">4% Épique</span>
+                            <span class="rarity-chance legendary">1% Légendaire</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="booster-type-card rare">
+                    <div class="type-header">
+                        <img src="/img/booster/booster-rare.png" alt="Booster Rare">
+                        <h3>Booster Rare</h3>
+                    </div>
+                    <div class="type-chances">
+                        <div class="chance-bar">
+                            <span class="rarity-chance common">55% Commune</span>
+                            <span class="rarity-chance rare">35% Rare</span>
+                            <span class="rarity-chance epic">8% Épique</span>
+                            <span class="rarity-chance legendary">2% Légendaire</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="booster-type-card epic">
+                    <div class="type-header">
+                        <img src="/img/booster/booster-epic.png" alt="Booster Épique">
+                        <h3>Booster Épique</h3>
+                    </div>
+                    <div class="type-chances">
+                        <div class="chance-bar">
+                            <span class="rarity-chance common">30% Commune</span>
+                            <span class="rarity-chance rare">45% Rare</span>
+                            <span class="rarity-chance epic">20% Épique</span>
+                            <span class="rarity-chance legendary">5% Légendaire</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -138,7 +169,7 @@
             <div class="info-card">
                 <i class="fas fa-question-circle"></i>
                 <h3>Comment ça marche</h3>
-                <p>Achetez des boosters avec vos tokens $EFC et ouvrez-les pour obtenir 3 cartes de différentes raretés.</p>
+                <p>Payez 100 $EFC et obtenez un booster aléatoire contenant 3 cartes. La rareté du booster détermine les chances d'obtenir des cartes rares !</p>
             </div>
             <div class="info-card">
                 <i class="fas fa-money-bill-wave"></i>
@@ -188,8 +219,8 @@
                 <img src="/img/illustrations/broke.png" alt="Portefeuille vide" onerror="this.src='/img/gift.svg';">
             </div>
             <div class="broke-message">
-                <p>Oups ! Votre portefeuille est aussi vide que votre chance aujourd'hui !</p>
-                <p>Vous avez besoin d'au moins <span class="required-amount">700</span> <span class="balance-currency">$EFC</span> pour obtenir un booster aléatoire.</p>
+                <p>Oups ! Votre portefeuille est vide !</p>
+                <p>Vous avez besoin de <span class="required-amount">100</span> <span class="balance-currency">$EFC</span> pour acheter un booster.</p>
             </div>
             <div class="how-to-earn">
                 <h4>Comment gagner plus de tokens ?</h4>
@@ -229,6 +260,7 @@
 .shop-subtitle {
     color: #7f8c8d;
     margin-bottom: 20px;
+    font-size: 1.1em;
 }
 
 .user-balance {
@@ -249,147 +281,176 @@
     color: #f39c12;
 }
 
-.boosters-section {
+/* Section d'achat principale */
+.main-purchase-section {
     margin-bottom: 50px;
 }
 
-.section-header {
+.booster-purchase-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    padding: 30px;
+    color: white;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.purchase-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 30px;
 }
 
-.section-title {
-    color: #2c3e50;
+.purchase-header h2 {
     margin: 0;
+    font-size: 2em;
 }
 
-.section-description {
-    color: #7f8c8d;
-    margin-bottom: 30px;
-    text-align: center;
+.price-display {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 15px 25px;
+    border-radius: 25px;
+    font-size: 1.5em;
+    font-weight: bold;
 }
 
-.boosters-grid {
+.purchase-content {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
+    grid-template-columns: 1fr 2fr;
+    gap: 40px;
+    align-items: center;
+}
+
+.booster-preview {
+    text-align: center;
+}
+
+.mystery-booster {
+    position: relative;
+    display: inline-block;
+}
+
+.mystery-booster img {
+    width: 200px;
+    height: 200px;
+    border-radius: 15px;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+}
+
+.mystery-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+}
+
+.mystery-overlay i {
+    font-size: 3em;
+    margin-bottom: 10px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+.purchase-info h3 {
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+.guaranteed-content {
     margin-bottom: 30px;
 }
 
-.booster-card {
-    background: white;
-    border-radius: 15px;
-    padding: 25px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    border: 3px solid transparent;
+.content-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 10px;
+    font-size: 1.1em;
 }
 
-.booster-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+.content-item i {
+    font-size: 1.5em;
+    color: #f39c12;
 }
 
-.booster-card.common {
-    border-color: #95a5a6;
+.rarity-chances h4 {
+    margin-bottom: 15px;
+    color: #ecf0f1;
 }
 
-.booster-card.rare {
-    border-color: #3498db;
+.chance-grid {
+    display: grid;
+    gap: 15px;
+    margin-bottom: 30px;
 }
 
-.booster-card.epic {
-    border-color: #9b59b6;
-}
-
-.booster-image {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.booster-image img {
-    width: 120px;
-    height: 120px;
-    object-fit: cover;
+.chance-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 12px;
     border-radius: 10px;
 }
 
-.booster-info h3 {
-    text-align: center;
-    color: #2c3e50;
-    margin-bottom: 15px;
-    font-size: 1.3em;
+.chance-icon img {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
 }
 
-.booster-rarity {
-    margin-bottom: 20px;
+.chance-info {
+    display: flex;
+    flex-direction: column;
 }
 
-.rarity-label {
-    display: block;
+.chance-type {
     font-weight: bold;
-    margin-bottom: 10px;
-    color: #34495e;
+    margin-bottom: 3px;
 }
 
-.rarity-chance {
-    display: inline-block;
-    padding: 3px 8px;
-    border-radius: 12px;
-    font-size: 0.8em;
+.chance-percent {
+    opacity: 0.8;
+    font-size: 1.1em;
     font-weight: bold;
-    margin: 2px;
-    color: white;
 }
 
-.rarity-chance.common { background-color: #95a5a6; }
-.rarity-chance.rare { background-color: #3498db; }
-.rarity-chance.epic { background-color: #9b59b6; }
-.rarity-chance.legendary { background-color: #f39c12; }
-
-.booster-price {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.price-amount {
-    font-size: 2em;
-    font-weight: bold;
-    color: #2c3e50;
-}
-
-.price-currency {
-    font-size: 1.2em;
-    color: #7f8c8d;
-    margin-left: 5px;
-}
-
-.booster-actions {
-    text-align: center;
-}
-
-.btn-buy-booster {
+.btn-buy-booster-main {
     background: linear-gradient(135deg, #e74c3c, #c0392b);
     color: white;
     border: none;
-    padding: 12px 25px;
-    border-radius: 25px;
+    padding: 18px 35px;
+    border-radius: 50px;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-size: 1em;
-}
-
-.btn-buy-booster:hover:not(:disabled) {
-    background: linear-gradient(135deg, #c0392b, #a93226);
-    transform: translateY(-2px);
+    font-size: 1.2em;
+    width: 100%;
     box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
 }
 
-.btn-buy-booster:disabled {
-    background: #bdc3c7;
+.btn-buy-booster-main:hover:not(:disabled) {
+    background: linear-gradient(135deg, #c0392b, #a93226);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(231, 76, 60, 0.6);
+}
+
+.btn-buy-booster-main:disabled {
+    background: #7f8c8d;
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
@@ -397,7 +458,7 @@
 
 /* Distributeur */
 .distributeur-container {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
     border-radius: 20px;
     padding: 40px;
     text-align: center;
@@ -500,6 +561,86 @@
     width: 60px;
     height: 60px;
 }
+
+/* Section d'information sur les cartes */
+.cards-info-section {
+    margin-bottom: 50px;
+}
+
+.cards-info-section h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+}
+
+.booster-types-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+.booster-type-card {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border: 3px solid;
+    transition: transform 0.3s ease;
+}
+
+.booster-type-card:hover {
+    transform: translateY(-5px);
+}
+
+.booster-type-card.common {
+    border-color: #95a5a6;
+}
+
+.booster-type-card.rare {
+    border-color: #3498db;
+}
+
+.booster-type-card.epic {
+    border-color: #9b59b6;
+}
+
+.type-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.type-header img {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+}
+
+.type-header h3 {
+    color: #2c3e50;
+    margin: 0;
+}
+
+.chance-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.rarity-chance {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.85em;
+    font-weight: bold;
+    color: white;
+}
+
+.rarity-chance.common { background-color: #95a5a6; }
+.rarity-chance.rare { background-color: #3498db; }
+.rarity-chance.epic { background-color: #9b59b6; }
+.rarity-chance.legendary { background-color: #f39c12; }
 
 /* Info cards */
 .shop-info-cards {
@@ -735,9 +876,20 @@
         padding: 10px;
     }
     
-    .boosters-grid {
+    .purchase-content {
         grid-template-columns: 1fr;
         gap: 20px;
+    }
+    
+    .purchase-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .mystery-booster img {
+        width: 150px;
+        height: 150px;
     }
     
     .shop-info-cards {
@@ -750,6 +902,10 @@
     
     .user-balance {
         font-size: 1em;
+    }
+    
+    .booster-types-grid {
+        grid-template-columns: 1fr;
     }
 }
 </style>
