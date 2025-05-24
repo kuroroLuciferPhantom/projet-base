@@ -1,115 +1,87 @@
 <div class="shop-container">
     <div class="shop-header">
-        <h1>Boutique de Boosters</h1>
-        <p class="shop-subtitle">Achetez des boosters pour 100 $EFC et obtenez 3 cartes d'une rareté aléatoire !</p>
-        <div class="user-balance">
-            <i class="fas fa-coins balance-icon"></i>
-            <span class="balance-amount">1000</span>
-            <span class="balance-currency">$EFC</span>
-        </div>
+        <h1 class="distributeur-title">Distributeur Automatique</h2>
+        <p class="distributeur-description">Appuyez sur le bouton pour obtenir un booster aléatoire !</p>
     </div>
 
     <div class="shop-content">
         
-        <!-- Section d'achat de booster unique -->
-        <div class="main-purchase-section">
-            <div class="booster-purchase-card">
-                <div class="purchase-header">
-                    <h2>Achat de Booster</h2>
-                    <div class="price-display">
-                        <span class="price-amount">100</span>
-                        <span class="price-currency">$EFC</span>
-                    </div>
-                </div>
+        
+        <!-- Distributeur Automatique -->
+        <div class="purchase-content">
+            <div class="distributeur-container">
                 
-                <div class="purchase-content">
-                    <div class="booster-preview">
-                        <div class="mystery-booster">
-                            <img src="/img/booster/mystery-booster.png" alt="Booster Mystère" onerror="this.src='/img/booster/booster-commun.png';">
-                            <div class="mystery-overlay">
-                                <i class="fas fa-question-circle"></i>
-                                <span>Booster Mystère</span>
-                            </div>
-                        </div>
+                <div class="distributeur">
+                    <!-- Booster qui tourne en permanence -->
+                    <div class="rotating-booster">
+                        <img src="/img/booster/booster-commun.png" alt="Booster commun">
                     </div>
                     
-                    <div class="purchase-info">
-                        <h3>Contenu Garanti</h3>
-                        <div class="guaranteed-content">
-                            <div class="content-item">
-                                <i class="fas fa-layer-group"></i>
-                                <span><strong>3 cartes</strong> par booster</span>
-                            </div>
-                            <div class="content-item">
-                                <i class="fas fa-dice"></i>
-                                <span>Rareté du booster <strong>aléatoire</strong></span>
-                            </div>
-                        </div>
-                        
-                        <div class="rarity-chances">
-                            <h4>Chances d'obtenir :</h4>
-                            <div class="chance-grid">
-                                <div class="chance-item common">
-                                    <div class="chance-icon">
-                                        <img src="/img/booster/booster-commun.png" alt="Commun">
-                                    </div>
-                                    <div class="chance-info">
-                                        <span class="chance-type">Booster Commun</span>
-                                        <span class="chance-percent">82%</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="chance-item rare">
-                                    <div class="chance-icon">
-                                        <img src="/img/booster/booster-rare.png" alt="Rare">
-                                    </div>
-                                    <div class="chance-info">
-                                        <span class="chance-type">Booster Rare</span>
-                                        <span class="chance-percent">14%</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="chance-item epic">
-                                    <div class="chance-icon">
-                                        <img src="/img/booster/booster-epic.png" alt="Épique">
-                                    </div>
-                                    <div class="chance-info">
-                                        <span class="chance-type">Booster Épique</span>
-                                        <span class="chance-percent">4%</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="purchase-actions">
-                            <button class="btn btn-buy-booster-main" data-booster-price="100">
-                                <i class="fas fa-shopping-cart"></i> 
-                                Acheter un Booster (100 $EFC)
-                            </button>
-                        </div>
+                    <div class="bouton" id="distributeur-bouton">
+                        <span class="bouton-price">100 $EFC</span>
+                    </div>
+                    <div class="fente" id="distributeur-fente">
+                        <div class="fente-light"></div>
+                    </div>
+                    <div class="booster-animating" id="booster-animation-container">
+                        <!-- Le booster animé apparaîtra ici -->
                     </div>
                 </div>
             </div>
-        </div>
-            
-        <!-- Distributeur Automatique (optionnel) -->
-        <div class="distributeur-container">
-            <h2 class="distributeur-title">Distributeur Automatique</h2>
-            <p class="distributeur-description">Appuyez sur le bouton pour obtenir un booster aléatoire !</p>
-            <div class="distributeur">
-                <!-- Booster qui tourne en permanence -->
-                <div class="rotating-booster">
-                    <img src="/img/booster/booster-commun.png" alt="Booster commun">
-                </div>
-                
-                <div class="bouton" id="distributeur-bouton">
-                    <span class="bouton-price">100 $EFC</span>
-                </div>
-                <div class="fente" id="distributeur-fente">
-                    <div class="fente-light"></div>
-                </div>
-                <div class="booster-animating" id="booster-animation-container">
-                    <!-- Le booster animé apparaîtra ici -->
+            <div class="purchase-info booster-purchase-card">
+                <div class="purchase-header">
+                        <h2></h2>
+                        <div class="price-display">
+                            <span class="price-amount">100</span>
+                            <span class="price-currency">$EFC</span>
+                        </div>
+                    </div>
+                    <h3>Contenu</h3>
+                    <div class="guaranteed-content">
+                        <div class="content-item">
+                            <i class="fas fa-layer-group"></i>
+                            <span><strong>3 cartes</strong> par booster</span>
+                        </div>
+                        <div class="content-item">
+                            <i class="fas fa-dice"></i>
+                            <span>Rareté du booster <strong>aléatoire</strong></span>
+                        </div>
+                    </div>
+                    
+                    <div class="rarity-chances">
+                        <h4>Chances d'obtenir :</h4>
+                        <div class="chance-grid">
+                            <div class="chance-item common">
+                                <div class="chance-icon">
+                                    <img src="/img/booster/booster-commun.png" alt="Commun">
+                                </div>
+                                <div class="chance-info">
+                                    <span class="chance-type">Booster Commun</span>
+                                    <span class="chance-percent">82%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="chance-item rare">
+                                <div class="chance-icon">
+                                    <img src="/img/booster/booster-rare.png" alt="Rare">
+                                </div>
+                                <div class="chance-info">
+                                    <span class="chance-type">Booster Rare</span>
+                                    <span class="chance-percent">14%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="chance-item epic">
+                                <div class="chance-icon">
+                                    <img src="/img/booster/booster-epic.png" alt="Épique">
+                                </div>
+                                <div class="chance-info">
+                                    <span class="chance-type">Booster Épique</span>
+                                    <span class="chance-percent">4%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>  
                 </div>
             </div>
         </div>
@@ -141,25 +113,6 @@
                         <span class="slot-price">GRATUIT</span>
                     </button>
                 </div>
-            </div>
-        </div>
-
-
-        <div class="shop-info-cards">
-            <div class="info-card">
-                <i class="fas fa-question-circle"></i>
-                <h3>Comment ça marche</h3>
-                <p>Payez 100 $EFC et obtenez un booster aléatoire contenant 3 cartes. La rareté du booster détermine les chances d'obtenir des cartes rares !</p>
-            </div>
-            <div class="info-card">
-                <i class="fas fa-money-bill-wave"></i>
-                <h3>Obtenir des tokens</h3>
-                <p>Gagnez des tokens en participant à des duels, en complétant des quêtes ou en achetant des packs.</p>
-            </div>
-            <div class="info-card">
-                <i class="fas fa-gifts"></i>
-                <h3>Récompenses</h3>
-                <p>Revenez chaque jour pour obtenir un booster gratuit et des récompenses quotidiennes.</p>
             </div>
         </div>
     </div>

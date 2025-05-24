@@ -1,3 +1,17 @@
+let userCards = [];
+let filteredCards = [];
+let currentPage = 1;
+const cardsPerPage = 16; // 4 lignes de 4 cartes (avec le responsive, ça s'ajustera automatiquement)
+let currentFilters = {
+    rarity: 'all',
+    energy: 'all',
+    tournament: 'all'
+};
+let currentSort = {
+    by: 'name',
+    order: 'asc'
+};
+
 /**
  * Charge la collection complète de l'utilisateur (statistiques + cartes)
  */
