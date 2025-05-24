@@ -1,3 +1,4 @@
+// Variables globales
 let userBalance = 0;
 let boosterConfig = {};
 let distributeurAnimating = false;
@@ -160,7 +161,7 @@ async function handleBoosterPurchase() {
     } finally {
         // Réactiver le bouton
         this.disabled = false;
-        this.innerHTML = this.getAttribute('data-original-text') || '<i class=\"fas fa-wallet\"></i> Acheter';
+        this.innerHTML = this.getAttribute('data-original-text') || '<i class="fas fa-wallet"></i> Acheter';
     }
 }
 
@@ -244,7 +245,7 @@ async function handleDistributeurClick() {
                 
                 setTimeout(() => {
                     const boosterContainer = document.getElementById('booster-animation-container');
-                    boosterContainer.innerHTML = `<img src=\"/img/booster/booster-${chosenBoosterType}.png\" alt=\"${boosterName}\">`;
+                    boosterContainer.innerHTML = `<img src="/img/booster/booster-${chosenBoosterType}.png" alt="${boosterName}">`;
                     boosterContainer.className = `booster-animating active ${chosenBoosterType}`;
                     
                     showSuccessNotification(`Vous avez obtenu un ${boosterName} !`);
@@ -272,7 +273,7 @@ async function handleDistributeurClick() {
         distributeur.classList.remove('active');
         bouton.classList.remove('pressed');
         distributeurAnimating = false;
-        console.error("Erreur lors de l'achat:", error);
+        console.error('Erreur lors de l\'achat:', error);
         showErrorNotification('Erreur de connexion au serveur.');
     }
 }
@@ -289,17 +290,17 @@ function displayCardsResult(cards, boosterName) {
         resultModal.id = 'cards-result-modal';
         resultModal.className = 'modal';
         resultModal.innerHTML = `
-            <div class=\"modal-content cards-result-modal\">
-                <div class=\"modal-header\">
-                    <h3 id=\"result-title\">Félicitations !</h3>
-                    <span class=\"close-modal\" onclick=\"closeCardsResultModal()\">&times;</span>
+            <div class="modal-content cards-result-modal">
+                <div class="modal-header">
+                    <h3 id="result-title">Félicitations !</h3>
+                    <span class="close-modal" onclick="closeCardsResultModal()">&times;</span>
                 </div>
-                <div class=\"modal-body\">
-                    <p id=\"result-subtitle\">Vous avez obtenu ces cartes :</p>
-                    <div class=\"cards-reveal\" id=\"cards-reveal-container\"></div>
+                <div class="modal-body">
+                    <p id="result-subtitle">Vous avez obtenu ces cartes :</p>
+                    <div class="cards-reveal" id="cards-reveal-container"></div>
                 </div>
-                <div class=\"modal-footer\">
-                    <button class=\"btn btn-primary\" onclick=\"closeCardsResultModal()\">Continuer</button>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" onclick="closeCardsResultModal()">Continuer</button>
                 </div>
             </div>
         `;
@@ -396,11 +397,11 @@ function displayCardsResult(cards, boosterName) {
         cardEl.className = `card-reveal ${card.gameCard.rarity}`;
         
         cardEl.innerHTML = `
-            <img src=\"${card.gameCard.imageUrl}\" alt=\"${card.gameCard.name}\" onerror=\"this.src='/img/cards/placeholder.png';\">
-            <div class=\"card-info\">
+            <img src="${card.gameCard.imageUrl}" alt="${card.gameCard.name}" onerror="this.src='/img/cards/placeholder.png';">
+            <div class="card-info">
                 <h4>${card.gameCard.name}</h4>
-                <div class=\"card-rarity ${card.gameCard.rarity}\">${card.gameCard.rarity.toUpperCase()}</div>
-                <div class=\"card-stats\">
+                <div class="card-rarity ${card.gameCard.rarity}">${card.gameCard.rarity.toUpperCase()}</div>
+                <div class="card-stats">
                     <span>ATT: ${card.gameCard.stats.attack}</span>
                     <span>DEF: ${card.gameCard.stats.defense}</span>
                     <span>MAG: ${card.gameCard.stats.magic}</span>
@@ -497,7 +498,7 @@ function updateUserBalance() {
 }
 
 /**
- * Initialise les événements pour la modal \"Vous êtes pauvre\"
+ * Initialise les événements pour la modal "Vous êtes pauvre"
  */
 function initBrokeModalEvents() {
     const brokeModal = document.getElementById('broke-modal');
@@ -528,7 +529,7 @@ function initBrokeModalEvents() {
                 showSuccessNotification(`Vous avez acheté ${tokensToAdd} $EFC !`);
                 brokeModal.classList.remove('show');
             } catch (error) {
-                showErrorNotification("Erreur lors de l'achat de tokens.");
+                showErrorNotification('Erreur lors de l\'achat de tokens.');
             }
         });
     }
