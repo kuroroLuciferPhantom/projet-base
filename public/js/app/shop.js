@@ -744,7 +744,7 @@ function initBrokeModalEvents() {
                 showSuccessNotification(`Vous avez acheté ${tokensToAdd} $EFC !`);
                 brokeModal.classList.remove('show');
             } catch (error) {
-                showErrorNotification('Erreur lors de l\\'achat de tokens.');
+                showErrorNotification("Erreur lors de l'achat de tokens.");
             }
         });
     }
