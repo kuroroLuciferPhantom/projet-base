@@ -400,7 +400,7 @@ async function handleDistributeurClick(event) {
                 setTimeout(() => {
                     const boosterContainer = document.getElementById('booster-animation-container');
                     if (boosterContainer) {
-                        boosterContainer.innerHTML = `<img src="/img/booster/booster-${boosterType}.png" alt="${boosterName}" onerror="this.src='/img/booster/booster-commun.png';">`;
+                        boosterContainer.innerHTML = `<img src="/img/booster/booster-${boosterType}.png" alt="${boosterName}" onerror="this.src='/img/booster/booster-common.png';">`;
                         boosterContainer.className = `booster-animating active ${boosterType}`;
                     }
                     

@@ -7,7 +7,7 @@ const SLOT_ITEMS = [
     {
         id: 'booster-common',
         name: 'Booster Commun',
-        image: '/img/booster/booster-commun.png',
+        image: '/img/booster/booster-common.png',
         probability: 0.30,
         type: 'win',
         category: 'booster'
