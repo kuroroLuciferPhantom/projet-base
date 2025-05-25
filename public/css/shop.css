@@ -339,10 +339,10 @@
 /* Fente du distributeur */
 .fente {
     position: absolute;
-    bottom: 280px;
+    bottom: 249px;
     left: 50%;
     transform: translateX(-50%);
-    width: 180px;
+    width: 150px;
     height: 20px;
     background: rgba(0, 0, 0, 0.5);
     border-radius: 4px;

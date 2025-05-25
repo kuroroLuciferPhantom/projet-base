@@ -400,7 +400,7 @@ async function handleDistributeurClick(event) {
                 setTimeout(() => {
                     const boosterContainer = document.getElementById('booster-animation-container');
                     if (boosterContainer) {
-                        boosterContainer.innerHTML = `<img src="/img/booster/booster-${boosterType}.png" alt="${boosterName}" onerror="this.src='/img/booster/booster-common.png';">`;
+                        boosterContainer.innerHTML = `<img src="/img/booster/booster-${boosterType}.png" alt="${boosterName}" onerror="this.src='/img/booster/booster-commun.png';">`;
                         boosterContainer.className = `booster-animating active ${boosterType}`;
                     }
                     
@@ -462,156 +462,161 @@ async function handleDistributeurClick(event) {
 }
 
 /**
- * Affiche le résultat des cartes obtenues dans une modal
+ * Affiche le résultat des cartes obtenues dans une modal améliorée
  */
 function displayCardsResult(cards, boosterName) {
-    let resultModal = document.getElementById('cards-result-modal');
+    let resultModal = document.getElementById('booster-cards-result-modal');
     
     if (!resultModal) {
+        // S'assurer que le CSS est chargé
+        ensureModalCSSLoaded();
+        
         // Créer la modal si elle n'existe pas
         resultModal = document.createElement('div');
-        resultModal.id = 'cards-result-modal';
-        resultModal.className = 'modal';
+        resultModal.id = 'booster-cards-result-modal';
+        resultModal.className = 'bcr-modal-overlay';
         resultModal.innerHTML = `
-            <div class="modal-content cards-result-modal">
-                <div class="modal-header">
-                    <h3 id="result-title">Félicitations !</h3>
-                    <span class="close-modal" onclick="closeCardsResultModal()">&times;</span>
+            <div class="bcr-modal-container">
+                <div class="bcr-modal-header">
+                    <h3 id="bcr-result-title" class="bcr-title">🎉 Félicitations !</h3>
+                    <span class="bcr-close-btn" id="bcr-modal-close">&times;</span>
                 </div>
-                <div class="modal-body">
-                    <p id="result-subtitle">Vous avez obtenu ces cartes :</p>
-                    <div class="cards-reveal" id="cards-reveal-container"></div>
+                <div class="bcr-modal-body">
+                    <p id="bcr-result-subtitle" class="bcr-subtitle">Vous avez obtenu ces cartes :</p>
+                    <div class="bcr-cards-grid" id="bcr-cards-container"></div>
                 </div>
-                <div class="modal-footer">
-                    <button class="btn btn-primary" onclick="closeCardsResultModal()">Continuer</button>
+                <div class="bcr-modal-footer">
+                    <button class="bcr-continue-btn" id="bcr-modal-continue">
+                        <i class="fas fa-forward"></i> Continuer
+                    </button>
                 </div>
             </div>
         `;
         document.body.appendChild(resultModal);
         
-        // Ajouter le CSS pour la modal
-        const style = document.createElement('style');
-        style.textContent = `
-            .cards-result-modal .modal-content {
-                max-width: 800px;
-                width: 90%;
-            }
-            
-            .cards-reveal {
-                display: flex;
-                gap: 20px;
-                justify-content: center;
-                flex-wrap: wrap;
-                margin: 20px 0;
-            }
-            
-            .card-reveal {
-                background: #fff;
-                border-radius: 10px;
-                padding: 15px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                text-align: center;
-                min-width: 200px;
-                transform: translateY(20px);
-                opacity: 0;
-                transition: all 0.5s ease;
-            }
-            
-            .card-reveal.revealed {
-                transform: translateY(0);
-                opacity: 1;
-            }
-            
-            .card-reveal img {
-                width: 100%;
-                max-width: 150px;
-                height: auto;
-                border-radius: 5px;
-                margin-bottom: 10px;
-            }
-            
-            .card-reveal h4 {
-                margin: 10px 0 5px 0;
-                color: #333;
-            }
-            
-            .card-rarity {
-                display: inline-block;
-                padding: 3px 8px;
-                border-radius: 15px;
-                font-size: 0.8em;
-                font-weight: bold;
-                margin-bottom: 10px;
-                text-transform: uppercase;
-            }
-            
-            .card-rarity.common { background-color: #95a5a6; color: white; }
-            .card-rarity.rare { background-color: #3498db; color: white; }
-            .card-rarity.epic { background-color: #9b59b6; color: white; }
-            .card-rarity.legendary { background-color: #f39c12; color: white; }
-            
-            .card-stats {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 5px;
-                font-size: 0.9em;
-                color: #666;
-            }
-            
-            .card-stats span {
-                background: #f8f9fa;
-                padding: 2px 6px;
-                border-radius: 3px;
-            }
-        `;
-        document.head.appendChild(style);
+        // Attacher les événements une seule fois
+        attachCardsModalEventsOnce();
     }
     
     // Mettre à jour le contenu
-    document.getElementById('result-title').textContent = `${boosterName} ouvert !`;
-    document.getElementById('result-subtitle').textContent = `Vous avez obtenu ces ${cards.length} cartes :`;
+    document.getElementById('bcr-result-title').innerHTML = `🎉 ${boosterName} ouvert !`;
+    document.getElementById('bcr-result-subtitle').textContent = `Vous avez obtenu ces ${cards.length} cartes :`;
     
-    const cardsContainer = document.getElementById('cards-reveal-container');
+    const cardsContainer = document.getElementById('bcr-cards-container');
     cardsContainer.innerHTML = '';
     
-    // Créer les éléments pour chaque carte
+    // Créer les éléments pour chaque carte - design simplifié
     cards.forEach((card, index) => {
         const cardEl = document.createElement('div');
-        cardEl.className = `card-reveal ${card.gameCard.rarity}`;
+        cardEl.className = `bcr-card bcr-card-${card.gameCard.rarity}`;
         
         cardEl.innerHTML = `
-            <img src="${card.gameCard.imageUrl}" alt="${card.gameCard.name}" onerror="this.src='/img/cards/placeholder.png';">
-            <div class="card-info">
-                <h4>${card.gameCard.name}</h4>
-                <div class="card-rarity ${card.gameCard.rarity}">${card.gameCard.rarity.toUpperCase()}</div>
-                <div class="card-stats">
-                    <span>ATT: ${card.gameCard.stats.attack}</span>
-                    <span>DEF: ${card.gameCard.stats.defense}</span>
-                    <span>MAG: ${card.gameCard.stats.magic}</span>
-                    <span>VIT: ${card.gameCard.stats.speed}</span>
-                </div>
+            <div class="bcr-card-image-wrapper">
+                <img src="${card.gameCard.imageUrl}" 
+                     alt="${card.gameCard.name}" 
+                     onerror="this.src='/img/cards/placeholder.png';"
+                     class="bcr-card-image">
+                <div class="bcr-card-glow bcr-glow-${card.gameCard.rarity}"></div>
             </div>
+            <div class="bcr-card-name">${card.gameCard.name}</div>
         `;
         
         cardsContainer.appendChild(cardEl);
         
-        // Animation d'apparition des cartes
+        // Animation d'apparition des cartes avec effet cascade
         setTimeout(() => {
-            cardEl.classList.add('revealed');
-        }, 200 * index);
+            cardEl.classList.add('bcr-revealed');
+        }, 300 + (150 * index));
     });
     
-    // Afficher la modal
+    // Afficher la modal avec animation
     resultModal.style.display = 'flex';
+    setTimeout(() => {
+        resultModal.classList.add('bcr-show');
+    }, 10);
+}
+
+/**
+ * S'assure que le CSS de la modal est chargé
+ */
+function ensureModalCSSLoaded() {
+    // Vérifier si le CSS est déjà chargé
+    const existingLink = document.querySelector('link[href*="booster-cards-modal.css"]');
+    if (existingLink) return;
+    
+    // Créer et ajouter le lien vers le fichier CSS
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = '/css/booster-cards-modal.css';
+    document.head.appendChild(link);
+}
+
+/**
+ * Attache les événements à la modal des cartes (une seule fois)
+ */
+function attachCardsModalEventsOnce() {
+    // Utiliser la délégation d'événements sur le document
+    document.addEventListener('click', function(event) {
+        console.log('Clic détecté dans la modal des cartes', event);
+        // Fermeture par clic sur la croix
+        if (event.target && event.target.id === 'bcr-modal-close') {
+            event.preventDefault();
+            closeCardsResultModal();
+        }
+        
+        // Fermeture par clic sur le bouton continuer
+        console.log('Clic sur le bouton continuer');
+        console.log(event.target);
+        console.log(event.target.id);
+        if (event.target && event.target.id === 'bcr-modal-continue') {
+            console.log('Fermeture de la modal par le bouton continuer');
+            event.preventDefault();
+            console.log('Fermeture de la modal des cartes');
+            closeCardsResultModal();
+        }
+        
+        // Fermeture par clic en dehors de la modal
+        if (event.target && event.target.id === 'booster-cards-result-modal') {
+            closeCardsResultModal();
+        }
+    });
+    
+    // Fermeture par touche Échap
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const modal = document.getElementById('booster-cards-result-modal');
+            if (modal && modal.classList.contains('bcr-show')) {
+                closeCardsResultModal();
+            }
+        }
+    });
+}
+
+function attachCardsModalEvents() {
+    const modalOverlay = document.getElementById('booster-cards-result-modal');
+    if (modalOverlay) {
+        modalOverlay.onclick = function(event) {
+            if (event.target === modalOverlay) {
+                closeCardsResultModal();
+            }
+        };
+    }
 }
 
 /**
  * Ferme la modal de résultats des cartes
  */
 function closeCardsResultModal() {
-    const resultModal = document.getElementById('cards-result-modal');
+    console.log('Fermeture de la modal des cartes...');
+    const resultModal = document.getElementById('booster-cards-result-modal');
     if (resultModal) {
-        resultModal.style.display = 'none';
+        resultModal.classList.remove('bcr-show');
+        
+        // Attendre la fin de l'animation avant de masquer complètement
+        setTimeout(() => {
+            resultModal.style.display = 'none';
+        }, 300);
     }
     
     // Recharger la collection pour afficher les nouvelles cartes
@@ -639,6 +644,7 @@ function showSuccessNotification(message) {
         console.log('Notification de succès:', message);
     }
 }
+
 
 /**
  * Affiche une notification d'erreur
