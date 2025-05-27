@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" fill="transparent"/>
+  <path d="M387.3,99.6l-112.3,84.2l20.7-49.1L387.3,99.6z" fill="#E2761B" stroke="#E2761B" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  <path d="M124.6,99.6l111.6,85l-19.6-49.9L124.6,99.6z" fill="#E4761B" stroke="#E4761B" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  <path d="M345.5,304.8l-29.8,45.7l63.8,17.6l18.3-62.2L345.5,304.8z" fill="#E4761B" stroke="#E4761B" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  <path d="M114.3,305.9l18.2,62.2l63.8-17.6l-29.8-45.7L114.3,305.9z" fill="#E4761B" stroke="#E4761B" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  <path d="M191.7,222.3l-17.4,26.3l62.1,2.8l-2.1-66.7L191.7,222.3z" fill="#E4761B" stroke="#E4761B" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  <path d="M320.3,222.3l-43.1-38.4l-1.4,67.5l62.1-2.8L320.3,222.3z" fill="#E4761B" stroke="#E4761B" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  <path d="M196.3,350.5l37.5-18.3l-32.3-25.2L196.3,350.5z" fill="#E4761B" stroke="#E4761B" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  <path d="M278.2,332.2l37.6,18.3l-5.3-43.5L278.2,332.2z" fill="#E4761B" stroke="#E4761B" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  <path d="M278.2,332.2l-32.3-25.2l-2.5,37.7L278.2,332.2z" fill="#D7C1B3" stroke="#D7C1B3" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  <path d="M196.3,350.5l2.6-37.7l-32.3,25.2L196.3,350.5z" fill="#D7C1B3" stroke="#D7C1B3" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  <path d="M196.1,285.3l31.1-9.3l-26.8-12.2L196.1,285.3z" fill="#233447" stroke="#233447" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  <path d="M284.8,276l31.1,9.3l-4.3-21.5L284.8,276z" fill="#233447" stroke="#233447" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  <path d="M196.3,350.5l5.3-45.7l-37.3,1L196.3,350.5z" fill="#CD6116" stroke="#CD6116" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  <path d="M310.4,304.8l-5.2,45.7l37.4-44.6L310.4,304.8z" fill="#CD6116" stroke="#CD6116" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+</svg>

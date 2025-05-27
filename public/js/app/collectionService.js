@@ -24,9 +24,13 @@ const collectionService = {
     currentPage: 1,
     cardsPerPage: 16,
     totalPages: 1,
+    totalCards: 0,
     
     // État de sélection des cartes
     selectedCards: new Set(),
+    
+    // Flag pour éviter les appels multiples
+    isLoading: false,
     
     // Initialiser le service
     initialize() {
@@ -35,31 +39,31 @@ const collectionService = {
         
         // Charger les cartes si la section collection est visible
         const collectionSection = document.getElementById('section-collection');
-if (collectionSection) {
-    const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                const target = mutation.target;
-                if (target.id === 'section-collection') {
-                    console.log('[CollectionService] Section class changed:', target.className);
-                    
-                    // Si la section devient visible (plus de classe hidden)
-                    if (!target.classList.contains('hidden')) {
-                        console.log('[CollectionService] Section became visible, loading cards...');
-                        this.loadUserCollection();
+        if (collectionSection) {
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                        const target = mutation.target;
+                        if (target.id === 'section-collection') {
+                            console.log('[CollectionService] Section class changed:', target.className);
+                            
+                            // Si la section devient visible (plus de classe hidden)
+                            if (!target.classList.contains('hidden') && !this.isLoading) {
+                                console.log('[CollectionService] Section became visible, loading cards...');
+                                this.loadUserCollection();
+                            }
+                        }
                     }
-                }
-            }
-        });
-    });
-    
-    observer.observe(collectionSection, { 
-        attributes: true, 
-        attributeFilter: ['class'] 
-    });
-    
-    console.log('[CollectionService] Observer set up for section visibility');
-}
+                });
+            });
+            
+            observer.observe(collectionSection, { 
+                attributes: true, 
+                attributeFilter: ['class'] 
+            });
+            
+            console.log('[CollectionService] Observer set up for section visibility');
+        }
     },
     
     // Configuration des écouteurs d'événements
@@ -74,7 +78,7 @@ if (collectionSection) {
         // Navigation vers la collection
         document.addEventListener('sectionChanged', (event) => {
             console.log('[CollectionService] Section changed to:', event.detail.section);
-            if (event.detail.section === 'collection') {
+            if (event.detail.section === 'collection' && !this.isLoading) {
                 this.loadUserCollection();
             }
         });
@@ -114,7 +118,7 @@ if (collectionSection) {
                 clearTimeout(searchTimeout);
                 searchTimeout = setTimeout(() => {
                     this.applyFilters();
-                }, 300); // Délai de 300ms pour éviter trop de requêtes
+                }, 300);
             });
         }
         
@@ -164,18 +168,18 @@ if (collectionSection) {
         
         if (prevBtn) {
             prevBtn.addEventListener('click', () => {
-                if (this.currentPage > 1) {
+                if (this.currentPage > 1 && !this.isLoading) {
                     this.currentPage--;
-                    this.loadUserCards();
+                    this.loadCards();
                 }
             });
         }
         
         if (nextBtn) {
             nextBtn.addEventListener('click', () => {
-                if (this.currentPage < this.totalPages) {
+                if (this.currentPage < this.totalPages && !this.isLoading) {
                     this.currentPage++;
-                    this.loadUserCards();
+                    this.loadCards();
                 }
             });
         }
@@ -203,30 +207,33 @@ if (collectionSection) {
         
         if (buyPackBtn) {
             buyPackBtn.addEventListener('click', () => {
-                // Naviguer vers le shop
                 this.navigateToSection('shop');
             });
         }
         
         if (visitMarketBtn) {
             visitMarketBtn.addEventListener('click', () => {
-                // Naviguer vers le marketplace
                 this.navigateToSection('marketplace');
             });
         }
     },
     
-    // Charger la collection complète de l'utilisateur
+    // Charger la collection complète de l'utilisateur (premier chargement)
     async loadUserCollection() {
+        if (this.isLoading) {
+            console.log('[CollectionService] Already loading, skipping...');
+            return;
+        }
+        
         try {
             console.log('[CollectionService] Loading user collection...');
+            this.isLoading = true;
             this.showLoading();
             
             // Vérifier que apiService est disponible
             if (!window.apiService) {
                 console.error('[CollectionService] apiService not available');
                 this.showError('Service API non disponible');
-                this.hideLoading();
                 return;
             }
             
@@ -234,112 +241,116 @@ if (collectionSection) {
             if (!window.apiService.isLoggedIn()) {
                 console.warn('[CollectionService] User not logged in');
                 this.showError('Vous devez être connecté pour voir votre collection');
-                this.hideLoading();
                 return;
             }
             
             // Charger les cartes
-            console.log('[CollectionService] Loading user cards...');
-            const cardsResponse = await this.loadUserCards();
+            await this.loadCards();
             
-            this.hideLoading();
-            
-            if (cardsResponse.success) {
-                console.log('[CollectionService] Cards loaded successfully:', cardsResponse);
-                this.updateCardsDisplay(cardsResponse);
-                
-                // Charger les statistiques séparément
-                this.loadCollectionStats().then(statsResponse => {
-                    if (statsResponse.success) {
-                        console.log('[CollectionService] Stats loaded successfully:', statsResponse);
-                        this.updateStatsDisplay(statsResponse.stats);
-                    } else {
-                        console.warn('[CollectionService] Failed to load stats:', statsResponse.message);
-                    }
-                }).catch(error => {
-                    console.warn('[CollectionService] Error loading stats:', error);
-                });
-            } else {
-                console.error('[CollectionService] Failed to load cards:', cardsResponse);
-                this.showError(cardsResponse.message || 'Erreur lors du chargement des cartes');
-            }
+            // Charger les statistiques pour le header (total de cartes)
+            await this.loadAndUpdateStats();
             
         } catch (error) {
             console.error('[CollectionService] Error loading collection:', error);
-            this.hideLoading();
             this.showError('Erreur lors du chargement de votre collection');
+        } finally {
+            this.isLoading = false;
+            this.hideLoading();
         }
     },
     
-    // Charger les statistiques de la collection
-    async loadCollectionStats() {
+    // Charger les cartes avec les filtres actuels
+    async loadCards() {
+        if (this.isLoading) {
+            console.log('[CollectionService] Already loading, skipping...');
+            return;
+        }
+        
         try {
-            console.log('[CollectionService] Loading collection stats...');
+            console.log('[CollectionService] Loading cards with current filters...');
+            this.isLoading = true;
             
-            // Créer des statistiques de base à partir des cartes chargées
-            const stats = {
-                totalCards: this.userCards.length,
-                gameStats: {
-                    wins: 0,
-                    losses: 0,
-                    currentRank: 'Non classé'
-                },
-                rarityStats: {
-                    common: 0,
-                    rare: 0,
-                    epic: 0,
-                    legendary: 0
-                }
+            // Construire les paramètres de filtres pour l'API
+            const filters = {
+                rarity: this.currentFilters.rarity,
+                search: this.currentFilters.search,
+                sale: this.currentFilters.sale,
+                sortBy: this.currentSort.by,
+                sortOrder: this.currentSort.order,
+                page: this.currentPage,
+                limit: this.cardsPerPage
             };
             
-            // Calculer les statistiques par rareté
-            this.userCards.forEach(card => {
-                if (card.rarity && stats.rarityStats.hasOwnProperty(card.rarity)) {
-                    stats.rarityStats[card.rarity]++;
-                }
-            });
+            console.log('[CollectionService] Sending filters to API:', filters);
             
-            console.log('[CollectionService] Generated stats:', stats);
-            return { success: true, stats };
-            
-        } catch (error) {
-            console.error('[CollectionService] Error loading stats:', error);
-            return { success: false, message: error.message };
-        }
-    },
-    
-    // Charger les cartes de l'utilisateur avec filtres et pagination
-    async loadUserCards() {
-        try {
-            console.log('[CollectionService] Loading user cards from API...');
-            
-            // Utiliser l'API existante dans apiService
-            const response = await window.apiService.getUserCards();
+            // Utiliser l'API avec les paramètres
+            const response = await window.apiService.getUserCards(filters);
             console.log('[CollectionService] API response:', response);
             
             if (response.success) {
-                // Traiter la réponse pour correspondre au format attendu
-                // L'API retourne { success: true, data: { cards: [...], pagination: {...} } }
-                const cards = response.data?.cards || response.cards || [];
-                const pagination = response.data?.pagination || {};
+                // Mettre à jour les données
+                this.userCards = response.cards || [];
+                this.totalPages = response.totalPages || 1;
+                this.currentPage = response.currentPage || 1;
+                this.totalCards = response.total || 0;
                 
-                console.log('[CollectionService] Extracted cards:', cards);
-                console.log('[CollectionService] Pagination info:', pagination);
+                console.log(`[CollectionService] Loaded ${this.userCards.length} cards (page ${this.currentPage}/${this.totalPages}, total: ${this.totalCards})`);
                 
-                return {
-                    success: true,
-                    cards: cards,
-                    total: pagination.total || cards.length,
-                    totalPages: pagination.pages || Math.ceil(cards.length / this.cardsPerPage),
-                    currentPage: pagination.current || 1
-                };
+                // Mettre à jour l'affichage
+                this.updateCardsDisplay();
+                this.updatePagination();
             } else {
-                return response;
+                console.error('[CollectionService] Failed to load cards:', response);
+                this.showError(response.message || 'Erreur lors du chargement des cartes');
             }
             
         } catch (error) {
             console.error('[CollectionService] Error loading cards:', error);
-            return { success: false, message: 'Erreur de connexion au serveur' };
+            this.showError('Erreur de connexion au serveur');
+        } finally {
+            this.isLoading = false;
+        }
+    },
+    
+    // Charger et mettre à jour les statistiques
+    async loadAndUpdateStats() {
+        try {
+            console.log('[CollectionService] Loading collection stats...');
+            
+            // Faire un appel API pour récupérer les stats réelles
+            const statsResponse = await window.apiService.getUserCards({ page: 1, limit: 1000 });
+            
+            if (statsResponse.success) {
+                const allCards = statsResponse.cards || [];
+                
+                const stats = {
+                    totalCards: statsResponse.total || 0,
+                    gameStats: {
+                        wins: 0,
+                        losses: 0,
+                        currentRank: 'Non classé'
+                    },
+                    rarityStats: {
+                        common: 0,
+                        rare: 0,
+                        epic: 0,
+                        legendary: 0
+                    }
+                };
+                
+                // Calculer les statistiques par rareté
+                allCards.forEach(card => {
+                    if (card.rarity && stats.rarityStats.hasOwnProperty(card.rarity)) {
+                        stats.rarityStats[card.rarity]++;
+                    }
+                });
+                
+                console.log('[CollectionService] Generated stats:', stats);
+                this.updateStatsDisplay(stats);
+            }
+            
+        } catch (error) {
+            console.error('[CollectionService] Error loading stats:', error);
         }
     },
     
@@ -347,7 +358,7 @@ if (collectionSection) {
     updateStatsDisplay(stats) {
         console.log('[CollectionService] Updating stats display:', stats);
         
-        // Statistiques générales
+        // IMPORTANT: Afficher le TOTAL de cartes, pas le nombre de la page courante
         const totalCardsElement = document.getElementById('total-cards-count');
         if (totalCardsElement) {
             totalCardsElement.textContent = stats.totalCards || 0;
@@ -403,8 +414,8 @@ if (collectionSection) {
     },
     
     // Mettre à jour l'affichage des cartes
-    updateCardsDisplay(response) {
-        console.log('[CollectionService] Updating cards display:', response);
+    updateCardsDisplay() {
+        console.log('[CollectionService] Updating cards display with', this.userCards.length, 'cards');
         
         const cardsGrid = document.getElementById('cards-grid');
         const noCardsSection = document.getElementById('no-cards-section');
@@ -415,32 +426,32 @@ if (collectionSection) {
         if (noCardsSection) noCardsSection.classList.add('hidden');
         if (noResultsSection) noResultsSection.classList.add('hidden');
         
-        if (!response.success) {
-            console.error('[CollectionService] Response not successful:', response.message);
-            this.showError(response.message);
-            return;
-        }
-        
-        this.userCards = response.cards || [];
-        this.totalPages = response.totalPages || 1;
-        this.currentPage = response.currentPage || 1;
-        
-        console.log('[CollectionService] User cards:', this.userCards);
-        
         // Si aucune carte
-        if (response.total === 0 || this.userCards.length === 0) {
-            console.log('[CollectionService] No cards found, showing no-cards section');
-            if (noCardsSection) noCardsSection.classList.remove('hidden');
+        if (this.totalCards === 0) {
+            console.log('[CollectionService] No cards found, showing appropriate section');
+            
+            // Si c'est un résultat de filtre et qu'on a des filtres actifs
+            if (this.hasActiveFilters()) {
+                if (noResultsSection) noResultsSection.classList.remove('hidden');
+            } else {
+                if (noCardsSection) noCardsSection.classList.remove('hidden');
+            }
             return;
         }
         
         // Afficher les cartes
-        console.log('[CollectionService] Showing cards grid with', this.userCards.length, 'cards');
+        console.log('[CollectionService] Showing cards grid');
         if (cardsGrid) {
             cardsGrid.classList.remove('hidden');
             this.renderCards();
-            this.updatePagination();
         }
+    },
+    
+    // Vérifier si des filtres sont actifs
+    hasActiveFilters() {
+        return this.currentFilters.rarity !== 'all' || 
+               this.currentFilters.search !== '' || 
+               this.currentFilters.sale !== 'all';
     },
     
     // Rendre les cartes dans la grille
@@ -452,10 +463,11 @@ if (collectionSection) {
             return;
         }
         
+        // IMPORTANT: Vider complètement la grille avant de re-rendre
         cardsGrid.innerHTML = '';
         
         this.userCards.forEach((card, index) => {
-            console.log(`[CollectionService] Rendering card ${index + 1}:`, card);
+            console.log(`[CollectionService] Rendering card ${index + 1}:`, card.name);
             const cardElement = this.createCardElement(card);
             cardsGrid.appendChild(cardElement);
         });
@@ -473,9 +485,6 @@ if (collectionSection) {
         if (this.selectedCards.has(card._id)) {
             cardDiv.classList.add('selected');
         }
-        
-        // Assurer que les statistiques existent
-        const stats = card.stats || { attack: 0, defense: 0, magic: 0, speed: 0 };
         
         cardDiv.innerHTML = `
             <div class="card-image">
@@ -502,33 +511,6 @@ if (collectionSection) {
         return cardDiv;
     },
     
-    // Basculer la sélection d'une carte
-    toggleCardSelection(cardId) {
-        const cardElement = document.querySelector(`[data-card-id="${cardId}"]`);
-        
-        if (this.selectedCards.has(cardId)) {
-            this.selectedCards.delete(cardId);
-            if (cardElement) cardElement.classList.remove('selected');
-        } else {
-            this.selectedCards.add(cardId);
-            if (cardElement) cardElement.classList.add('selected');
-        }
-        
-        // Mettre à jour l'état du bouton de vente
-        this.updateSellButtonState();
-    },
-    
-    // Mettre à jour l'état du bouton de vente
-    updateSellButtonState() {
-        const sellBtn = document.getElementById('btn-sell-selected');
-        if (sellBtn) {
-            sellBtn.disabled = this.selectedCards.size === 0;
-            sellBtn.textContent = this.selectedCards.size > 0 
-                ? `Vendre ${this.selectedCards.size} cartes` 
-                : 'Vendre sélectionnées';
-        }
-    },
-    
     // Mettre à jour la pagination
     updatePagination() {
         const paginationContainer = document.getElementById('pagination-container');
@@ -548,10 +530,14 @@ if (collectionSection) {
         
         if (prevBtn) prevBtn.disabled = this.currentPage <= 1;
         if (nextBtn) nextBtn.disabled = this.currentPage >= this.totalPages;
+        
+        console.log(`[CollectionService] Pagination updated: ${this.currentPage}/${this.totalPages}`);
     },
     
     // Appliquer les filtres
     applyFilters() {
+        if (this.isLoading) return;
+        
         // Récupérer les valeurs des filtres
         const raritySelect = document.getElementById('filter-rarity');
         const searchInput = document.getElementById('filter-search');
@@ -564,16 +550,16 @@ if (collectionSection) {
         // Réinitialiser à la première page
         this.currentPage = 1;
         
+        console.log('[CollectionService] Applying filters:', this.currentFilters);
+        
         // Recharger les cartes
-        this.loadUserCards().then(response => {
-            if (response.success) {
-                this.updateCardsDisplay(response);
-            }
-        });
+        this.loadCards();
     },
     
     // Appliquer le tri
     applySort() {
+        if (this.isLoading) return;
+        
         const sortBySelect = document.getElementById('sort-by');
         const sortOrderSelect = document.getElementById('sort-order');
         
@@ -583,16 +569,16 @@ if (collectionSection) {
         // Réinitialiser à la première page
         this.currentPage = 1;
         
+        console.log('[CollectionService] Applying sort:', this.currentSort);
+        
         // Recharger les cartes
-        this.loadUserCards().then(response => {
-            if (response.success) {
-                this.updateCardsDisplay(response);
-            }
-        });
+        this.loadCards();
     },
     
     // Réinitialiser les filtres
     resetFilters() {
+        if (this.isLoading) return;
+        
         // Réinitialiser les valeurs des filtres dans l'interface
         const raritySelect = document.getElementById('filter-rarity');
         const searchInput = document.getElementById('filter-search');
@@ -624,12 +610,36 @@ if (collectionSection) {
         if (filterDropdown) filterDropdown.classList.add('hidden');
         if (sortDropdown) sortDropdown.classList.add('hidden');
         
+        console.log('[CollectionService] Filters reset');
+        
         // Recharger les cartes
-        this.loadUserCards().then(response => {
-            if (response.success) {
-                this.updateCardsDisplay(response);
-            }
-        });
+        this.loadCards();
+    },
+    
+    // Basculer la sélection d'une carte
+    toggleCardSelection(cardId) {
+        const cardElement = document.querySelector(`[data-card-id="${cardId}"]`);
+        
+        if (this.selectedCards.has(cardId)) {
+            this.selectedCards.delete(cardId);
+            if (cardElement) cardElement.classList.remove('selected');
+        } else {
+            this.selectedCards.add(cardId);
+            if (cardElement) cardElement.classList.add('selected');
+        }
+        
+        this.updateSellButtonState();
+    },
+    
+    // Mettre à jour l'état du bouton de vente
+    updateSellButtonState() {
+        const sellBtn = document.getElementById('btn-sell-selected');
+        if (sellBtn) {
+            sellBtn.disabled = this.selectedCards.size === 0;
+            sellBtn.textContent = this.selectedCards.size > 0 
+                ? `Vendre ${this.selectedCards.size} cartes` 
+                : 'Vendre sélectionnées';
+        }
     },
     
     // Vendre les cartes sélectionnées
@@ -639,7 +649,6 @@ if (collectionSection) {
             return;
         }
         
-        // Demander le prix de vente
         const price = prompt('Prix de vente pour chaque carte (en EFC):');
         if (!price || isNaN(price) || parseFloat(price) <= 0) {
             this.showError('Prix invalide');
@@ -650,7 +659,6 @@ if (collectionSection) {
         let successCount = 0;
         let errorCount = 0;
         
-        // Mettre en vente chaque carte sélectionnée
         for (const cardId of this.selectedCards) {
             try {
                 const response = await window.apiService.updateCard(cardId, {
@@ -670,7 +678,6 @@ if (collectionSection) {
             }
         }
         
-        // Afficher le résultat
         if (successCount > 0) {
             this.showSuccess(`${successCount} carte(s) mise(s) en vente avec succès`);
         }
@@ -678,23 +685,16 @@ if (collectionSection) {
             this.showError(`${errorCount} carte(s) n'ont pas pu être mises en vente`);
         }
         
-        // Réinitialiser la sélection et recharger
         this.selectedCards.clear();
         this.updateSellButtonState();
-        this.loadUserCards().then(response => {
-            if (response.success) {
-                this.updateCardsDisplay(response);
-            }
-        });
+        this.loadCards();
     },
     
     // Afficher les détails d'une carte
     showCardDetails(card) {
-        // Utiliser le système de modal existant ou créer une popup
         if (window.showCardDetails) {
             window.showCardDetails(card);
         } else {
-            // Fallback: afficher les détails dans une alerte
             alert(`
                 Carte: ${card.name}
                 Rareté: ${card.rarity}
@@ -709,11 +709,9 @@ if (collectionSection) {
     
     // Naviguer vers une autre section
     navigateToSection(sectionName) {
-        // Utiliser le système de navigation existant
         if (window.showSection) {
             window.showSection(sectionName);
         } else {
-            // Fallback: émettre un événement personnalisé
             document.dispatchEvent(new CustomEvent('navigateToSection', {
                 detail: { section: sectionName }
             }));
@@ -722,24 +720,20 @@ if (collectionSection) {
     
     // Afficher l'indicateur de chargement
     showLoading() {
-        console.log('[CollectionService] Showing loading indicator');
         const loadingIndicator = document.getElementById('cards-loading');
         const cardsGrid = document.getElementById('cards-grid');
         const noCardsSection = document.getElementById('no-cards-section');
         const noResultsSection = document.getElementById('no-results-section');
         
-        // Cacher tout le reste
         if (cardsGrid) cardsGrid.classList.add('hidden');
         if (noCardsSection) noCardsSection.classList.add('hidden');
         if (noResultsSection) noResultsSection.classList.add('hidden');
         
-        // Afficher le chargement
         if (loadingIndicator) loadingIndicator.classList.remove('hidden');
     },
     
     // Masquer l'indicateur de chargement
     hideLoading() {
-        console.log('[CollectionService] Hiding loading indicator');
         const loadingIndicator = document.getElementById('cards-loading');
         if (loadingIndicator) loadingIndicator.classList.add('hidden');
     },
@@ -748,26 +742,22 @@ if (collectionSection) {
     showError(message) {
         console.error('[CollectionService] Showing error:', message);
         
-        // Supprimer les anciens messages
         this.removeMessages();
         
         const errorDiv = document.createElement('div');
         errorDiv.className = 'error-message';
         errorDiv.textContent = message;
         
-        // Insérer le message après le header
         const header = document.querySelector('.collection-header');
         if (header) {
             header.insertAdjacentElement('afterend', errorDiv);
         } else {
-            // Fallback: insérer au début de la section collection
             const collectionSection = document.getElementById('section-collection');
             if (collectionSection) {
                 collectionSection.insertAdjacentElement('afterbegin', errorDiv);
             }
         }
         
-        // Supprimer automatiquement après 5 secondes
         setTimeout(() => {
             if (errorDiv.parentNode) {
                 errorDiv.remove();
@@ -777,26 +767,22 @@ if (collectionSection) {
     
     // Afficher un message de succès
     showSuccess(message) {
-        // Supprimer les anciens messages
         this.removeMessages();
         
         const successDiv = document.createElement('div');
         successDiv.className = 'success-message';
         successDiv.textContent = message;
         
-        // Insérer le message après le header
         const header = document.querySelector('.collection-header');
         if (header) {
             header.insertAdjacentElement('afterend', successDiv);
         } else {
-            // Fallback: insérer au début de la section collection
             const collectionSection = document.getElementById('section-collection');
             if (collectionSection) {
                 collectionSection.insertAdjacentElement('afterbegin', successDiv);
             }
         }
         
-        // Supprimer automatiquement après 3 secondes
         setTimeout(() => {
             if (successDiv.parentNode) {
                 successDiv.remove();
