@@ -15,8 +15,11 @@ exports.getUserCards = async (req, res) => {
       rarity,
       sort = 'name',
       order = 'asc',
-      search
+      search,
+      isForSale
     } = req.query;
+    
+    console.log('[CardsController] getUserCards called with params:', req.query);
     
     // Construire le pipeline d'agrégation pour PlayerCard
     const pipeline = [
@@ -39,6 +42,7 @@ exports.getUserCards = async (req, res) => {
       // Étape 4: Appliquer les filtres
       ...(rarity && rarity !== 'all' ? [{ $match: { 'gameCard.rarity': rarity } }] : []),
       ...(search ? [{ $match: { 'gameCard.name': { $regex: search, $options: 'i' } } }] : []),
+      ...(isForSale !== undefined ? [{ $match: { 'isForSale': isForSale === 'true' } }] : []),
       
       // Étape 5: Projeter les champs nécessaires
       {
@@ -75,8 +79,24 @@ exports.getUserCards = async (req, res) => {
     if (sort === 'name') {
       sortOptions.name = order === 'desc' ? -1 : 1;
     } else if (sort === 'rarity') {
-      // Ordre de rareté personnalisé
-      sortOptions.rarity = order === 'desc' ? -1 : 1;
+      // Ordre de rareté personnalisé: common, rare, epic, legendary
+      const rarityOrder = { 'common': 1, 'rare': 2, 'epic': 3, 'legendary': 4 };
+      pipeline.push({
+        $addFields: {
+          rarityOrder: {
+            $switch: {
+              branches: [
+                { case: { $eq: ['$rarity', 'common'] }, then: 1 },
+                { case: { $eq: ['$rarity', 'rare'] }, then: 2 },
+                { case: { $eq: ['$rarity', 'epic'] }, then: 3 },
+                { case: { $eq: ['$rarity', 'legendary'] }, then: 4 }
+              ],
+              default: 0
+            }
+          }
+        }
+      });
+      sortOptions.rarityOrder = order === 'desc' ? -1 : 1;
     } else if (sort === 'attack') {
       sortOptions['stats.attack'] = order === 'desc' ? -1 : 1;
     } else if (sort === 'defense') {
@@ -106,6 +126,7 @@ exports.getUserCards = async (req, res) => {
       { $unwind: '$gameCard' },
       ...(rarity && rarity !== 'all' ? [{ $match: { 'gameCard.rarity': rarity } }] : []),
       ...(search ? [{ $match: { 'gameCard.name': { $regex: search, $options: 'i' } } }] : []),
+      ...(isForSale !== undefined ? [{ $match: { 'isForSale': isForSale === 'true' } }] : []),
       { $count: 'total' }
     ];
     
@@ -122,7 +143,8 @@ exports.getUserCards = async (req, res) => {
     const total = totalResult.length > 0 ? totalResult[0].total : 0;
     const totalPages = Math.ceil(total / parseInt(limit));
     
-    console.log(`🎴 Cartes trouvées pour l'utilisateur ${userId}: ${cards.length}/${total}`);
+    console.log(`🎴 Cartes trouvées pour l'utilisateur ${userId}: ${cards.length}/${total} (page ${page}/${totalPages})`);
+    console.log(`🔍 Filtres appliqués: rarity=${rarity}, search=${search}, isForSale=${isForSale}, sort=${sort}, order=${order}`);
     
     res.status(200).json({
       success: true,
@@ -291,6 +313,8 @@ exports.updateCardSaleStatus = async (req, res) => {
     const { isForSale, price } = req.body;
     const userId = req.user.id;
     
+    console.log(`[CardsController] Updating card ${cardId} sale status: isForSale=${isForSale}, price=${price}`);
+    
     // Vérifier que la carte appartient à l'utilisateur
     const playerCard = await PlayerCard.findOne({ _id: cardId, owner: userId });
     
@@ -332,6 +356,8 @@ exports.updateCardSaleStatus = async (req, res) => {
         speed: playerCard.gameCard.stats.speed + (playerCard.enhancedStats?.speed || 0)
       }
     };
+    
+    console.log(`✅ Card ${cardId} sale status updated successfully`);
     
     res.status(200).json({
       success: true,
