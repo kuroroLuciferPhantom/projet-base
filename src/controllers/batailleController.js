@@ -1,5 +1,5 @@
 const User = require('../models/User');
-const Card = require('../models/Card');
+const PlayerCard = require('../models/PlayerCard');
 const Deck = require('../models/Deck');
 const GameStats = require('../models/GameStats');
 const logger = require('../utils/logger');
@@ -115,7 +115,7 @@ exports.createDeck = async (req, res) => {
     
     // Vérifier que les cartes appartiennent bien au joueur
     if (cards && cards.length > 0) {
-      const userCards = await Card.find({ owner: userId, _id: { $in: cards } });
+      const userCards = await PlayerCard.find({ owner: userId, _id: { $in: cards } });
       
       if (userCards.length !== cards.length) {
         return res.status(400).json({
@@ -169,7 +169,7 @@ exports.updateDeck = async (req, res) => {
     
     // Vérifier que les cartes appartiennent bien au joueur
     if (cards && cards.length > 0) {
-      const userCards = await Card.find({ owner: userId, _id: { $in: cards } });
+      const userCards = await PlayerCard.find({ owner: userId, _id: { $in: cards } });
       
       if (userCards.length !== cards.length) {
         return res.status(400).json({

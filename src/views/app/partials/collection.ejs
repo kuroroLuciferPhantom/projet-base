@@ -183,6 +183,99 @@
     </div>
 </section>
 
+<script>
+// Fonction de débogage
+function toggleDebug() {
+    const debugInfo = document.getElementById('debug-info');
+    if (debugInfo.style.display === 'none') {
+        debugInfo.style.display = 'block';
+        updateDebugInfo();
+    } else {
+        debugInfo.style.display = 'none';
+    }
+}
+
+function updateDebugInfo() {
+    // Vérifier apiService
+    const apiServiceSpan = document.getElementById('debug-api-service');
+    if (apiServiceSpan) {
+        apiServiceSpan.textContent = window.apiService ? 'Oui' : 'Non';
+        apiServiceSpan.style.color = window.apiService ? 'green' : 'red';
+    }
+    
+    // Vérifier utilisateur connecté
+    const userLoggedSpan = document.getElementById('debug-user-logged');
+    if (userLoggedSpan) {
+        const isLoggedIn = window.apiService && window.apiService.isLoggedIn();
+        userLoggedSpan.textContent = isLoggedIn ? 'Oui' : 'Non';
+        userLoggedSpan.style.color = isLoggedIn ? 'green' : 'red';
+    }
+    
+    // Dernière tentative
+    const lastLoadSpan = document.getElementById('debug-last-load');
+    if (lastLoadSpan) {
+        lastLoadSpan.textContent = new Date().toLocaleTimeString();
+    }
+    
+    // Nombre de cartes
+    const cardsCountSpan = document.getElementById('debug-cards-count');
+    if (cardsCountSpan && window.collectionService) {
+        cardsCountSpan.textContent = window.collectionService.userCards.length;
+    }
+}
+
+function forceLoadCollection() {
+    console.log('[DEBUG] Force loading collection...');
+    updateDebugInfo();
+    if (window.collectionService) {
+        window.collectionService.loadUserCollection();
+    } else {
+        console.error('[DEBUG] collectionService not available');
+    }
+}
+
+// Auto-update debug info when section becomes visible
+document.addEventListener('sectionChanged', (event) => {
+    if (event.detail.section === 'collection') {
+        console.log('[DEBUG] Collection section activated');
+        setTimeout(updateDebugInfo, 100);
+    }
+});
+
+// Observer pour détecter quand la section devient visible
+const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+            const target = mutation.target;
+            if (target.id === 'section-collection' && !target.classList.contains('hidden')) {
+                console.log('[DEBUG] Collection section is now visible');
+                setTimeout(updateDebugInfo, 100);
+            }
+        }
+    });
+});
+
+// Observer la section collection
+const collectionSection = document.getElementById('section-collection');
+if (collectionSection) {
+    observer.observe(collectionSection, { attributes: true });
+}
+
+// Activer le mode debug par défaut en développement
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    setTimeout(() => {
+        const debugInfo = document.getElementById('debug-info');
+        if (debugInfo) {
+            debugInfo.style.display = 'block';
+            updateDebugInfo();
+        }
+    }, 1000);
+}
+
+// Log initial pour vérifier que le script se charge
+console.log('[DEBUG] Collection EJS debug script loaded');
+</script>
+
 <style>
 /* Styles pour les nouvelles fonctionnalités */
 .loading-indicator {
@@ -208,7 +301,7 @@
 .rarity-stats {
     margin: 20px 0;
     padding: 20px;
-    background: var(--card-bg, #f8f9fa);
+    background: var(--card-bg, #1f2937);
     border-radius: 8px;
 }
 
@@ -260,10 +353,14 @@
     position: relative;
     cursor: pointer;
     transition: transform 0.2s ease;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .card-item:hover {
     transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 .card-item.selected {
@@ -320,5 +417,42 @@
     padding: 10px;
     border-radius: 4px;
     margin: 10px 0;
+}
+
+/* Styles pour la grille de cartes */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.card-image {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.card-artwork {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-info h3 {
+    margin: 0 0 5px 0;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.card-description {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 5px 0;
+    height: 40px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 </style>

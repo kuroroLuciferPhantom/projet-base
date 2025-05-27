@@ -1,4 +1,4 @@
-const Card = require('../models/Card');
+const PlayerCard = require('../models/PlayerCard');
 const Transaction = require('../models/Transaction');
 const User = require('../models/User');
 
@@ -68,14 +68,14 @@ exports.getMarketCards = async (req, res) => {
     const skip = (Number(page) - 1) * Number(limit);
     
     // Récupérer les cartes avec pagination
-    const marketCards = await Card.find(filter)
+    const marketCards = await PlayerCard.find(filter)
       .sort(sortOption)
       .skip(skip)
       .limit(Number(limit))
       .populate('owner', 'username');
     
     // Compter le total de cartes pour la pagination
-    const total = await Card.countDocuments(filter);
+    const total = await PlayerCard.countDocuments(filter);
     
     // Format de la réponse API
     if (req.originalUrl && (req.originalUrl.startsWith('/api') || req.originalUrl.includes('/api'))) {
@@ -153,7 +153,7 @@ exports.getMarketCardDetails = async (req, res) => {
     const { id } = req.params;
     
     // Récupérer la carte avec les informations du propriétaire
-    const card = await Card.findById(id).populate('owner', 'username walletAddress');
+    const card = await PlayerCard.findById(id).populate('owner', 'username walletAddress');
     
     if (!card) {
       if (req.originalUrl && (req.originalUrl.startsWith('/api') || req.originalUrl.includes('/api'))) {

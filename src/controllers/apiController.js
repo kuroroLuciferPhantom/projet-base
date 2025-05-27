@@ -2,7 +2,6 @@
  * Contrôleur principal pour les API REST
  * Permet de centraliser la logique de traitement des requêtes API
  */
-const Card = require('../models/Card');
 const GameCard = require('../models/GameCard');
 const PlayerCard = require('../models/PlayerCard');
 const User = require('../models/User');
@@ -103,21 +102,54 @@ exports.getAllCards = async (req, res) => {
     const skip = (page - 1) * limit;
     
     // Construire les filtres
-    const filter = {};
-    if (rarity) filter.rarity = rarity;
-    if (type) filter.type = type;
+    const filter = {
+      owner: req.user.id // AJOUT CRUCIAL : filtrer par utilisateur connecté
+    };
     
-    // Requête avec pagination
-    const cards = await Card.find(filter)
-      .sort({ createdAt: -1 })
+    if (rarity) filter['gameCard.rarity'] = rarity; // Filtrer sur gameCard.rarity
+    if (type) filter['gameCard.type'] = type;
+    
+    // Requête avec pagination ET populate
+    const playerCards = await PlayerCard.find(filter)
+      .populate('gameCard') // AJOUT : récupérer les infos de GameCard
+      .populate('owner', 'username') // Optionnel : infos du propriétaire
+      .sort({ acquiredAt: -1 }) // Mieux : trier par date d'acquisition
       .skip(skip)
       .limit(parseInt(limit));
     
-    // Compter le total pour la pagination
-    const total = await Card.countDocuments(filter);
+    // Transformer les données pour correspondre au format attendu par le frontend
+    const transformedCards = playerCards.map(playerCard => ({
+      _id: playerCard._id,
+      // Infos de la GameCard
+      name: playerCard.gameCard?.name || 'Carte inconnue',
+      description: playerCard.gameCard?.description || '',
+      rarity: playerCard.gameCard?.rarity || 'common',
+      imageUrl: playerCard.gameCard?.imageUrl || '/images/cards/default.jpg',
+      stats: {
+        // Stats de base + améliorations du joueur
+        attack: (playerCard.gameCard?.stats?.attack || 0) + (playerCard.enhancedStats?.attack || 0),
+        defense: (playerCard.gameCard?.stats?.defense || 0) + (playerCard.enhancedStats?.defense || 0),
+        magic: (playerCard.gameCard?.stats?.magic || 0) + (playerCard.enhancedStats?.magic || 0),
+        speed: (playerCard.gameCard?.stats?.speed || 0) + (playerCard.enhancedStats?.speed || 0)
+      },
+      // Infos spécifiques au joueur
+      tokenId: playerCard.tokenId,
+      owner: playerCard.owner?._id || req.user.id,
+      isForSale: playerCard.isForSale,
+      price: playerCard.price,
+      level: playerCard.level,
+      experience: playerCard.experience,
+      isInDeck: playerCard.isInDeck,
+      isFavorite: playerCard.isFavorite,
+      isPublic: true,
+      createdAt: playerCard.acquiredAt
+    }));
+    
+    // Compter le total pour la pagination (avec le même filtre)
+    const total = await PlayerCard.countDocuments(filter);
     
     return res.status(200).json(formatApiResponse(true, { 
-      cards,
+      cards: transformedCards,
       pagination: {
         total,
         pages: Math.ceil(total / limit),
@@ -175,7 +207,7 @@ exports.getAllCards = async (req, res) => {
  */
 exports.getCardById = async (req, res) => {
   try {
-    const card = await Card.findById(req.params.id);
+    const card = await PlayerCard.findById(req.params.id);
     if (!card) {
       return res.status(404).json(formatApiResponse(false, null, { message: "Carte non trouvée" }));
     }

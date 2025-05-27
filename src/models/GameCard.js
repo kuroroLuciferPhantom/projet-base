@@ -21,13 +21,12 @@ const GameCardSchema = new Schema({
   },
   type: {
     type: String,
-    enum: ['creature', 'spell', 'artifact'],
-    default: 'creature'
+    enum: ['marmotte', 'mask'],
+    default: ''
   },
-  element: {
+  level: {
     type: String,
-    enum: ['fire', 'water', 'earth', 'air', 'light', 'dark', 'neutral'],
-    default: 'neutral'
+    required: true
   },
   stats: {
     attack: {
@@ -47,17 +46,6 @@ const GameCardSchema = new Schema({
       default: 0
     }
   },
-  abilities: [{
-    name: {
-      type: String
-    },
-    description: {
-      type: String
-    },
-    effect: {
-      type: String
-    }
-  }],
   dropRate: {
     common: {
       type: Number,

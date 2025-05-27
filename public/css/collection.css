@@ -158,13 +158,13 @@
 /* Styles pour les cartes dans la collection - AGRANDIES */
 .card-item {
     position: relative;
-    border-radius: 12px;
+    border-radius: 0px !important;
     overflow: hidden;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s, box-shadow 0.3s;
     background-color: #1f2937;
     cursor: pointer;
-    height: 320px;
+    height: 485px;
     display: flex;
     flex-direction: column;
 }

@@ -1,4 +1,3 @@
-const Card = require('../models/Card');
 const PlayerCard = require('../models/PlayerCard');
 const GameCard = require('../models/GameCard');
 const User = require('../models/User');
