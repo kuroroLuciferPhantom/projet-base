@@ -90,14 +90,55 @@ const apiService = {
         }
     },
     
-    // Récupérer les cartes de l'utilisateur
-    async getUserCards() {
+    // Récupérer les cartes de l'utilisateur avec filtres et pagination
+    async getUserCards(filters = {}) {
         try {
-            const response = await fetch(`${this.baseUrl}/cards`, {
+            // Construire les paramètres de requête
+            const queryParams = new URLSearchParams();
+            
+            // Filtres
+            if (filters.rarity && filters.rarity !== 'all') {
+                queryParams.append('rarity', filters.rarity);
+            }
+            if (filters.search && filters.search.trim()) {
+                queryParams.append('search', filters.search.trim());
+            }
+            if (filters.sale && filters.sale !== 'all') {
+                if (filters.sale === 'for-sale') {
+                    queryParams.append('isForSale', 'true');
+                } else if (filters.sale === 'not-for-sale') {
+                    queryParams.append('isForSale', 'false');
+                }
+            }
+            
+            // Tri
+            if (filters.sortBy) {
+                queryParams.append('sort', filters.sortBy);
+            }
+            if (filters.sortOrder) {
+                queryParams.append('order', filters.sortOrder);
+            }
+            
+            // Pagination
+            if (filters.page) {
+                queryParams.append('page', filters.page);
+            }
+            if (filters.limit) {
+                queryParams.append('limit', filters.limit);
+            }
+            
+            const url = `${this.baseUrl}/users/me/cards${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
+            console.log('[ApiService] Fetching cards with URL:', url);
+            
+            const response = await fetch(url, {
                 method: 'GET',
                 headers: this.getAuthHeaders()
             });
-            return await response.json();
+            
+            const result = await response.json();
+            console.log('[ApiService] Cards response:', result);
+            
+            return result;
         } catch (error) {
             console.error('Erreur lors de la récupération des cartes:', error);
             throw error;
@@ -121,7 +162,7 @@ const apiService = {
     // Mettre à jour une carte
     async updateCard(cardId, data) {
         try {
-            const response = await fetch(`${this.baseUrl}/cards/${cardId}`, {
+            const response = await fetch(`${this.baseUrl}/users/me/cards/${cardId}/sale`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
