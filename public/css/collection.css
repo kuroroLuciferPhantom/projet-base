@@ -444,7 +444,7 @@
 
 /* Classe utilitaire pour masquer les éléments */
 .hidden {
-    display: none !important;
+    display: none;
 }
 
 /* Boutons standard */

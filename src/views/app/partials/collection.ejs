@@ -455,4 +455,35 @@ console.log('[DEBUG] Collection EJS debug script loaded');
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+/* Fix pour le positionnement des dropdowns */
+.collection-actions {
+    position: relative;
+}
+
+.filter-tools,
+.sort-tools {
+    position: relative;
+    display: inline-block;
+}
+
+.filter-dropdown,
+.sort-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0; /* Pour aligner à gauche du bouton */
+    min-width: 250px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 1000;
+    padding: 15px;
+    margin-top: 2px;
+}
+
+/* Si tu veux le dropdown "Trier" aligné à droite du bouton */
+.sort-dropdown {
+    right: -209px;
+    left: auto;
+}
 </style>
